@@ -526,6 +526,7 @@ public :
    bool fv;
    bool second_trk;
    bool short_trk;
+   bool add_protons = true;
 
    //POT Weight:                                                                                                                                       
    static const int wgt = 1;
@@ -575,10 +576,11 @@ public :
    //Particle Specific Plots
    static const int num_var = 4;
    const char* var[num_var] = {"_mom","_E","_theta","_phi"};
-   int num_bins[num_var] = {50,50,50,10};
+   int num_bins[num_var] = {50,50,30,10};
    double xlim_low[num_var] = {0.0,0.0,-1.5,-3.15};
-   double xlim_high[num_var] = {2.0,1.0,1.5,3.15};
-   double xlim_high_muon[num_var]={2.0,1.5,1.5,3.15};
+   double xlim_high_recoil[num_var] = {0.8,0.35,1.5,3.15};
+   double xlim_high_leading[num_var] = {1.5,0.6,1.5,3.15};
+   double xlim_high_muon[num_var]={1.2,1,1.5,3.15};
    const char* xlabel[num_var] ={"P [GeV/c]","E [GeV]","cos(#theta)","#phi [Rad]"};
    TH1D* h_muon[num_var];
    TH1D* h_recoil[num_var];
@@ -632,8 +634,8 @@ void twoproton_filtered_bnb::Define_Histograms(){
 
   //Other histograms
   for(int i=0; i< number; i++){
-    h_vtx_x[i]=new TH1D(Form("h_vtx_x%s_bnb",point[i]),Form("h_vtx_x%s_bnb",point[i]),40,0,275);
-    h_vtx_y[i]=new TH1D(Form("h_vtx_y%s_bnb",point[i]),Form("h_vtx_y%s_bnb",point[i]),40,-125,125);
+    h_vtx_x[i]=new TH1D(Form("h_vtx_x%s_bnb",point[i]),Form("h_vtx_x%s_bnb",point[i]),50,0,250);
+    h_vtx_y[i]=new TH1D(Form("h_vtx_y%s_bnb",point[i]),Form("h_vtx_y%s_bnb",point[i]),50,-125,125);
     h_vtx_z[i]=new TH1D(Form("h_vtx_z%s_bnb",point[i]),Form("h_vtx_z%s_bnb",point[i]),50,0,1050);
     h_list.push_back(h_vtx_x[i]);
     h_list.push_back(h_vtx_y[i]);
@@ -650,7 +652,7 @@ void twoproton_filtered_bnb::Define_Histograms(){
   }
 
   for(int j=0; j < num_3D; j++){ 
-    h_chi2p_3D[j] = new TH1D(Form("h_chi2p_3D%s_bnb",point_3D[j]),Form("h_chi2p_3D%s_bnb",point_3D[j]),50,0,400);
+    h_chi2p_3D[j] = new TH1D(Form("h_chi2p_3D%s_bnb",point_3D[j]),Form("h_chi2p_3D%s_bnb",point_3D[j]),50,0,350);
     h_chi2mu_3D[j] = new TH1D(Form("h_chi2mu_3D%s_bnb",point_3D[j]),Form("h_chi2mu_3D%s_bnb",point_3D[j]),50,0,120);
     h_chi2pi_3D[j] = new TH1D(Form("h_chi2pi_3D%s_bnb",point_3D[j]),Form("h_chi2pi_3D%s_bnb",point_3D[j]),50,0,120);
     h_list.push_back(h_chi2p_3D[j]);
@@ -660,19 +662,19 @@ void twoproton_filtered_bnb::Define_Histograms(){
 
   for(int j = 0; j < num_var; j++){
     h_muon[j] = new TH1D(Form("h_muon%s",var[j]),Form(" h_muon%s ;%s; Counts",var[j],xlabel[j]),num_bins[j],xlim_low[j],xlim_high_muon[j]);
-    h_recoil[j] = new TH1D(Form("h_recoil%s",var[j]),Form("h_recoil%s ;%s; Counts",var[j],xlabel[j]),num_bins[j],xlim_low[j],xlim_high[j]);
-    h_leading[j] = new TH1D(Form("h_leading%s",var[j]),Form("h_leading%s ;%s; Counts",var[j],xlabel[j]),num_bins[j],xlim_low[j],xlim_high[j]);
+    h_recoil[j] = new TH1D(Form("h_recoil%s",var[j]),Form("h_recoil%s ;%s; Counts",var[j],xlabel[j]),num_bins[j],xlim_low[j],xlim_high_recoil[j]);
+    h_leading[j] = new TH1D(Form("h_leading%s",var[j]),Form("h_leading%s ;%s; Counts",var[j],xlabel[j]),num_bins[j],xlim_low[j],xlim_high_leading[j]);
       h_list.push_back(h_muon[j]);
       h_list.push_back(h_recoil[j]);
       h_list.push_back(h_leading[j]);
     }
 
-  h_opening_angle_protons = new TH1D("h_opening_angle_protons","h_opening_angle_protons; Opening Angle btwn Two Protons; Counts",35,-1.5,1.5); //50, 0, 1.5                                      
-  h_opening_angle_mu_leading = new TH1D("h_opening_angle_mu_leading","h_opening_angle_mu_leading;Opening Angle btwn Muon and Leading Proton; Counts",35,-1.5,1.5);
+  h_opening_angle_protons = new TH1D("h_opening_angle_protons","h_opening_angle_protons; Opening Angle btwn Two Protons; Counts",30,-1.5,1.5); //50, 0, 1.5                                      
+  h_opening_angle_mu_leading = new TH1D("h_opening_angle_mu_leading","h_opening_angle_mu_leading;Opening Angle btwn Muon and Leading Proton; Counts",30,-1.5,1.5);
   h_delta_PT = new TH1D("h_delta_PT","h_deltaPT;#delta P_{T} [GeV/c];Counts",10,0,1);
   h_delta_alphaT = new TH1D("h_delta_alphaT","h_delta_alphaT; #delta #alpha_{T} [Deg.];Counts",10,0,180); //0,180 
-  h_delta_phiT = new TH1D("h_delta_phiT","h_delta_phiT; #delta #phi_{T} [Deg.];Counts",50,0,180); //0,180     
-  h_cos_gamma_cm = new TH1D("h_cos_gamma_cm","h_cos_gamma_cm;cos(#gamma_{COM});Counts",35,-1.5,1.5);
+  h_delta_phiT = new TH1D("h_delta_phiT","h_delta_phiT; #delta #phi_{T} [Deg.];Counts",10,0,180); //0,180     
+  h_cos_gamma_cm = new TH1D("h_cos_gamma_cm","h_cos_gamma_cm;cos(#gamma_{COM});Counts",30,-1.5,1.5);
 
   h_list.push_back(h_cos_gamma_cm);
   h_list.push_back(h_opening_angle_protons);
@@ -680,6 +682,13 @@ void twoproton_filtered_bnb::Define_Histograms(){
   h_list.push_back(h_delta_PT);
   h_list.push_back(h_delta_alphaT);
   h_list.push_back(h_delta_phiT);
+
+  for (int i = 0; i < h_list.size(); i++){
+    h_list[i]->Sumw2();
+  }
+  //for(int i = 0; i < h_list_2D.size(); i++){
+  // h_list_2D[i]->Sumw2();
+  // }
 
 }
 
@@ -722,6 +731,7 @@ void twoproton_filtered_bnb::Fill_Particles(int mu, int p1, int p2){
   vMuon.SetMag(reco_mom_muon->at(mu));
   vMuon.SetTheta(reco_theta->at(mu));
   vMuon.SetPhi(reco_phi->at(mu));
+  TLorentzVector muon(vMuon[0],vMuon[1],vMuon[2],EMuon); //Recoil proton TLorentzVector    
 
   TVector3 vLead(1,1,1);
   double ELead = std::sqrt(std::pow(reco_mom_proton->at(p1),2)+std::pow(0.93827208,2));
@@ -746,14 +756,41 @@ void twoproton_filtered_bnb::Fill_Particles(int mu, int p1, int p2){
   open_angle = ((vLead[0]*vRec[0])+(vLead[1]*vRec[1])+(vLead[2]*vRec[2]))/(vLead.Mag()*vRec.Mag()); //vLead.Angle(vRec);  //note this is the cos(opening angle)                             
   open_angle_mu = ((vLead[0]*vMuon[0])+(vLead[1]*vMuon[1])+(vLead[2]*vMuon[2]))/(vLead.Mag()*vMuon.Mag()); //note this is the cos(opening angle)   
   En = std::sqrt(std::pow(NEUTRON_MASS,2) + vmiss.Mag2()); //energy of struck nucleon   
-  delta_pT = (vMuon + vLead).Perp();
-  delta_phiT = std::acos( (-vMuon.X()*vLead.X() - vMuon.Y()*vLead.Y()) / (vMuon.XYvector().Mod() * vLead.XYvector().Mod()) );
-  TVector2 delta_pT_vec = (vMuon + vLead).XYvector();
+
+  TVector3 vProton;
+  if(add_protons){
+    vProton.SetXYZ(vLead[0]+vRec[0],vLead[1]+vRec[1],vLead[2]+vRec[2]);
+  }else{
+    vProton.SetXYZ(vLead[0],vLead[1],vLead[2]);
+  }
+  delta_pT = (vMuon + vProton).Perp();
+  delta_phiT = std::acos( (-vMuon.X()*vProton.X() - vMuon.Y()*vProton.Y()) / (vMuon.XYvector().Mod() * vProton.XYvector().Mod()));
+  TVector2 delta_pT_vec = (vMuon + vProton).XYvector();
   delta_alphaT = std::acos( (-vMuon.X()*delta_pT_vec.X()- vMuon.Y()*delta_pT_vec.Y()) / (vMuon.XYvector().Mod() * delta_pT_vec.Mod()) );
-  TLorentzVector betacm(vmiss[0] + vRec[0] + vBeam[0],vmiss[1] + vRec[1] + vBeam[1], vmiss[2] + vRec[2]+ vBeam[2], En + ERec + Eneutrino); //beta for CM              
+
+  //TLorentzVector betacm(vmiss[0] + vRec[0] + vBeam[0],vmiss[1] + vRec[1] + vBeam[1], vmiss[2] + vRec[2]+ vBeam[2], En + ERec + Eneutrino); //beta for CM              
+  TLorentzVector betacm(vRec[0]+vLead[0]+vMuon[0],vRec[1]+vLead[1]+vMuon[1],vRec[2]+vLead[2]+vMuon[2],ERec+ELead+EMuon); 
   TVector3 boost = betacm.BoostVector(); //the boost vector                                                          
   lead.Boost(-boost); //boost leading proton                                                                         
   rec.Boost(-boost); //boost recoil proton                                                                           
+  muon.Boost(-boost); 
+  
+  std::cout<<"Value of the added vectors x : "<<lead[0]+rec[0]+muon[0]<<std::endl;
+  std::cout<<"Value of the added vectors y : "<<lead[1]+rec[1]+muon[1]<<std::endl;
+  std::cout<<"Value of the added vectors z : "<<lead[2]+rec[2]+muon[2]<<std::endl;
+  
+
+  //Sanity Check
+  /*TLorentzVector betacm(vRec[0]+vLead[0],vRec[1]+vLead[1],vRec[2]+vLead[2],ERec+ELead);
+  TVector3 boost = betacm.BoostVector(); //the boost vector                                                                                                                                                                                                          
+  lead.Boost(-boost); //boost leading proton                                                                                                                                                                                                                       
+  rec.Boost(-boost); //boost recoil proton                                                                                                                                                                                                                          
+
+  std::cout<<"Value of the added vectors x : "<<lead[0]+rec[0]<<std::endl;
+  std::cout<<"Value of the added vectors y : "<<lead[1]+rec[1]<<std::endl;
+  std::cout<<"Value of the added vectors z : "<<lead[2]+rec[2]<<std::endl;
+  */
+
   cos_gamma_cm = cos(lead.Angle(rec.Vect())); //uses Lorentz Vectors                                                                                                  
   //Some more specific plots
   h_opening_angle_protons->Fill(open_angle,wgt);

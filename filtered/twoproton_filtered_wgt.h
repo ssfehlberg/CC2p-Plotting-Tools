@@ -2,7 +2,7 @@
 // This class has been automatically generated on
 // Thu Apr  9 11:36:39 2020 by ROOT version 6.12/06
 // from TTree tree/
-// found on file: /uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay_filtered_wgt.root
+// found on file: /uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay_filtered_wgt.root
 //////////////////////////////////////////////////////////
 
 #ifndef twoproton_filtered_wgt_h
@@ -529,10 +529,11 @@ public :
 
    ofstream ccNp0pi_file;
 
-   //Boolean for inFV, second shortest track, and shortest track
+   //Boolean for inFV, second shortest track, and shortest track, and if add the protons in STVs
    bool fv;
    bool second_trk;
    bool short_trk;
+   bool add_protons = true;
 
    //POT Weight:
    const double pot_wgt = 0.0350;
@@ -542,7 +543,6 @@ public :
    float chi2p;
    float chi2mu;
    float dEdx;
-
 
    //Other parameters:
    double open_angle; //note this is the cos(opening angle)                                                          
@@ -633,10 +633,11 @@ public :
    //All the single particle plots
    static const int num_var = 4;
    const char* var[num_var] = {"_mom","_E","_theta","_phi"};
-   int num_bins[num_var] = {50,50,50,10};
+   int num_bins[num_var] = {50,50,30,10};
    double xlim_low[num_var] = {0.0,0.0,-1.5,-3.15};
-   double xlim_high[num_var] = {2.0,1.0,1.5,3.15};
-   double xlim_high_muon[num_var]={2.0,1.5,1.5,3.15};
+   double xlim_high_recoil[num_var] = {0.8,0.35,1.5,3.15};
+   double xlim_high_leading[num_var] = {1.5,0.6,1.5,3.15};
+   double xlim_high_muon[num_var]={1.2,1,1.5,3.15};
    const char* xlabel[num_var] ={"P [GeV/c]","E [GeV]","cos(#theta)","#phi [Rad]"};
    TH1D* h_muon[num_var][number2];
    TH1D* h_recoil[num_var][number2];
@@ -684,11 +685,11 @@ twoproton_filtered_wgt::twoproton_filtered_wgt(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay_filtered_wgt.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay_filtered_wgt.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("/uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay_filtered_wgt.root");
+         f = new TFile("/uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay_filtered_wgt.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("/uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay_filtered_wgt.root:/TwoProtonAna");
+      TDirectory * dir = (TDirectory*)f->Get("/uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay_filtered_wgt.root:/TwoProtonAna");
       dir->GetObject("tree",tree);
 
    }
@@ -719,8 +720,8 @@ void twoproton_filtered_wgt::Define_Histograms(){
 
     for(int j=0; j < number2; j++){ //my stuff                                                                                                          
 
-      h_vtx_x[i][j]=new TH1D(Form("h_vtx_x%s%s",point[i],channel[j]),Form("h_vtx_x%s%s",point[i],channel[j]),40,0,275);
-      h_vtx_y[i][j]=new TH1D(Form("h_vtx_y%s%s",point[i],channel[j]),Form("h_vtx_y%s%s",point[i],channel[j]),40,-125,125);
+      h_vtx_x[i][j]=new TH1D(Form("h_vtx_x%s%s",point[i],channel[j]),Form("h_vtx_x%s%s",point[i],channel[j]),50,0,250);
+      h_vtx_y[i][j]=new TH1D(Form("h_vtx_y%s%s",point[i],channel[j]),Form("h_vtx_y%s%s",point[i],channel[j]),50,-125,125);
       h_vtx_z[i][j]=new TH1D(Form("h_vtx_z%s%s",point[i],channel[j]),Form("h_vtx_z%s%s",point[i],channel[j]),50,0,1050);
       h_vtx_x_mc[i][j]=new TH1D(Form("h_vtx_x_mc%s%s",point[i],channel[j]),Form("h_vtx_x_mc%s%s",point[i],channel[j]),40,0,275);
       h_vtx_y_mc[i][j]=new TH1D(Form("h_vtx_y_mc%s%s",point[i],channel[j]),Form("h_vtx_y_mc%s%s",point[i],channel[j]),40,-125,125);
@@ -795,7 +796,7 @@ void twoproton_filtered_wgt::Define_Histograms(){
 
   for(int j=0; j < num_3D; j++){ 
     for(int k=0; k < num_part; k++){
-      h_chi2p_3D[j][k] = new TH1D(Form("h_chi2p_3D%s%s",point_3D[j],particle[k]),Form("h_chi2p_3D%s%s",point_3D[j],particle[k]),50,0,400);
+      h_chi2p_3D[j][k] = new TH1D(Form("h_chi2p_3D%s%s",point_3D[j],particle[k]),Form("h_chi2p_3D%s%s",point_3D[j],particle[k]),50,0,350);
       h_chi2mu_3D[j][k] = new TH1D(Form("h_chi2mu_3D%s%s",point_3D[j],particle[k]),Form("h_chi2mu_3D%s%s",point_3D[j],particle[k]),50,0,120);
       h_chi2pi_3D[j][k] = new TH1D(Form("h_chi2pi_3D%s%s",point_3D[j],particle[k]),Form("h_chi2pi_3D%s%s",point_3D[j],particle[k]),50,0,120);
       h_list.push_back(h_chi2p_3D[j][k]);
@@ -808,8 +809,8 @@ void twoproton_filtered_wgt::Define_Histograms(){
   for(int j = 0; j < num_var; j++){
     for(int k = 0; k < number2; k++){
       h_muon[j][k] = new TH1D(Form("h_muon%s%s",var[j],channel[k]),Form(" h_muon%s%s ;%s; Counts",var[j],channel[k],xlabel[j]),num_bins[j],xlim_low[j],xlim_high_muon[j]);
-      h_recoil[j][k] = new TH1D(Form("h_recoil%s%s",var[j],channel[k]),Form("h_recoil%s%s ;%s; Counts",var[j],channel[k],xlabel[j]),num_bins[j],xlim_low[j],xlim_high[j]);
-      h_leading[j][k] = new TH1D(Form("h_leading%s%s",var[j],channel[k]),Form("h_leading%s%s ;%s; Counts",var[j],channel[k],xlabel[j]),num_bins[j],xlim_low[j],xlim_high[j]);
+      h_recoil[j][k] = new TH1D(Form("h_recoil%s%s",var[j],channel[k]),Form("h_recoil%s%s ;%s; Counts",var[j],channel[k],xlabel[j]),num_bins[j],xlim_low[j],xlim_high_recoil[j]);
+      h_leading[j][k] = new TH1D(Form("h_leading%s%s",var[j],channel[k]),Form("h_leading%s%s ;%s; Counts",var[j],channel[k],xlabel[j]),num_bins[j],xlim_low[j],xlim_high_leading[j]);
       h_list.push_back(h_muon[j][k]);
       h_list.push_back(h_recoil[j][k]);
       h_list.push_back(h_leading[j][k]);
@@ -818,12 +819,12 @@ void twoproton_filtered_wgt::Define_Histograms(){
 
   //more particle specific plots
   for(int i = 0; i < number2; i++){
-    h_opening_angle_protons[i] = new TH1D(Form("h_opening_angle_protons%s",channel[i]),Form("h_opening_angle_protons%s; Opening Angle btwn Two Protons; Counts",channel[i]),35,-1.5,1.5); //50, 0, 1.5                                                                            
-    h_opening_angle_mu_leading[i] = new TH1D(Form("h_opening_angle_mu_leading%s",channel[i]),Form("h_opening_angle_mu_leading%s;Opening Angle btwn Muon and Leading Proton; Counts",channel[i]),35,-1.5,1.5);
+    h_opening_angle_protons[i] = new TH1D(Form("h_opening_angle_protons%s",channel[i]),Form("h_opening_angle_protons%s; Opening Angle btwn Two Protons; Counts",channel[i]),30,-1.5,1.5); //50, 0, 1.5                                                                            
+    h_opening_angle_mu_leading[i] = new TH1D(Form("h_opening_angle_mu_leading%s",channel[i]),Form("h_opening_angle_mu_leading%s;Opening Angle btwn Muon and Leading Proton; Counts",channel[i]),30,-1.5,1.5);
     h_delta_PT[i] = new TH1D(Form("h_delta_PT%s",channel[i]),Form("h_deltaPT%s;#delta P_{T} [GeV/c];Counts",channel[i]),10,0,1);
     h_delta_alphaT[i] = new TH1D(Form("h_delta_alphaT%s",channel[i]),Form("h_delta_alphaT%s; #delta #alpha_{T} [Deg.];Counts",channel[i]),10,0,180); //0,180                 
-    h_delta_phiT[i] = new TH1D(Form("h_delta_phiT%s",channel[i]),Form("h_delta_phiT%s; #delta #phi_{T} [Deg.];Counts",channel[i]),50,0,180); //0,180                   
-    h_cos_gamma_cm[i] = new TH1D(Form("h_cos_gamma_cm%s",channel[i]),Form("h_cos_gamma_cm%s; cos(#gamma_{COM}); Counts",channel[i]),35,-1.5,1.5);
+    h_delta_phiT[i] = new TH1D(Form("h_delta_phiT%s",channel[i]),Form("h_delta_phiT%s; #delta #phi_{T} [Deg.];Counts",channel[i]),10,0,180); //0,180                   
+    h_cos_gamma_cm[i] = new TH1D(Form("h_cos_gamma_cm%s",channel[i]),Form("h_cos_gamma_cm%s; cos(#gamma_{COM}); Counts",channel[i]),30,-1.5,1.5);
 
     h_list.push_back(h_cos_gamma_cm[i]);
     h_list.push_back(h_opening_angle_protons[i]);
@@ -832,6 +833,13 @@ void twoproton_filtered_wgt::Define_Histograms(){
     h_list.push_back(h_delta_alphaT[i]);
     h_list.push_back(h_delta_phiT[i]);
   }
+
+  for (int i = 0; i < h_list.size(); i++){
+    h_list[i]->Sumw2();
+  }
+  ///for(int i = 0; i < h_list_2D.size(); i++){
+  // h_list_2D[i]->Sumw2();
+  // }
 
 }
 
@@ -905,6 +913,7 @@ void twoproton_filtered_wgt::Fill_Particles(int j, int mu, int p1, int p2){
   vMuon.SetMag(reco_mom_muon->at(mu));
   vMuon.SetTheta(reco_theta->at(mu));
   vMuon.SetPhi(reco_phi->at(mu));
+  TLorentzVector muon(vMuon[0],vMuon[1],vMuon[2],EMuon); //Recoil proton TLorentzVector    
 
   TVector3 vLead(1,1,1);
   double ELead = std::sqrt(std::pow(reco_mom_proton->at(p1),2)+std::pow(0.93827208,2));
@@ -927,18 +936,34 @@ void twoproton_filtered_wgt::Fill_Particles(int j, int mu, int p1, int p2){
   TVector3 vq = vBeam - vMuon; // Momentum transfer                                                                                                               
   TVector3 vmiss = vLead - vq; // Missing momentum         
 
-  open_angle = vLead.Angle(vRec);//((vLead[0]*vRec[0])+(vLead[1]*vRec[1])+(vLead[2]*vRec[2]))/(vLead.Mag()*vRec.Mag()); //note this is the cos(opening angle)                             
+  open_angle = ((vLead[0]*vRec[0])+(vLead[1]*vRec[1])+(vLead[2]*vRec[2]))/(vLead.Mag()*vRec.Mag()); //note this is the cos(opening angle)                             
   open_angle_mu = ((vLead[0]*vMuon[0])+(vLead[1]*vMuon[1])+(vLead[2]*vMuon[2]))/(vLead.Mag()*vMuon.Mag()); //note this is the cos(opening angle)   
   En = std::sqrt(std::pow(NEUTRON_MASS,2) + vmiss.Mag2()); //energy of struck nucleon   
-  delta_pT = (vMuon + vLead).Perp();
-  delta_phiT = std::acos( (-vMuon.X()*vLead.X() - vMuon.Y()*vLead.Y()) / (vMuon.XYvector().Mod() * vLead.XYvector().Mod()) );
-  TVector2 delta_pT_vec = (vMuon + vLead).XYvector();
+
+  TVector3 vProton;
+  if(add_protons){
+    vProton.SetXYZ(vLead[0]+vRec[0],vLead[1]+vRec[1],vLead[2]+vRec[2]);
+  }else{
+    vProton.SetXYZ(vLead[0],vLead[1],vLead[2]);
+    }
+
+  delta_pT = (vMuon + vProton).Perp(); 
+  delta_phiT = std::acos( (-vMuon.X()*vProton.X() - vMuon.Y()*vProton.Y()) / (vMuon.XYvector().Mod() * vProton.XYvector().Mod()));
+  TVector2 delta_pT_vec = (vMuon + vProton).XYvector();
   delta_alphaT = std::acos( (-vMuon.X()*delta_pT_vec.X()- vMuon.Y()*delta_pT_vec.Y()) / (vMuon.XYvector().Mod() * delta_pT_vec.Mod()) );
 
-  TLorentzVector betacm(vmiss[0] + vRec[0] + vBeam[0],vmiss[1] + vRec[1] + vBeam[1], vmiss[2] + vRec[2]+ vBeam[2], En + ERec + Eneutrino); //beta for CM              
+  //TLorentzVector betacm(vmiss[0] + vRec[0] + vBeam[0],vmiss[1] + vRec[1] + vBeam[1], vmiss[2] + vRec[2]+ vBeam[2], En + ERec + Eneutrino); //beta for CM              
+  
+  TLorentzVector betacm(vRec[0]+vLead[0]+vMuon[0],vRec[1]+vLead[1]+vMuon[1],vRec[2]+vLead[2]+vMuon[2],ERec+ELead+EMuon);
   TVector3 boost = betacm.BoostVector(); //the boost vector                                                                                                           
-  lead.Boost(-boost); //boost leading proton                                                                                                                          
-  rec.Boost(-boost); //boost recoil proton                                                                                                                            
+  lead.Boost(-boost); //boost leading proton                                                                                     
+  rec.Boost(-boost); //boost recoil proton                                                                                       
+  muon.Boost(-boost);
+                       
+  std::cout<<"Value of the added vectors x : "<<lead[0]+rec[0]+muon[0]<<std::endl;
+  std::cout<<"Value of the added vectors y : "<<lead[1]+rec[1]+muon[1]<<std::endl;
+  std::cout<<"Value of the added vectors z : "<<lead[2]+rec[2]+muon[2]<<std::endl;
+             
   cos_gamma_cm = cos(lead.Angle(rec.Vect())); //uses Lorentz Vectors                                                                                                  
   //Some more specific plots
   h_opening_angle_protons[j]->Fill(open_angle,wgt);
@@ -953,28 +978,28 @@ void twoproton_filtered_wgt::Fill_Particles(int j, int mu, int p1, int p2){
 void twoproton_filtered_wgt::Fill_Histograms_Mine(int i){
   Fill_Mine(i,0);
   //cc0p0pi                                                                                                                                  
-  if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 0 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 0 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,1);
     cc0p0pi[i]++;
     //cc1p0pi                                                                                                                                  
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 1 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 &&mc_n_threshold_proton == 1 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,2);
     cc1p0pi[i]++;
     //cc2p0pi                                                                                                                                    
-  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,3);
     cc2p0pi[i]++;
     //ccNp0pi                                                                                                                                  
-  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton > 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton > 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,4);
     ccNp0pi[i]++;
 
     //ccNp1pi                                                                                                                                   
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 == 1 || mc_n_threshold_pionpm == 1) && fv == true){
+  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 == 1 || mc_n_threshold_pionpm == 1) && fv == true){
     Fill_Mine(i,5);
     ccNp1pi[i]++;
     //ccNpNpi                                                                                                                                   
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 > 1 || mc_n_threshold_pionpm > 1) && fv == true){
+  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 > 1 || mc_n_threshold_pionpm > 1) && fv == true){
     Fill_Mine(i,6);
     ccNpNpi[i]++;
     //CC NUE                                                                                                                                   

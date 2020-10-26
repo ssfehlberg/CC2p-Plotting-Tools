@@ -2,7 +2,7 @@
 // This class has been automatically generated on
 // Thu Apr  9 11:36:39 2020 by ROOT version 6.12/06
 // from TTree tree/
-// found on file: /uboone/data/users/sfehlber/2020/Sep2020/Sep02/overlay.root
+// found on file: /uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay.root
 //////////////////////////////////////////////////////////
 
 #ifndef twoproton_unfiltered_h
@@ -664,15 +664,15 @@ public :
    int other[number+1] = {0};
    
    //number of generated event/channel                                                                                                                                                              
-   int qel[number] = {0};
-   int res[number] = {0};
-   int mec[number] = {0};
-   int coh[number] = {0};
-   int dis[number] = {0};
-   int ccnue_raquel[number] = {0};
-   int outfv_raquel[number] = {0};
-   int nc_raquel[number] = {0};
-   int other_raquel[number] = {0};
+   int qel[number+1] = {0};
+   int res[number+1] = {0};
+   int mec[number+1] = {0};
+   int coh[number+1] = {0};
+   int dis[number+1] = {0};
+   int ccnue_raquel[number+1] = {0};
+   int outfv_raquel[number+1] = {0};
+   int nc_raquel[number+1] = {0};
+   int other_raquel[number+1] = {0};
 
 };
 
@@ -684,11 +684,11 @@ twoproton_unfiltered::twoproton_unfiltered(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("/uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay.root");
+         f = new TFile("/uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("/uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay.root:/TwoProtonAna");
+      TDirectory * dir = (TDirectory*)f->Get("/uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay.root:/TwoProtonAna");
       dir->GetObject("tree",tree);
 
    }
@@ -946,27 +946,27 @@ void twoproton_unfiltered::Fill_Particles(int j, int mu, int p1, int p2){
 void twoproton_unfiltered::Fill_Histograms_Mine(int i){
   Fill_Mine(i,0);
   //cc0p0pi                                                                                                                                  
-  if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 0 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 0 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,1);
     cc0p0pi[i]++;
     //cc1p0pi                                                                                                                                  
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 1 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 1 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,2);
     cc1p0pi[i]++;
     //cc2p0pi                                                                                                                                    
-  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,3);
     cc2p0pi[i]++;
     //ccNp0pi                                                                                                                                  
-  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton > 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton > 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,4);
     ccNp0pi[i]++;
     //ccNp1pi                                                                                                                                    
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 == 1 || mc_n_threshold_pionpm == 1) && fv == true){
+  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 == 1 || mc_n_threshold_pionpm == 1) && fv == true){
     Fill_Mine(i,5);
     ccNp1pi[i]++;
     //ccNpNpi                                                                                                                                   
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 > 1 || mc_n_threshold_pionpm > 1) && fv == true){
+  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 > 1 || mc_n_threshold_pionpm > 1) && fv == true){
     Fill_Mine(i,6);
     ccNpNpi[i]++;
     //CC NUE                                                                                                                                   

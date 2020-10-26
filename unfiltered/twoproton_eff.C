@@ -73,6 +73,10 @@ void twoproton_eff::Loop()
   float_t zmin = 0.0 + FV_edge;
   float_t zmax = 1036.8 - FV_edge;
 
+  //stupid counters
+  int a = 0;
+  int b = 0;
+
   if (fChain == 0) return;
   Long64_t nentries  = fChain->GetEntriesFast();
   Long64_t nbytes = 0, nb = 0;
@@ -119,15 +123,18 @@ void twoproton_eff::Loop()
       //Here is where the cut is actually applied
       if((reco_nu_vtxx <= xmin || reco_nu_vtxx >= xmax) || (reco_nu_vtxy <= ymin || reco_nu_vtxy >= ymax) || (reco_nu_vtxz <= zmin || reco_nu_vtxz >= zmax)) continue;
       fvcntr++;
+      if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+        a++;}
 
       //Fill the stuff for the denominator:
       ////////////////////////////////////////////
-      if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_proton == 2 && mc_n_pion0 == 0 && mc_n_pionpm == 0 && fv == true){  
+      if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){  
 	if(_debug) std::cout<<"Denom"<<std::endl;
 	h_denom_overlay[0]->Fill(mc_enu,wgt);
 	h_denom_overlay[1]->Fill(mc_q2,wgt);
 	h_denom_overlay[2]->Fill(mc_X,wgt);
 	h_denom_overlay[3]->Fill(mc_Y,wgt);
+	denom_cc2p++;
 	for(int i=0; i < mc_g4_pdg->size(); i++){
 	  if(mc_g4_pdg->at(i) == 13){
 	    for(int j=0; j < mc_g4_mom_muon->size(); j++){
@@ -142,7 +149,7 @@ void twoproton_eff::Loop()
 	  }
 	}
 	denom++;
-	denom_cc2p++;
+	//denom_cc2p++;
       }
 
       //Okay Next: We need to require things to be from the neutrino slice cause otherwise this is going to be a hot mess
@@ -312,12 +319,13 @@ void twoproton_eff::Loop()
 
       //Filling stuff for my efficinecy study
       ////////////////////////////////////
-      if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_proton == 2 && mc_n_pion0 == 0 && mc_n_pionpm == 0 && fv == true) {
+      if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true) {
 	if(_debug) std::cout<<"Num"<<std::endl;
 	h_num_overlay[0]->Fill(mc_enu,wgt);
 	h_num_overlay[1]->Fill(mc_q2,wgt);
 	h_num_overlay[2]->Fill(mc_X,wgt);
 	h_num_overlay[3]->Fill(mc_Y,wgt);
+	num_cc2p++;
 	for(int i=0; i < mc_g4_pdg->size(); i++){
 	  if(mc_g4_pdg->at(i) == 13){
 	    for(int j=0; j < mc_g4_mom_muon->size(); j++){
@@ -332,8 +340,11 @@ void twoproton_eff::Loop()
 	  }
 	}
 	num++;
-	num_cc2p++;
+	//num_cc2p++;
       }
+
+      if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+        b++;}
  
 	if(_debug) std::cout<<"[DEBUG] Finish Processing Run: "<<run<<" Subrun: "<<subrun<<" Event: "<<event<<std::endl;
 	if(_debug) std::cout<<"-----------------------------------"<<std::endl;
@@ -371,6 +382,9 @@ void twoproton_eff::Loop()
    std::cout << "[PURITY] Rough Purity Estimate For CC2p: "<<float(100.*(float(num_cc2p)/float(events_remaining)))<<"%"<<std::endl;
    std::cout <<"-----CLOSING TIME. YOU DON'T HAVE TO GO HOME, BUT YOU CAN'T STAY HERE-----"<<std::endl;
    
+   std::cout<<"a"<<a<<std::endl;
+   std::cout<<"b"<<b<<std::endl;
+
    //Don't forget to write all of your histograms before you leave!
    ///////////////////////////////////////////////////////////////
    tfile->cd();

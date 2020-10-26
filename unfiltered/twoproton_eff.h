@@ -532,11 +532,11 @@ twoproton_eff::twoproton_eff(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("/uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay.root");
+         f = new TFile("/uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("/uboone/data/users/sfehlber/2020/Sep2020/Sep10/overlay.root:/TwoProtonAna");
+      TDirectory * dir = (TDirectory*)f->Get("/uboone/data/users/sfehlber/2020/Sep2020/Sep30/overlay.root:/TwoProtonAna");
       dir->GetObject("tree",tree);
 
    }

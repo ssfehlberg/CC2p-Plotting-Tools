@@ -10,16 +10,16 @@ void twoproton_filtered_wgt::Loop()
 
   //Making a new Root File that will contain all the histograms that we will want to plot:
   ///////////////////////////////////////////////////////////////////////////////////////
-  TFile *tfile = new TFile("histograms_filtered_wgt.root","RECREATE");
+  TFile *tfile = new TFile("root_files/histograms_filtered_wgt.root","RECREATE");
 
   //Files with RSE's in them                                                                            
   ofstream myfile;//File that will contain RSE of good events                                          
   ofstream cc2p; //File that will contain good cc2p events                                                                          
   //ofstream ccNp0pi_file;
                      
-  myfile.open("files_filtered_wgt.list");
-  cc2p.open("files_filtered_wgt_cc2p.list");
-  ccNp0pi_file.open("files_filtered_wgt_ccNp0pi.list"); 
+  myfile.open("lists/files_filtered_wgt.list");
+  cc2p.open("lists/files_filtered_wgt_cc2p.list");
+  ccNp0pi_file.open("lists/files_filtered_wgt_ccNp0pi.list"); 
   myfile<<"Run"<<" "<<"Subrun"<<" "<<"Event"<<endl;
   cc2p<<"Run"<<" "<<"Subrun"<<" "<<"Event"<<endl;
   ccNp0pi_file<<"Run"<<" "<<"Subrun"<<" "<<"Event"<<endl;  
@@ -59,6 +59,10 @@ void twoproton_filtered_wgt::Loop()
   int neutrinos_0 = 0;
   int neutrinos_1 = 0;
   int neutrinos_else = 0;
+
+  //stupid counters
+  int a = 0;
+  int b = 0;
 
   //FV Stuff
   float_t FV_edge = 10.0;
@@ -131,6 +135,9 @@ void twoproton_filtered_wgt::Loop()
       //Here is where the cut is actually applied
       if((reco_nu_vtxx <= xmin || reco_nu_vtxx >= xmax) || (reco_nu_vtxy <= ymin || reco_nu_vtxy >= ymax) || (reco_nu_vtxz <= zmin || reco_nu_vtxz >= zmax)) continue;
       fvcntr++;
+
+      if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+	a++;}
 
       //Okay Next: We need to require things to be from the neutrino slice cause otherwise this is going to be a hot mess
       for (int i = 0; i < is_from_nu_slice->size(); i++){
@@ -278,10 +285,10 @@ void twoproton_filtered_wgt::Loop()
 	//	if(chi2p_3D->at(value) == -9999.) continue;
 	//if(chi2mu_3D->at(value) == -9999.) continue;
 	//if(chi2pi_3D->at(value) == -9999.) continue;
-	//Fill_3D_chi2(0,value); //make sure to fill 3D chi2
+	Fill_3D_chi2(0,value); //make sure to fill 3D chi2
       } //end of loop over the particle ids
 
-      Fill_3D_chi2(0,good_trk_id[longest_trk_index]); //we are just doing this to check the muon pid. normally we use the function in the loop found above. 
+      //Fill_3D_chi2(0,good_trk_id[longest_trk_index]); //we are just doing this to check the muon pid. normally we use the function in the loop found above. 
 
       //Done with the initial selection....just doing some sanity checks
       ///////////////////////////////////////////////////////////
@@ -372,6 +379,9 @@ void twoproton_filtered_wgt::Loop()
       n_mom_p1++;
       if(reco_mom_proton->at(recoil_proton_id) == -9999.) continue;
       n_mom_p2++;
+
+      if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+	b++;}
 
       Fill_Histograms_Particles(muon_id,leading_proton_id,recoil_proton_id);
 
@@ -477,7 +487,8 @@ void twoproton_filtered_wgt::Loop()
    std::cout<<"events_mc: "<<events_mc<<std::endl;
    std::cout<<"events_2mu: "<<events_2mu<<std::endl;    
    std::cout<<"events_2other: "<<events_2other<<std::endl;
-
+   std::cout<<"a: "<<a<<std::endl;
+   std::cout<<"b: "<<b<<std::endl;
 
    //Don't forget to write all of your histograms before you leave!
    ///////////////////////////////////////////////////////////////

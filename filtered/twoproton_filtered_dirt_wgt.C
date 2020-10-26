@@ -7,11 +7,11 @@
 void twoproton_filtered_dirt_wgt::Loop()
 {
   //Making a new Root File that will contain all the histograms that we will want to plot:                                                                ///////////////////////////////////////////////////////////////////////////////////////                                                              
-  TFile *tfile = new TFile("histograms_filtered_dirt_wgt.root","RECREATE");
+  TFile *tfile = new TFile("root_files/histograms_filtered_dirt_wgt.root","RECREATE");
 
   //File with RSE's in them                                                                                                                           
   ofstream myfile;//File that will contain RSE of good events                                                                                          
-  myfile.open("files_filtered_dirt_wgt.list");
+  myfile.open("lists/files_filtered_dirt_wgt.list");
   myfile<<"Run"<<" "<<"Subrun"<<" "<<"Event"<<endl;
 
   //Define all the histograms I am going to fill                                                                                                       
@@ -251,14 +251,14 @@ void twoproton_filtered_dirt_wgt::Loop()
 	//if(chi2p_3D->at(value) == -9999.) continue;
         //if(chi2mu_3D->at(value) == -9999.) continue;
 	//if(chi2pi_3D->at(value) == -9999.) continue;
-	//h_chi2p_3D[0]->Fill(chi2p_3D->at(value),wgt);
-        //h_chi2mu_3D[0]->Fill(chi2mu_3D->at(value),wgt);
-	//h_chi2pi_3D[0]->Fill(chi2pi_3D->at(value),wgt);
+	h_chi2p_3D[0]->Fill(chi2p_3D->at(value),wgt);
+        h_chi2mu_3D[0]->Fill(chi2mu_3D->at(value),wgt);
+	h_chi2pi_3D[0]->Fill(chi2pi_3D->at(value),wgt);
       } //end of loop over particle ids		    
 
-      h_chi2p_3D[0]->Fill(chi2p_3D->at(good_trk_id[longest_trk_index]),wgt);
-      h_chi2mu_3D[0]->Fill(chi2mu_3D->at(good_trk_id[longest_trk_index]),wgt);
-      h_chi2pi_3D[0]->Fill(chi2pi_3D->at(good_trk_id[longest_trk_index]),wgt);
+      //h_chi2p_3D[0]->Fill(chi2p_3D->at(good_trk_id[longest_trk_index]),wgt);
+      //h_chi2mu_3D[0]->Fill(chi2mu_3D->at(good_trk_id[longest_trk_index]),wgt);
+      //h_chi2pi_3D[0]->Fill(chi2pi_3D->at(good_trk_id[longest_trk_index]),wgt);
 
       if(_debug) std::cout<<"[DEBUG] We finished the initial Selection. Yeah! Onto PID"<<std::endl;
 
