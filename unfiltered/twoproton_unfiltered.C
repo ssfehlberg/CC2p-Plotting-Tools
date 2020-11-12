@@ -307,10 +307,10 @@ void twoproton_unfiltered::Loop()
       for(int v = 0; v < good_trk_id.size(); v++){ //loop through the tracks again
 	float value = good_trk_id.at(v);
 	//std::cout<<"value"<<value<<std::endl;
-	if(chi2p_3D->at(value) < 70){ //this is our PID cut. Indicates track is a proton
+	if(chi2p_3D->at(value) < 50){ //this is our PID cut. Indicates track is a proton 70
 	  protons_vector.push_back(value);
-	}else if(chi2p_3D->at(value) > 70){
-	  muon_vector.push_back(value); //id of the other track
+	}else if(chi2p_3D->at(value) > 120){
+	  muon_vector.push_back(value); //id of the other track 70
 	}else{
 	  other_vector.push_back(value);
 	}
@@ -345,7 +345,6 @@ void twoproton_unfiltered::Loop()
 
       //we are going to fill chi2 based on just the final track to try and get a muon id cut figured out
       Fill_3D_chi2(1,muon_vector[0]); //we are filling it just for the muon track here
-
       //////////////////////////
       //Particle Specific Plots
       ////////////////////////
@@ -361,7 +360,7 @@ void twoproton_unfiltered::Loop()
 	  recoil_proton_id = protons_vector[0];
       }
 
-      //remove events in which we can't reconstruct the momentum                                                                                                                                                                                                         
+      //remove events in which we can't reconstruct the momentum                                                                                                                                                                                                   
       if(reco_mom_muon->at(muon_id) == -9999.) continue;
       n_mom_mu++;
       if(reco_mom_proton->at(leading_proton_id) == -9999.) continue;
@@ -434,15 +433,15 @@ void twoproton_unfiltered::Loop()
 
    std::cout<<"-----MC RECO'D SUMMARY: RAQUEL-----"<<std::endl;
    std::cout << "[MC_RECO_RAQUEL] Initial Number of Events That were Reconstructed: "<<events_remaining<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCQEL Events: "<<qel[4]<<" Fraction of the Total: "<<float(100.*(float(qel[4])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCRES Events: "<<res[4]<<" Fraction of the Total: "<<float(100.*(float(res[4])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCMEC Events: "<<mec[4]<<" Fraction of the Total: "<<float(100.*(float(mec[4])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCCOH Events: "<<coh[4]<<" Fraction of the Total: "<<float(100.*(float(coh[4])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCDIS Events: "<<dis[4]<<" Fraction of the Total: "<<float(100.*(float(dis[4])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCNue Events: "<<ccnue_raquel[4]<<" Fraction of the Total: "<<float(100.*(float(ccnue_raquel[4])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of OUTFV Events: "<<outfv_raquel[4]<<" Fraction of the Total: "<<float(100.*(float(outfv_raquel[4])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of NC Events: "<<nc_raquel[4]<<" Fraction of the Total: "<<float(100.*(float(nc_raquel[4])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of Else Events: "<<other_raquel[4]<<" Fraction of the Total: "<<float(100.*(float(other_raquel[4])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCQEL Events: "<<qel[3]<<" Fraction of the Total: "<<float(100.*(float(qel[3])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCRES Events: "<<res[3]<<" Fraction of the Total: "<<float(100.*(float(res[3])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCMEC Events: "<<mec[3]<<" Fraction of the Total: "<<float(100.*(float(mec[3])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCCOH Events: "<<coh[3]<<" Fraction of the Total: "<<float(100.*(float(coh[3])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCDIS Events: "<<dis[3]<<" Fraction of the Total: "<<float(100.*(float(dis[3])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCNue Events: "<<ccnue_raquel[3]<<" Fraction of the Total: "<<float(100.*(float(ccnue_raquel[3])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of OUTFV Events: "<<outfv_raquel[3]<<" Fraction of the Total: "<<float(100.*(float(outfv_raquel[3])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of NC Events: "<<nc_raquel[3]<<" Fraction of the Total: "<<float(100.*(float(nc_raquel[3])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of Else Events: "<<other_raquel[3]<<" Fraction of the Total: "<<float(100.*(float(other_raquel[3])/float(events_remaining)))<<"%"<<std::endl;
    std::cout <<"-----ONE FOR THE DAGGER, AND ONE FOR THE ONE YOU BELIEVE!!-----"<<std::endl;
 
    std::cout<<"-----MC RECO'D SUMMARY-----"<<std::endl;

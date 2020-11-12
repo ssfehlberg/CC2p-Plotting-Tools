@@ -663,7 +663,7 @@ public :
    int nc[number+1] = {0};
    int other[number+1] = {0};
    
-   //number of generated event/channel                                                                                                                                                              
+   //number of generated event/channel                                                                                                                                                        
    int qel[number+1] = {0};
    int res[number+1] = {0};
    int mec[number+1] = {0};

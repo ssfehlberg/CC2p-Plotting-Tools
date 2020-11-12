@@ -517,9 +517,11 @@ public :
    virtual void     Fill_Histograms_Mine(int i);
    virtual void     Fill_Histograms_Raquel(int i);
    virtual void     Fill_Histograms_Particles(int mu, int p1, int p2);
+   virtual void     Fill_Histograms_Particles_Raquel(int mu, int p1, int p2);
    virtual void     Fill_Mine(int i, int j);
    virtual void     Fill_Raquel(int i, int j);
    virtual void     Fill_Particles(int j, int mu, int p1, int p2);
+   virtual void     Fill_Particles_Raquel(int j, int mu, int p1, int p2);
    virtual void     Fill_Particle_Plots(int y, float value);
    virtual void     Fill_3D_chi2(int x,float value);
    virtual void     Write_Histograms();
@@ -649,6 +651,16 @@ public :
    TH1D* h_delta_phiT[number2];
    TH1D* h_cos_gamma_cm[number2];
 
+   TH1D* h_muon_raquel[num_var][number3];
+   TH1D* h_recoil_raquel[num_var][number3];
+   TH1D* h_leading_raquel[num_var][number3];
+   TH1D* h_opening_angle_protons_raquel[number3];
+   TH1D* h_opening_angle_mu_leading_raquel[number3];
+   TH1D* h_delta_PT_raquel[number3];
+   TH1D* h_delta_alphaT_raquel[number3];
+   TH1D* h_delta_phiT_raquel[number3];
+   TH1D* h_cos_gamma_cm_raquel[number3];
+
    //List of all the 1D histograms
    vector<TH1*> h_list;
 
@@ -665,15 +677,15 @@ public :
    int other[number+1] = {0};
    
    //number of generated event/channel                                                                                                                                                              
-   int qel[number] = {0};
-   int res[number] = {0};
-   int mec[number] = {0};
-   int coh[number] = {0};
-   int dis[number] = {0};
-   int ccnue_raquel[number] = {0};
-   int outfv_raquel[number] = {0};
-   int nc_raquel[number] = {0};
-   int other_raquel[number] = {0};
+   int qel[number+1] = {0};
+   int res[number+1] = {0};
+   int mec[number+1] = {0};
+   int coh[number+1] = {0};
+   int dis[number+1] = {0};
+   int ccnue_raquel[number+1] = {0};
+   int outfv_raquel[number+1] = {0};
+   int nc_raquel[number+1] = {0};
+   int other_raquel[number+1] = {0};
 
 };
 
@@ -817,9 +829,20 @@ void twoproton_filtered_wgt::Define_Histograms(){
     }
   }
 
+  for(int j = 0; j < num_var; j++){
+    for(int k = 0; k < number3; k++){
+      h_muon_raquel[j][k] = new TH1D(Form("h_muon_raquel%s%s",var[j],channel2[k]),Form(" h_muon_raquel%s%s ;%s; Counts",var[j],channel2[k],xlabel[j]),num_bins[j],xlim_low[j],xlim_high_muon[j]);
+      h_recoil_raquel[j][k] = new TH1D(Form("h_recoil_raquel%s%s",var[j],channel2[k]),Form("h_recoil_raquel%s%s ;%s; Counts",var[j],channel2[k],xlabel[j]),num_bins[j],xlim_low[j],xlim_high_recoil[j]);
+      h_leading_raquel[j][k] = new TH1D(Form("h_leading_raquel%s%s",var[j],channel2[k]),Form("h_leading_raquel%s%s ;%s; Counts",var[j],channel2[k],xlabel[j]),num_bins[j],xlim_low[j],xlim_high_leading[j]);
+      h_list.push_back(h_muon_raquel[j][k]);
+      h_list.push_back(h_recoil_raquel[j][k]);
+      h_list.push_back(h_leading_raquel[j][k]);
+    }
+  }
+
   //more particle specific plots
   for(int i = 0; i < number2; i++){
-    h_opening_angle_protons[i] = new TH1D(Form("h_opening_angle_protons%s",channel[i]),Form("h_opening_angle_protons%s; Opening Angle btwn Two Protons; Counts",channel[i]),30,-1.5,1.5); //50, 0, 1.5                                                                            
+    h_opening_angle_protons[i] = new TH1D(Form("h_opening_angle_protons%s",channel[i]),Form("h_opening_angle_protons%s; Opening Angle btwn Two Protons; Counts",channel[i]),30,-1.5,1.5); //50, 0, 1.5        
     h_opening_angle_mu_leading[i] = new TH1D(Form("h_opening_angle_mu_leading%s",channel[i]),Form("h_opening_angle_mu_leading%s;Opening Angle btwn Muon and Leading Proton; Counts",channel[i]),30,-1.5,1.5);
     h_delta_PT[i] = new TH1D(Form("h_delta_PT%s",channel[i]),Form("h_deltaPT%s;#delta P_{T} [GeV/c];Counts",channel[i]),10,0,1);
     h_delta_alphaT[i] = new TH1D(Form("h_delta_alphaT%s",channel[i]),Form("h_delta_alphaT%s; #delta #alpha_{T} [Deg.];Counts",channel[i]),10,0,180); //0,180                 
@@ -832,6 +855,22 @@ void twoproton_filtered_wgt::Define_Histograms(){
     h_list.push_back(h_delta_PT[i]);
     h_list.push_back(h_delta_alphaT[i]);
     h_list.push_back(h_delta_phiT[i]);
+  }
+
+  for(int i = 0; i < number3; i++){
+    h_opening_angle_protons_raquel[i] = new TH1D(Form("h_opening_angle_protons_raquel%s",channel2[i]),Form("h_opening_angle_protons_raquel%s; Opening Angle btwn Two Protons; Counts",channel2[i]),30,-1.5,1.5); //50, 0, 1.5        
+    h_opening_angle_mu_leading_raquel[i] = new TH1D(Form("h_opening_angle_mu_leading_raquel%s",channel2[i]),Form("h_opening_angle_mu_leading_raquel%s;Opening Angle btwn Muon and Leading Proton; Counts",channel2[i]),30,-1.5,1.5);
+    h_delta_PT_raquel[i] = new TH1D(Form("h_delta_PT_raquel%s",channel2[i]),Form("h_deltaPT_raquel%s;#delta P_{T} [GeV/c];Counts",channel2[i]),10,0,1);
+    h_delta_alphaT_raquel[i] = new TH1D(Form("h_delta_alphaT_raquel%s",channel2[i]),Form("h_delta_alphaT_raquel%s; #delta #alpha_{T} [Deg.];Counts",channel2[i]),10,0,180); //0,180                 
+    h_delta_phiT_raquel[i] = new TH1D(Form("h_delta_phiT_raquel%s",channel2[i]),Form("h_delta_phiT_raquel%s; #delta #phi_{T} [Deg.];Counts",channel2[i]),10,0,180); //0,180                   
+    h_cos_gamma_cm_raquel[i] = new TH1D(Form("h_cos_gamma_cm_raquel%s",channel2[i]),Form("h_cos_gamma_cm_raquel%s; cos(#gamma_{COM}); Counts",channel2[i]),30,-1.5,1.5);
+
+    h_list.push_back(h_cos_gamma_cm_raquel[i]);
+    h_list.push_back(h_opening_angle_protons_raquel[i]);
+    h_list.push_back(h_opening_angle_mu_leading_raquel[i]);
+    h_list.push_back(h_delta_PT_raquel[i]);
+    h_list.push_back(h_delta_alphaT_raquel[i]);
+    h_list.push_back(h_delta_phiT_raquel[i]);
   }
 
   for (int i = 0; i < h_list.size(); i++){
@@ -906,6 +945,7 @@ void twoproton_filtered_wgt::Fill_Particles(int j, int mu, int p1, int p2){
   h_muon[3][j]->Fill(reco_phi->at(mu),wgt);
   h_leading[3][j]->Fill(reco_phi->at(p1),wgt);
   h_recoil[3][j]->Fill(reco_phi->at(p2),wgt);
+
   //Specific parameters
   ////////////////////////////////
   TVector3 vMuon(1,1,1);
@@ -960,11 +1000,12 @@ void twoproton_filtered_wgt::Fill_Particles(int j, int mu, int p1, int p2){
   rec.Boost(-boost); //boost recoil proton                                                                                       
   muon.Boost(-boost);
                        
-  std::cout<<"Value of the added vectors x : "<<lead[0]+rec[0]+muon[0]<<std::endl;
+  /*  std::cout<<"Value of the added vectors x : "<<lead[0]+rec[0]+muon[0]<<std::endl;
   std::cout<<"Value of the added vectors y : "<<lead[1]+rec[1]+muon[1]<<std::endl;
   std::cout<<"Value of the added vectors z : "<<lead[2]+rec[2]+muon[2]<<std::endl;
-             
+  */         
   cos_gamma_cm = cos(lead.Angle(rec.Vect())); //uses Lorentz Vectors                                                                                                  
+
   //Some more specific plots
   h_opening_angle_protons[j]->Fill(open_angle,wgt);
   h_opening_angle_mu_leading[j]->Fill(open_angle_mu,wgt);
@@ -972,6 +1013,93 @@ void twoproton_filtered_wgt::Fill_Particles(int j, int mu, int p1, int p2){
   h_delta_alphaT[j]->Fill(delta_alphaT*180/3.14,wgt);
   h_delta_phiT[j]->Fill(delta_phiT*180./3.14,wgt);
   h_cos_gamma_cm[j]->Fill(cos_gamma_cm,wgt);
+
+}
+
+void twoproton_filtered_wgt::Fill_Particles_Raquel(int j, int mu, int p1, int p2){
+  //first index indicates which variable is being filled: mom, energy, theta, phi                                                           
+  //second index represents what channel we are filling                                                                                  
+  wgt = pot_wgt*mc_wgt_cv;
+
+  h_muon_raquel[0][j]->Fill(reco_mom_muon->at(mu),wgt);
+  h_leading_raquel[0][j]->Fill(reco_mom_proton->at(p1),wgt);
+  h_recoil_raquel[0][j]->Fill(reco_mom_proton->at(p2),wgt);
+
+  h_muon_raquel[1][j]->Fill(std::sqrt(std::pow(reco_mom_muon->at(mu),2)+std::pow(0.10565837,2))-0.10565837,wgt);
+  h_leading_raquel[1][j]->Fill(std::sqrt(std::pow(reco_mom_proton->at(p1),2)+std::pow(0.93827208,2))-0.93827208,wgt);
+  h_recoil_raquel[1][j]->Fill(std::sqrt(std::pow(reco_mom_proton->at(p2),2)+std::pow(0.93827208,2))-0.93827208,wgt);
+
+  h_muon_raquel[2][j]->Fill(cos(reco_theta->at(mu)),wgt);
+  h_leading_raquel[2][j]->Fill(cos(reco_theta->at(p1)),wgt);
+  h_recoil_raquel[2][j]->Fill(cos(reco_theta->at(p2)),wgt);
+
+  h_muon_raquel[3][j]->Fill(reco_phi->at(mu),wgt);
+  h_leading_raquel[3][j]->Fill(reco_phi->at(p1),wgt);
+  h_recoil_raquel[3][j]->Fill(reco_phi->at(p2),wgt);
+
+  //Specific parameters
+  ////////////////////////////////
+  TVector3 vMuon(1,1,1);
+  double EMuon = std::sqrt(std::pow(reco_mom_muon->at(mu),2)+std::pow(0.10565837,2));
+  vMuon.SetMag(reco_mom_muon->at(mu));
+  vMuon.SetTheta(reco_theta->at(mu));
+  vMuon.SetPhi(reco_phi->at(mu));
+  TLorentzVector muon(vMuon[0],vMuon[1],vMuon[2],EMuon); //Recoil proton TLorentzVector    
+
+  TVector3 vLead(1,1,1);
+  double ELead = std::sqrt(std::pow(reco_mom_proton->at(p1),2)+std::pow(0.93827208,2));
+  vLead.SetMag(reco_mom_proton->at(p1));
+  vLead.SetTheta(reco_theta->at(p1));
+  vLead.SetPhi(reco_phi->at(p1));
+  TLorentzVector lead(vLead[0],vLead[1],vLead[2],ELead);//leading proton TLorentzVector    
+		  
+  TVector3 vRec(1,1,1);
+  double ERec = std::sqrt(std::pow(reco_mom_proton->at(p2),2)+std::pow(0.93827208,2));
+  vRec.SetMag(reco_mom_proton->at(p2));
+  vRec.SetTheta(reco_theta->at(p2));
+  vRec.SetPhi(reco_phi->at(p2));
+  TLorentzVector rec(vRec[0],vRec[1],vRec[2],ERec); //Recoil proton TLorentzVector   
+
+  //Beam Stuff
+  double PT_miss = vMuon.Perp() + vRec.Perp() + vLead.Perp();
+  double Eneutrino = EMuon + (ELead-0.93827208) + (ERec-0.93827208) +(std::pow(PT_miss,2)/(2*353.7)) + 0.304;
+  TVector3 vBeam(0.,0.,Eneutrino); // z-direction is defined along the neutrino direction                                                                         
+  TVector3 vq = vBeam - vMuon; // Momentum transfer                                                                                                               
+  TVector3 vmiss = vLead - vq; // Missing momentum         
+
+  open_angle = ((vLead[0]*vRec[0])+(vLead[1]*vRec[1])+(vLead[2]*vRec[2]))/(vLead.Mag()*vRec.Mag()); //note this is the cos(opening angle)                             
+  open_angle_mu = ((vLead[0]*vMuon[0])+(vLead[1]*vMuon[1])+(vLead[2]*vMuon[2]))/(vLead.Mag()*vMuon.Mag()); //note this is the cos(opening angle)   
+  En = std::sqrt(std::pow(NEUTRON_MASS,2) + vmiss.Mag2()); //energy of struck nucleon   
+
+  TVector3 vProton;
+  if(add_protons){
+    vProton.SetXYZ(vLead[0]+vRec[0],vLead[1]+vRec[1],vLead[2]+vRec[2]);
+  }else{
+    vProton.SetXYZ(vLead[0],vLead[1],vLead[2]);
+    }
+
+  delta_pT = (vMuon + vProton).Perp(); 
+  delta_phiT = std::acos( (-vMuon.X()*vProton.X() - vMuon.Y()*vProton.Y()) / (vMuon.XYvector().Mod() * vProton.XYvector().Mod()));
+  TVector2 delta_pT_vec = (vMuon + vProton).XYvector();
+  delta_alphaT = std::acos( (-vMuon.X()*delta_pT_vec.X()- vMuon.Y()*delta_pT_vec.Y()) / (vMuon.XYvector().Mod() * delta_pT_vec.Mod()) );
+
+  //TLorentzVector betacm(vmiss[0] + vRec[0] + vBeam[0],vmiss[1] + vRec[1] + vBeam[1], vmiss[2] + vRec[2]+ vBeam[2], En + ERec + Eneutrino); //beta for CM              
+  
+  TLorentzVector betacm(vRec[0]+vLead[0]+vMuon[0],vRec[1]+vLead[1]+vMuon[1],vRec[2]+vLead[2]+vMuon[2],ERec+ELead+EMuon);
+  TVector3 boost = betacm.BoostVector(); //the boost vector                                                                                                           
+  lead.Boost(-boost); //boost leading proton                                                                                     
+  rec.Boost(-boost); //boost recoil proton                                                                                       
+  muon.Boost(-boost);
+             
+  cos_gamma_cm = cos(lead.Angle(rec.Vect())); //uses Lorentz Vectors                                                                                                  
+
+  //Some more specific plots
+  h_opening_angle_protons_raquel[j]->Fill(open_angle,wgt);
+  h_opening_angle_mu_leading_raquel[j]->Fill(open_angle_mu,wgt);
+  h_delta_PT_raquel[j]->Fill(delta_pT,wgt);
+  h_delta_alphaT_raquel[j]->Fill(delta_alphaT*180/3.14,wgt);
+  h_delta_phiT_raquel[j]->Fill(delta_phiT*180./3.14,wgt);
+  h_cos_gamma_cm_raquel[j]->Fill(cos_gamma_cm,wgt);
 
 }
 
@@ -1044,7 +1172,7 @@ void twoproton_filtered_wgt::Fill_Histograms_Raquel(int i){
     Fill_Raquel(i,5);
     dis[i]++;
     //CCNue                                                                                                                                                                                             
-  } else if(mc_ccnc == 0 && mc_ccnc == 0 && mc_nupdg == abs(13) && fv ==true){
+  } else if(mc_ccnc == 0  && mc_nupdg == abs(13) && fv ==true){
     Fill_Raquel(i,6);
     ccnue_raquel[i]++;
     //NC                                                                                                                                                                                                
@@ -1059,11 +1187,12 @@ void twoproton_filtered_wgt::Fill_Histograms_Raquel(int i){
   }else{
     Fill_Raquel(i,9);
     other_raquel[i]++;
-  }
+  } 
 }
 
 void twoproton_filtered_wgt::Fill_Histograms_Particles(int mu, int p1, int p2){
   Fill_Particles(0, mu, p1, p2);
+
   //cc0p0pi                                                                                                                               
   if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 0 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Particles(1, mu, p1, p2);
@@ -1104,6 +1233,57 @@ void twoproton_filtered_wgt::Fill_Histograms_Particles(int mu, int p1, int p2){
     Fill_Particles(10, mu, p1, p2);
     other[number]++;
   }
+}
+
+
+void twoproton_filtered_wgt::Fill_Histograms_Particles_Raquel(int mu, int p1, int p2){
+  Fill_Particles_Raquel(0, mu, p1, p2);
+
+  //CCQE
+  if(mc_ccnc == 0 && mc_mode == 0 && fv==true){
+    Fill_Particles_Raquel(1, mu, p1, p2);
+    qel[number]++;
+
+  //CCCoh                                                                                                                                                                                             
+  } else if(mc_ccnc == 0 && mc_mode == 3 && fv == true){
+    Fill_Particles_Raquel(2, mu, p1, p2);
+    coh[number]++;
+
+    //CCMEC                                                                                                                                                                                             
+  } else if(mc_ccnc == 0 && mc_mode == 10 && fv==true){
+    Fill_Particles_Raquel(3, mu, p1, p2);
+    mec[number]++;
+
+    //CCRES                                                                                                                                                                                             
+  } else if(mc_ccnc == 0 && mc_mode == 1 && fv==true){
+    Fill_Particles_Raquel(4, mu, p1, p2);
+    res[number]++;
+
+    //CCDIS                                                                                                                                                                                             
+  } else if(mc_ccnc == 0 && mc_mode == 2 && fv==true){
+    Fill_Particles_Raquel(5, mu, p1, p2);
+    dis[number]++;
+
+    //CCNue                                                                                                                                                                                             
+  } else if(mc_ccnc == 0 && mc_nupdg == abs(13) && fv ==true){
+    Fill_Particles_Raquel(6, mu, p1, p2);
+    ccnue_raquel[number]++;
+
+    //NC                                                                                                                                                                                                
+  } else if(mc_ccnc == 1 && fv == true){
+    Fill_Particles_Raquel(7, mu, p1, p2);
+    nc_raquel[number]++;
+
+    //OUT OF FV                                                                                                                                                                                          
+  } else if(fv == false){
+    Fill_Particles_Raquel(8, mu, p1, p2);
+    outfv_raquel[number]++;
+
+    //Other                                                                                                                                                                                             
+  }else{
+    Fill_Particles_Raquel(9, mu, p1, p2);
+    other_raquel[number]++;
+  } 
 }
 
 void twoproton_filtered_wgt::Write_Histograms(){

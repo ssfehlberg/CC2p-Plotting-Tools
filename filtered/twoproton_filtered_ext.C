@@ -275,10 +275,10 @@ void twoproton_filtered_ext::Loop()
       for(int v = 0; v < good_trk_id.size(); v++){ //loop through the tracks again
 	float value = good_trk_id.at(v);
 	//std::cout<<"value"<<value<<std::endl;
-	if(chi2p_3D->at(value) < 70){ //this is our PID cut. Indicates track is a proton
+	if(chi2p_3D->at(value) < 70){ //this is our PID cut. Indicates track is a proton 70
 	  protons_vector.push_back(value);
 	}else if(chi2p_3D->at(value) > 70){
-	  muon_vector.push_back(value); //id of the other track
+	  muon_vector.push_back(value); //id of the other track 70
 	}else{
 	  other_vector.push_back(value);
 	}

@@ -318,9 +318,9 @@ void twoproton_filtered_wgt::Loop()
       for(int v = 0; v < good_trk_id.size(); v++){ //loop through the tracks again
 	float value = good_trk_id.at(v);
 	//std::cout<<"value"<<value<<std::endl;
-	if(chi2p_3D->at(value) < 70){ //this is our PID cut. Indicates track is a proton
+	if(chi2p_3D->at(value) < 70){ //this is our PID cut. Indicates track is a proton //used to be 70
 	  protons_vector.push_back(value);
-	}else if(chi2p_3D->at(value) > 70){
+	}else if(chi2p_3D->at(value) > 70){ //used to be 70
 	  muon_vector.push_back(value); //id of the other track
 	}else{
 	  other_vector.push_back(value);
@@ -384,6 +384,7 @@ void twoproton_filtered_wgt::Loop()
 	b++;}
 
       Fill_Histograms_Particles(muon_id,leading_proton_id,recoil_proton_id);
+      Fill_Histograms_Particles_Raquel(muon_id,leading_proton_id,recoil_proton_id);
 
       if(_debug) std::cout<<"[DEBUG] Finish Processing Run: "<<run<<" Subrun: "<<subrun<<" Event: "<<event<<std::endl;
       if(_debug) std::cout<<"-----------------------------------"<<std::endl;
@@ -454,15 +455,15 @@ void twoproton_filtered_wgt::Loop()
 
    std::cout<<"-----MC RECO'D SUMMARY: RAQUEL-----"<<std::endl;
    std::cout << "[MC_RECO_RAQUEL] Initial Number of Events That were Reconstructed: "<<events_remaining<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCQEL Events: "<<qel[1]<<" Fraction of the Total: "<<float(100.*(float(qel[1])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCRES Events: "<<res[1]<<" Fraction of the Total: "<<float(100.*(float(res[1])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCMEC Events: "<<mec[1]<<" Fraction of the Total: "<<float(100.*(float(mec[1])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCCOH Events: "<<coh[1]<<" Fraction of the Total: "<<float(100.*(float(coh[1])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCDIS Events: "<<dis[1]<<" Fraction of the Total: "<<float(100.*(float(dis[1])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of CCNue Events: "<<ccnue_raquel[1]<<" Fraction of the Total: "<<float(100.*(float(ccnue_raquel[1])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of OUTFV Events: "<<outfv_raquel[1]<<" Fraction of the Total: "<<float(100.*(float(outfv_raquel[1])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of NC Events: "<<nc_raquel[1]<<" Fraction of the Total: "<<float(100.*(float(nc_raquel[1])/float(events_remaining)))<<"%"<<std::endl;
-   std::cout << "[MC_RECO_RAQUEL] Number of Else Events: "<<other_raquel[1]<<" Fraction of the Total: "<<float(100.*(float(other_raquel[1])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCQEL Events: "<<qel[4]<<" Fraction of the Total: "<<float(100.*(float(qel[4])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCRES Events: "<<res[4]<<" Fraction of the Total: "<<float(100.*(float(res[4])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCMEC Events: "<<mec[4]<<" Fraction of the Total: "<<float(100.*(float(mec[4])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCCOH Events: "<<coh[4]<<" Fraction of the Total: "<<float(100.*(float(coh[4])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCDIS Events: "<<dis[4]<<" Fraction of the Total: "<<float(100.*(float(dis[4])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of CCNue Events: "<<ccnue_raquel[4]<<" Fraction of the Total: "<<float(100.*(float(ccnue_raquel[4])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of OUTFV Events: "<<outfv_raquel[4]<<" Fraction of the Total: "<<float(100.*(float(outfv_raquel[4])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of NC Events: "<<nc_raquel[4]<<" Fraction of the Total: "<<float(100.*(float(nc_raquel[4])/float(events_remaining)))<<"%"<<std::endl;
+   std::cout << "[MC_RECO_RAQUEL] Number of Else Events: "<<other_raquel[4]<<" Fraction of the Total: "<<float(100.*(float(other_raquel[4])/float(events_remaining)))<<"%"<<std::endl;
    std::cout <<"-----ONE FOR THE DAGGER, AND ONE FOR THE ONE YOU BELIEVE!!-----"<<std::endl;
 
    std::cout<<"-----MC RECO'D SUMMARY-----"<<std::endl;
