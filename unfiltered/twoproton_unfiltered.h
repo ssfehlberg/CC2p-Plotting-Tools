@@ -946,11 +946,11 @@ void twoproton_unfiltered::Fill_Particles(int j, int mu, int p1, int p2){
 void twoproton_unfiltered::Fill_Histograms_Mine(int i){
   Fill_Mine(i,0);
   //cc0p0pi                                                                                                                                  
-  if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 0 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  if(mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 0 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,1);
     cc0p0pi[i]++;
     //cc1p0pi                                                                                                                                  
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 1 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if(mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton == 1 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,2);
     cc1p0pi[i]++;
     //cc2p0pi                                                                                                                                    
@@ -958,19 +958,19 @@ void twoproton_unfiltered::Fill_Histograms_Mine(int i){
     Fill_Mine(i,3);
     cc2p0pi[i]++;
     //ccNp0pi                                                                                                                                  
-  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton > 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if (mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton > 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Mine(i,4);
     ccNp0pi[i]++;
     //ccNp1pi                                                                                                                                    
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 == 1 || mc_n_threshold_pionpm == 1) && fv == true){
+  } else if(mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 == 1 || mc_n_threshold_pionpm == 1) && fv == true){
     Fill_Mine(i,5);
     ccNp1pi[i]++;
     //ccNpNpi                                                                                                                                   
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 > 1 || mc_n_threshold_pionpm > 1) && fv == true){
+  } else if(mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_muon == 1 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 > 1 || mc_n_threshold_pionpm > 1) && fv == true){
     Fill_Mine(i,6);
     ccNpNpi[i]++;
     //CC NUE                                                                                                                                   
-  } else if(mc_ccnc == 0 && mc_nupdg == 13 && fv == true){
+  } else if(mc_ccnc == 0 && abs(mc_nupdg) == 12 && fv == true){
     Fill_Mine(i,7);
     ccnue[i]++;
   //OUT OF FV                                                                                                                                
@@ -1011,7 +1011,7 @@ void twoproton_unfiltered::Fill_Histograms_Raquel(int i){
     Fill_Raquel(i,5);
     dis[i]++;
     //CCNue                                                                                                                                                                                             
-  } else if(mc_ccnc == 0 && mc_ccnc == 0 && mc_nupdg == abs(13) && fv ==true){
+  } else if(mc_ccnc == 0 && abs(mc_nupdg) == 12 && fv ==true){
     Fill_Raquel(i,6);
     ccnue_raquel[i]++;
     //NC                                                                                                                                                                                                
@@ -1032,11 +1032,11 @@ void twoproton_unfiltered::Fill_Histograms_Raquel(int i){
 void twoproton_unfiltered::Fill_Histograms_Particles(int mu, int p1, int p2){
   Fill_Particles(0, mu, p1, p2);
   //cc0p0pi                                                                                                                               
-  if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 0 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  if(mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_proton == 0 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Particles(1, mu, p1, p2);
     cc0p0pi[number]++;
     //cc1p0pi                                                                                                                            
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 1 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if(mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_proton == 1 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Particles(2, mu, p1, p2);
     cc1p0pi[number]++;
     //cc2p0pi                                                                                                                            
@@ -1044,19 +1044,19 @@ void twoproton_unfiltered::Fill_Histograms_Particles(int mu, int p1, int p2){
     Fill_Particles(3, mu, p1, p2);
     cc2p0pi[number]++;
     //ccNp0pi                                                                                                                            
-  } else if (mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton > 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
+  } else if (mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_proton > 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
     Fill_Particles(4, mu, p1, p2);
     ccNp0pi[number]++;
     //ccNp1pi                                                                                                                            
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 == 1 || mc_n_threshold_pionpm == 1) && fv == true){
+  } else if(mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 == 1 || mc_n_threshold_pionpm == 1) && fv == true){
     Fill_Particles(5, mu, p1, p2);
     ccNp1pi[number]++;
     //ccNpNpi                                                                                                                            
-  } else if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 > 1 || mc_n_threshold_pionpm > 1) && fv == true){
+  } else if(mc_ccnc == 0 && abs(mc_nupdg) == 14 && mc_n_threshold_proton >= 0 && (mc_n_threshold_pion0 > 1 || mc_n_threshold_pionpm > 1) && fv == true){
     Fill_Particles(6, mu, p1, p2);
     ccNpNpi[number]++;
     //CC NUE                                                                                                                             
-  } else if(mc_ccnc == 0 && mc_nupdg == 13 && fv == true){
+  } else if(mc_ccnc == 0 && abs(mc_nupdg) == 12 && fv == true){
     Fill_Particles(7, mu, p1, p2);
     ccnue[number]++;
   //OUT OF FV                                                                                                                            

@@ -348,6 +348,9 @@ void twoproton_filtered_wgt::Loop()
       if(muon_vector.size() != 1) continue; //cut out events that don't have 1 muon
       muon_cut++;
 
+      std::cout<<"PID IS COMPLETE!"<<std::endl;
+
+
       //////////////////////////////////////
       //Filling histograms after PID cuts:
       /////////////////////////////////////
@@ -379,6 +382,10 @@ void twoproton_filtered_wgt::Loop()
       n_mom_p1++;
       if(reco_mom_proton->at(recoil_proton_id) == -9999.) continue;
       n_mom_p2++;
+
+      std::cout<<"Muon Candidate MC PDG"<<mc_pdg->at(muon_id)<<std::endl;
+      std::cout<<"Leading Proton Candidate MC PDG"<<mc_pdg->at(leading_proton_id)<<std::endl;
+      std::cout<<"Recoil Proton Candidate MC PDG"<<mc_pdg->at(recoil_proton_id)<<std::endl;
 
       if(mc_ccnc == 0 && mc_nupdg == 14 && mc_n_threshold_proton == 2 && mc_n_threshold_pion0 == 0 && mc_n_threshold_pionpm == 0 && fv == true){
 	b++;}
@@ -490,6 +497,10 @@ void twoproton_filtered_wgt::Loop()
    std::cout<<"events_2other: "<<events_2other<<std::endl;
    std::cout<<"a: "<<a<<std::endl;
    std::cout<<"b: "<<b<<std::endl;
+   std::cout<<"1mu2p"<<res_count[0]<<std::endl;
+   std::cout<<"1mu1p1pi"<<res_count[1]<<std::endl;
+   std::cout<<"1muNp"<<res_count[2]<<std::endl;
+   std::cout<<"else"<<res_count[3]<<std::endl;
 
    //Don't forget to write all of your histograms before you leave!
    ///////////////////////////////////////////////////////////////

@@ -540,6 +540,8 @@ public :
    double cos_gamma_lab; //cos(opening angle) in lab                                                                 
    double cos_gamma_cm; //cos(opening angle) in cm 
    double En; //energy of struck nucleon
+   double p_struck_nuc;
+   double pz_tot;
 
    //Various Masses
    const double TARGET_MASS = 37.215526; // 40Ar, GeV                                                               
@@ -595,6 +597,8 @@ public :
    TH1D* h_delta_alphaT;
    TH1D* h_delta_phiT;
    TH1D* h_cos_gamma_cm;
+   TH1D* h_mom_struck_nuc;
+   TH1D* h_tot_pz;
 
    //List of all the 1D histograms
    vector<TH1*> h_list;
@@ -677,7 +681,11 @@ void twoproton_filtered_ext::Define_Histograms(){
   h_delta_alphaT = new TH1D("h_delta_alphaT","h_delta_alphaT; #delta #alpha_{T} [Deg.];Counts",10,0,180); //0,180 
   h_delta_phiT = new TH1D("h_delta_phiT","h_delta_phiT; #delta #phi_{T} [Deg.];Counts",10,0,180); //0,180     
   h_cos_gamma_cm = new TH1D("h_cos_gamma_cm","h_cos_gamma_cm;cos(#gamma_{COM});Counts",30,-1.5,1.5);
+  h_mom_struck_nuc = new TH1D("h_mom_struck_nuc","h_mom_struck_nuc; P_{Init}; Counts", 30, 0, 1);
+  h_tot_pz = new TH1D("h_tot_pz","h_tot_pz; P_{Z}^{Total}; Counts", 20, 0, 2);
 
+  h_list.push_back(h_tot_pz);
+  h_list.push_back(h_mom_struck_nuc);
   h_list.push_back(h_cos_gamma_cm);
   h_list.push_back(h_opening_angle_protons);
   h_list.push_back(h_opening_angle_mu_leading);
@@ -776,6 +784,13 @@ void twoproton_filtered_ext::Fill_Particles(int mu, int p1, int p2){
   std::cout<<"Value of the added vectors z : "<<lead[2]+rec[2]+muon[2]<<std::endl;
 
   cos_gamma_cm = cos(lead.Angle(rec.Vect())); //uses Lorentz Vectors                                                                                                  
+
+  //Struck nucleon Momentum:                                                                                                                                            
+  TVector3 vector_sum(vMuon[0] + vLead[0] + vRec[0], vMuon[1] + vLead[1] + vRec[1], vMuon[2] + vLead[2] + vRec[2]);
+  TVector3 p_struck_nuc_vector(vector_sum[0], vector_sum[1], 0);
+  p_struck_nuc = p_struck_nuc_vector.Mag();
+  pz_tot = vLead[2] + vRec[2];
+
   //Some more specific plots
   h_opening_angle_protons->Fill(open_angle,wgt);
   h_opening_angle_mu_leading->Fill(open_angle_mu,wgt);
@@ -783,6 +798,8 @@ void twoproton_filtered_ext::Fill_Particles(int mu, int p1, int p2){
   h_delta_alphaT->Fill(delta_alphaT*180/3.14,wgt);
   h_delta_phiT->Fill(delta_phiT*180/3.14,wgt);
   h_cos_gamma_cm->Fill(cos_gamma_cm,wgt);
+  h_mom_struck_nuc->Fill(p_struck_nuc,wgt);
+  h_tot_pz->Fill(pz_tot,wgt);
 
 }
 
