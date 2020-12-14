@@ -1,30 +1,45 @@
+#define analysis_cxx
 #include "analysis.h"
+
 #include "paul_tol_colors.hpp"
 #include <iostream>
 #include <ctime>
 #include <string>
 
-void analysis(){
+
+void analysis::main(){
 
   gStyle->SetPaintTextFormat("4.2f");gStyle->SetHistMinimumZero(kTRUE);
   gStyle->SetHistMinimumZero(kFALSE);
 
-  //Define All the Histogram Files
-  /////////////////////////////////////
-  TFile *f1=new TFile("histograms_filtered.root");//overlay histograms
-  TFile *f2=new TFile("histograms_filtered_bnb.root");//bnb histograms  
-  TFile *f3=new TFile("histograms_filtered_ext.root");//extbnb histograms 
-  TFile *f4=new TFile("histograms_efficiency.root"); //efficiency histograms
+  ///////////////////////////////////////////////////////////
+  //FIRST: CHECK WHICH SAMPLE THIS IS: FILTERED OR UNFILTERED
+  //////////////////////////////////////////////////////////
+  const char* sample= which_sample();
 
-  //Things Common to all the Plots
-  //////////////////////////////////////////
+  ///////////////////////////////////////////////////////
+  //SECOND: DEFINE HISTOGRAMS FILES AND GENERAL VARIABLES
+  //////////////////////////////////////////////////////
+  TFile *f1=new TFile(Form("histograms_%s_wgt.root",sample));//overlay histograms. Note: be sure to use weighted for both dirt and overlay
+  TFile *f_dirt=new TFile(Form("histograms_%s_dirt_wgt.root",sample));//dirt histograms 
+  TFile *f2=new TFile(Form("histograms_%s_bnb.root",sample));//bnb histograms  
+  TFile *f3=new TFile(Form("histograms_%s_ext.root",sample));//extbnb histograms 
+  TFile *f4=new TFile("histograms_efficiency.root"); //efficiency histograms
+  
+  //Color Scheme
   tolcols::init();
   Color_t colors[] = {0,9031, 9030, 9029, 9028, 9026, 9025, 9024, 9032, kGray+2, 9027};  //Black, light pink, light orange, light yellow, olive, mint, light cyan, light blue, light grey, darker grey, olive
+  Color_t colors_raquel[] = {0,9012,9011,9010,9009,9008,9007,kGray+2,9032,9027}; //black, magenta, red, orange, mint, cyan, blue, dark gray, light gray, ccnue
   
   //POT number and In Progress
-  char const * pot_num="#scale[0.7]{Accumulated POT: 3.575e+19}";//pot number printed on the plots
-  char const * sample_name="#scale[0.7]{MicroBooNE In-Progress}";//sample name printed on the plots
+  char const * pot_num="#scale[0.6]{Accumulated POT: 4.566e+19}";//pot number printed on the plots
+  char const * sample_name="#scale[0.6]{MicroBooNE In-Progress}";//sample name printed on the plots
 
+  //latex stuff
+  TLatex *t = new TLatex();
+  t->SetNDC();
+  t->SetTextAlign(22);
+  
   //Stuff for time/date
   time_t now = time(0);
   tm *ltm = localtime(&now);
@@ -32,8 +47,10 @@ void analysis(){
   int Month = ltm->tm_mon + 1;
   int Year = ltm->tm_year + 1900;
 
-  //Make directory with Today's Date:
-  const char* pathname = Form("images/%d%d%d/",Month,Day,Year);
+  /////////////////////////////////////////////////////////////
+  //THIRD: MAKE DIRECTORY WITH TODAY'S DATE TO STORE ALL IMAGES
+  //////////////////////////////////////////////////////////////
+  const char* pathname = Form("images/%d%d%d_%s/",Month,Day,Year,sample);
   string path(pathname);
   int dir_exists = dirExists(pathname);
   if(dir_exists == 0){
@@ -44,301 +61,17 @@ void analysis(){
   }else if(dir_exists > 0){
     std::cout<<"Directory Already Exists. Continuing with Analysis"<<std::endl;
     }
-  
-  //latex stuff
-  TLatex *t = new TLatex();
-  t->SetNDC();
-  t->SetTextAlign(22);
-  
-  //Plots of all the reconstructed varaibles with MC, EXT, and BNB
-  ////////////////////////////////////////////////////////////////
-  int z=0; //dumb indices
-  int f = 0; //dumb indices
 
-  const int num_cuts = 2; //number of applied cuts
-  const int num_variables = 3; //number of various variables to plot 
-  const int num_channels = 11; //number of various overlay channels
-  const char* cut[num_cuts] = {"_before_selection","_after_selection"};
-  const char* plots[num_variables] = {"_vtx_x","_vtx_y","_vtx_z"};
-  const char* channel[num_channels] = {"_total", "_cc2p0pi","_ccNp1pi","_ccNp0pi","_cc1p0pi","_nc","_ccNpNpi","_cc0p0pi","_other","_outfv","_ccnue"};
-  const char* channel_legend[num_channels] = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2p)0#pi","CC1p0#pi","NC","CC(N>=0)p(N>2)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
-  const char* cut_titles[num_cuts] = {"Before Selection", "After Selection"};
-  const char* titles[num_variables] = {"Reconstructed X of Vertex (cm)", "Reconstructed Y of Vertex (cm)", "Reconstructed Z of Vertex (cm)"};
-  int ylim[num_cuts][num_variables] = {{80,80,80},{80,80,80}};
-  bool plot_total = false; //sanity check on total overlay
-  bool plot_ccnue = false; //do you want to plot ccnue?
-  TH1D* h_overlay[num_cuts][num_variables][num_channels]; //overlay plots
-  TH1D* h_overlay0[num_cuts][num_variables][3]; //copies of the overlay plots for statistics
-  TH1D* h_bnb[num_cuts][num_variables][2]; //two copies  
-  TH1D* h_ext[num_cuts][num_variables][3]; //two copies
-  THStack* h[num_cuts][num_variables];
-  TCanvas* canv[num_cuts][num_variables];
-  TLegend* legend[num_cuts][num_variables];
-  TPad* pad[num_cuts][num_variables];
-  TPad* pad0[num_cuts][num_variables];
-
-  //Plots of Truth Only
-  //////////////////////////////
-  const int num_truth = 9;//10;
-  const char* truth[num_truth] = {"_vtx_x_mc","_vtx_y_mc","_vtx_z_mc","_vtx_x_mc_sce","_vtx_y_mc_sce","_vtx_z_mc_sce","_q2","_X","_Y"};
-  const char* truth_titles[num_truth] = {"True Vertex X (cm)","True Vertex Y (cm)","True Vertex Z (cm)",
-					 "True Vertex w/ SCE X (cm)","True Vertex w/ SCE Y (cm)","True Vertex w/ SCE Z (cm)",
-                                         "True Q^{2} (GeV^{2})","True Bjorken X","True Bjorken Y"};
-  int ylim_truth[num_cuts][num_truth] = {{80,80,80,80,80,80,200,200,200},{60,60,60,60,60,60,200,200,200}};
-  bool plot_total_truth = true;
-  bool plot_ccnue_truth = true;
-  TH1D* h_mc[num_cuts][num_truth][num_channels];
-  TCanvas* canv_truth[num_cuts][num_truth];
-  THStack* h_truth[num_cuts][num_truth];
-  TLegend* legend_truth[num_cuts][num_truth];
-  
-  //Plots of variables concerning the pfp particles:
-  /////////////////////////////////////////////////
-  const int num_group = 4;
-  const char* group[num_group] = {"npfp","vtx_npfp","ntrack","nshower"};
-  const char* titles_pfp[num_group] = {"Number of PFP","Number of PFP Attached to the Vertex","Number of Tracks","Number of Showers"};
-  int ylim_pfp[num_group] = {6000,6000,6000,6000}; 
-  TH1D* h_overlay_pfp[num_group];
-  TH1D* h_bnb_pfp[num_group];
-  TH1D* h_ext_pfp[num_group];
-  THStack* h_pfp[num_group];
-  TCanvas* canv_pfp[num_group];
-  TLegend* legend_pfp[num_group];
- 
-  //Plots of 2D Variables:
-  //////////////////////////
-  const int num_group2d = 3;
-  const char* group2d[num_group2d] = {"reco","truth","truth_sce"};
-  TH2D* h_overlay2D[num_group2d];
-  TCanvas* canv_2d[num_group2d];
-
-  //Plots of Efficiency
-  ///////////////////////
-  const int num_eff = 4;
-  const char* eff[num_eff] = {"nue","q2","X","Y"};
-  const char* titles_eff[num_eff] = {"True Neutrino Energy","True Q^{2} (GeV^{2})","True X","True Y"};
-  int ylim_eff[num_eff] = {8000,8000,8000,8000};
-  TH1D* h_num[num_eff]; //numerator
-  TH1D* h_num0[num_eff]; //numerator clone
-  TH1D* h_num1[num_eff]; //numerator clone
-  TH1D* h_denom[num_eff]; //denominator
-  TH1D* h_denom0[num_eff]; //denominator clone
-  TH1D* h_denom1[num_eff]; //denominator clone
-  TCanvas* canv_eff[num_eff];
-  TCanvas* canv_both[num_eff];
-  TLegend* legend_eff[num_eff];
-
-  //Chi2 Plots
-  ///////////////////////////
-  int z0=0; //dumb indices                                                                                                                                                     
-  int f0 = 0; //dumb indices
-  const int num_planes = 3;
-  const int num_particles = 6;
-  const int num_hypothesis = 2;
-  const char* plane[num_planes] = {"Plane_0","Plane_1","Plane_2"};
-  const char* particles[num_particles] = {"total","proton","muon","pion","electron","other"};
-  const char* hypothesis[num_hypothesis] = {"chi2p","chi2mu"};
-  const char* channel_legend_chi2[num_particles] = {"Total Overlay","Proton","Muon","Pion","Electron","Other"};
-  const char* titles_chi2[num_hypothesis] = {"#chi^{2}_{p}","#chi^{2}_{#mu}"};
-  const char* titles_planes[num_planes] ={"U Plane","V Plane","Y Plane"};
-  int ylim_chi2[num_planes][num_hypothesis] = {{250,400},{250,250},{150,250}};
-  Color_t colors_chi2[] = {kBlack,kRed,kBlue,kGreen,kYellow,204};
-  bool plot_total_chi2 = false;
-  TH1D* h_overlay_chi2[num_planes][num_hypothesis][num_particles];
-  TH1D* h_overlay0_chi2[num_planes][num_hypothesis][3]; //copies for statistics
-  TH1D* h_ext_chi2[num_planes][num_hypothesis][3]; 
-  TH1D* h_bnb_chi2[num_planes][num_hypothesis][2];
-  THStack* h_chi2[num_planes][num_hypothesis];
-  TCanvas* canv_chi2[num_planes][num_hypothesis];
-  TLegend* legend_chi2[num_planes][num_hypothesis];
-  TPad* pad_chi2[num_planes][num_hypothesis];
-  TPad* pad0_chi2[num_planes][num_hypothesis];
-  
-  
-  //Plots from Raquels Files:
-  //////////////////////////
-  bool plot_raquel = false;
-  
-  //Grab all the histograms from the files
-  //////////////////////////////////////
-  for(int i = 0; i < num_cuts; i++){
-    for(int j = 0; j < num_variables; j++){
-      h_bnb[i][j][0] = (TH1D*)f2->Get(Form("h%s%s_bnb",plots[j],cut[i]));
-      h_ext[i][j][0] = (TH1D*)f3->Get(Form("h%s%s_ext",plots[j],cut[i]));
-
-      for(int k = 0; k < num_channels; k++){
-	h_overlay[i][j][k] = (TH1D*)f1->Get(Form("h%s%s%s",plots[j],cut[i],channel[k]));
-      }
-    }
-    //grabbing truth stuff
-    for(int j=0; j < num_truth; j++){
-	for(int k=0; k < num_channels; k++){
-	  h_mc[i][j][k] = (TH1D*)f1->Get(Form("h%s%s%s",truth[j],cut[i],channel[k]));
-
-	}
-      } 
-  }
-  //grabbing things related the PFP's
-  for(int i=0; i < num_group; i++){
-    h_overlay_pfp[i] = (TH1D*)f1->Get(Form("h_%s_overlay",group[i]));
-    h_bnb_pfp[i] = (TH1D*)f2->Get(Form("h_%s_overlay",group[i]));
-    h_ext_pfp[i] =(TH1D*)f3->Get(Form("h_%s_overlay",group[i]));
-  }
-  
-  //grabbing the 2D histograms
-  for(int i=0; i < num_group2d; i++){
-    h_overlay2D[i] = (TH2D*)f1->Get(Form("h_correlation_overlay_%s",group2d[i])); 
-  }
-
-  //grabbing efficiency plots:
-  for(int i=0; i < num_eff; i++){
-    h_num[i] =  (TH1D*)f4->Get(Form("h_num_overlay_%s",eff[i]));
-    h_denom[i] =  (TH1D*)f4->Get(Form("h_denom_overlay_%s",eff[i]));
-
-  }
-  //grabbing the chi2 plots
-  for(int i = 0; i < num_planes; i ++){
-    for(int j = 0; j < num_hypothesis; j++){
-
-      h_ext_chi2[i][j][0] = (TH1D*)f3->Get(Form("h_%s_%s_ext",hypothesis[j],plane[i]));
-      h_bnb_chi2[i][j][0] = (TH1D*)f2->Get(Form("h_%s_%s_bnb",hypothesis[j],plane[i]));
-      
-      for(int k =0; k < num_particles; k++){
-	h_overlay_chi2[i][j][k] = (TH1D*)f1->Get(Form("h_%s_%s_%s",hypothesis[j],plane[i],particles[k]));
-	
-      }
-
-    }
-  }
-  
-  //Now to make some plots: Reconstructed MC,EXT,and BNB
+  /////////////////////////////////////////
+  //GRAB ALL THE HISTOGRAMS FROM THE FILES
   ////////////////////////////////////////
-  for(int i = 0; i< num_cuts; i++){
-    for(int j = 0; j< num_variables; j++){
-      
-      h_ext[i][j][1] = (TH1D*)h_ext[i][j][0]->Clone();
-      h_ext[i][j][2] = (TH1D*)h_ext[i][j][0]->Clone();
-      h_bnb[i][j][1] = (TH1D*)h_bnb[i][j][0]->Clone();
-      h_overlay0[i][j][0] = (TH1D*)h_overlay[i][j][0]->Clone();
-      h_overlay0[i][j][1] = (TH1D*)h_overlay[i][j][0]->Clone();
-      h_overlay0[i][j][2] = (TH1D*)h_overlay[i][j][0]->Clone();
-      
-      canv[i][j] = new TCanvas(Form("C%s%s",plots[j],cut[i]),Form("C%s%s",plots[j],cut[i]),2000,1500);
-      canv[i][j]->cd(1);
-      h[i][j] = new THStack(Form("h%s%s",plots[j],cut[i]),Form("h%s%s",plots[j],cut[i]));
-      pad[i][j] = new TPad(Form("pad%s%s",plots[j],cut[i]),Form("pad%s%s",plots[j],cut[i]),0,0.28,1.0,1.0);
-      pad[i][j]->SetBottomMargin(0.0);
-      pad[i][j]->SetGridx();
-      pad[i][j]->SetBorderMode(0);
-      pad[i][j]->Draw();
-      pad[i][j]->cd();
+  Grab_Histograms(f1, f2, f3, f4, f_dirt);
+  
+  /////////////////////////////////////////////
+  //PLOTTING TIME
+  ///////////////////////////////////////////
 
-      //Stacked Histrogram parameters
-      h[i][j]->Draw("HIST");
-      h[i][j]->SetTitle("");
-      h[i][j]->SetMaximum(ylim[i][j]); 
-
-      //MC
-      if(plot_ccnue){
-	z = num_channels;
-	f = 11;
-      }else{
-	z = num_channels -1;
-	f = 10;
-      }
-      
-      for(int k=1; k < z ; k++){
-	h_overlay[i][j][k]->SetLineColor(colors[k]);
-	h_overlay[i][j][k]->SetFillColor(colors[k]);
-	h_overlay[i][j][k]->SetLineWidth(1);
-	h[i][j]->Add(h_overlay[i][j][k]);
-      }
-
-      //EXT
-      h[i][j]->Add(h_ext[i][j][0]);
-      h_ext[i][j][0]->SetFillColor(kViolet-7);
-      h_ext[i][j][0]->SetFillStyle(3005);
-      h_ext[i][j][0]->SetLineWidth(1);
-      
-      //BNB
-      h_bnb[i][j][0]->Draw("e1SAME");
-      h_bnb[i][j][0]->SetLineColor(kBlack);
-      h_bnb[i][j][0]->SetLineWidth(1);
-      
-      //if you want to plot the total for sanity sake:
-      if(plot_total){
-      h_overlay[i][j][0]->Draw("SAME");
-      }
-      
-      //Make sure to do overlay statistical uncertainty
-      OverlayStatistics(h_overlay0[i][j][0],h_ext[i][j][2]);
-      h_overlay0[i][j][0]->Draw("e2SAME");
-      h_overlay0[i][j][0]->SetLineColor(kBlack);
-      h_overlay0[i][j][0]->SetFillColor(kBlack);
-      h_overlay0[i][j][0]->SetFillStyle(3004);
-      h_overlay0[i][j][0]->SetMarkerSize(0);
-      h_overlay0[i][j][0]->SetLineWidth(1);
-
-      legend[i][j] = new TLegend(0.71, 0.54, 0.899, 0.89);
-      legend[i][j]->AddEntry(h_bnb[i][j][0],"Data (Beam-On)","lepf");
-      legend[i][j]->AddEntry(h_overlay0[i][j][0],"Stat. Unc.","f");
-      legend[i][j]->AddEntry(h_ext[i][j][0],"Data (Beam-Off)","f");
-      for(int k =1; k < z; k++){	
-	legend[i][j]->AddEntry(h_overlay[i][j][f-k],Form("%s",channel_legend[f-k]),"f");
-
-      }
-      legend[i][j]->SetLineWidth(0);
-      //legend[i][j]->SetFillStyle(1);
-      legend[i][j]->SetFillColor(kWhite);
-      legend[i][j]->SetTextSize(0.03);
-      legend[i][j]->Draw("same");
-      t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s: %s}",cut_titles[i],titles[j]));
-      t->DrawLatex(0.195,0.92,Form("%s",pot_num));
-      t->DrawLatex(0.82,0.92,Form("%s",sample_name));
-      
-      canv[i][j]->cd();
-      pad0[i][j] = new TPad(Form("pad0%s%s",plots[j],cut[i]),Form("pad0%s%s",plots[j],cut[i]),0,0.0,1.0,0.294);
-      pad0[i][j]->SetTopMargin(0);                
-      pad0[i][j]->SetBottomMargin(0.19);
-      pad0[i][j]->SetGridx();
-      pad0[i][j]->Draw();
-      pad0[i][j]->cd();
-
-      h_ext[i][j][1]->Add(h_overlay0[i][j][1]);
-      h_bnb[i][j][1]->Divide(h_bnb[i][j][1],h_ext[i][j][1],1,1,"B");
-      h_bnb[i][j][1]->Draw("e1p");
-      h_bnb[i][j][1]->SetStats(kFALSE);
-      h_bnb[i][j][1]->SetTitle("");
-      
-      TF1 *a = new TF1("a","1", -150000 , 150000);
-      a->SetLineColor(kRed);
-      a->Draw("SAME");
-
-      //Calculate the Chi2
-      double chisqv1 = calculatePearsonChiSq(h_bnb[i][j][0], h_overlay0[i][j][2]);
-      int nBins1 = h_overlay0[i][j][2]->GetXaxis()->GetNbins();
-      //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv, nBins, chisqv/nBins);
-      t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1/nBins1));
-      
-      h_bnb[i][j][1]->GetYaxis()->SetTitle("Ratio");
-      h_bnb[i][j][1]->GetYaxis()->SetTitleSize(25);
-      h_bnb[i][j][1]->GetYaxis()->SetTitleFont(43);
-      h_bnb[i][j][1]->GetYaxis()->SetTitleOffset(1.5);
-      h_bnb[i][j][1]->GetYaxis()->SetLabelFont(43);
-      h_bnb[i][j][1]->GetYaxis()->SetLabelSize(25);
-      h_bnb[i][j][1]->GetXaxis()->SetTitle(Form("%s",titles[j]));
-      h_bnb[i][j][1]->GetXaxis()->SetTitleSize(25);
-      h_bnb[i][j][1]->GetXaxis()->SetTitleFont(43);
-      h_bnb[i][j][1]->GetXaxis()->SetTitleOffset(3);
-      h_bnb[i][j][1]->GetXaxis()->SetLabelFont(43);
-      h_bnb[i][j][1]->GetXaxis()->SetLabelSize(25);
-      
-      canv[i][j]->Print(Form("%s%s%s.png",path.c_str(),plots[j],cut[i]));
-      canv[i][j]->Print(Form("%s%s%s.pdf",path.c_str(),plots[j],cut[i]));
-      
-    }
-  }
-
+  ///////////////////////////////////
   //Plots of the Truth Variables
   ////////////////////////////////////
   for(int i = 0; i< num_cuts; i++){
@@ -388,7 +121,8 @@ void analysis(){
       
     }
   }
-  
+
+  //////////////////////////
   //Plots of the PFP Stuff:
   //////////////////////////
   for(int i = 0; i < num_group; i ++){
@@ -420,6 +154,7 @@ void analysis(){
       canv_pfp[i]->Print(Form("%s_%s.pdf",path.c_str(),group[i]));
   }
 
+  //////////////////////////////////
   //Plot the 2D Histograms:
   //////////////////////////////////
   for(int i =0; i < num_group2d; i++){
@@ -429,7 +164,7 @@ void analysis(){
     canv_2d[i]->Print(Form("%s_%s.pdf",path.c_str(),group2d[i]));
   }
 
-
+  /////////////////////////////
   //Plot the Efficiency Stuff:
   //////////////////////////
   for(int i=0; i < num_eff; i++){
@@ -458,134 +193,683 @@ void analysis(){
     h_num1[i] = (TH1D*)h_num[i]->Clone();
     h_denom1[i] = (TH1D*)h_denom[i]->Clone();
     canv_eff[i] = new TCanvas(Form("C_eff_%s",eff[i]),Form("C_eff_%s",eff[i]),2000,1500);
-    h_num1[i]->Divide(h_num1[i],h_denom1[i],1.0,1.0,"B");
+    h_num1[i]->Divide(h_num1[i],h_denom1[i],1.0,1.0, "B");
     h_num1[i]->Draw("1e1p");
-    h_num1[i]->SetTitle(Form("Efficiency(%s); %s ; Efficiency",titles_eff[i],titles_eff[i]));
+    h_num1[i]->SetTitle(Form(" ; %s ; Efficiency",titles_eff[i]));
     h_num1[i]->SetLineColor(kViolet);
     h_num1[i]->SetMaximum(1);
     h_num1[i]->SetMinimum(0);
-    
-    canv_eff[i]->Print(Form("%s_%s.png",path.c_str(),eff[i]));
-    canv_eff[i]->Print(Form("%s_%s.pdf",path.c_str(),eff[i]));
+    t->DrawLatex(0.515,0.97,Form("#scale[1.0]{Efficiency: %s}",titles_eff[i]));
+    t->DrawLatex(0.23,0.92,"#scale[0.5]{Accumulated POT: 4.566e+19}");
+    t->DrawLatex(0.8,0.92,"#scale[0.5]{MicroBooNE In-Progress}");
+    a[i] = new TLine(xlim_eff[i],0,xlim_eff[i],1);
+    a[i]->Draw("same");
+    a[i]->SetLineColor(kBlack);
+    a[i]->SetLineWidth(4);
+    canv_eff[i]->Print(Form("%s_%s_eff.png",path.c_str(),eff[i]));
+    canv_eff[i]->Print(Form("%s_%s_eff.pdf",path.c_str(),eff[i]));
   }
 
-   //Chi2 Plots
-  ////////////////////////////////////////
-  for(int i = 0; i< num_planes; i++){
-    for(int j = 0; j< num_hypothesis; j++){
-      
-      h_ext_chi2[i][j][1] = (TH1D*)h_ext_chi2[i][j][0]->Clone();
-      h_ext_chi2[i][j][2] = (TH1D*)h_ext_chi2[i][j][0]->Clone();
-      h_bnb_chi2[i][j][1] = (TH1D*)h_bnb_chi2[i][j][0]->Clone();
-      h_overlay0_chi2[i][j][0] = (TH1D*)h_overlay_chi2[i][j][0]->Clone();
-      h_overlay0_chi2[i][j][1] = (TH1D*)h_overlay_chi2[i][j][0]->Clone();
-      h_overlay0_chi2[i][j][2] = (TH1D*)h_overlay_chi2[i][j][0]->Clone();
-      
-      canv_chi2[i][j] = new TCanvas(Form("C_chi2_%s_%s",plane[i],hypothesis[j]),Form("C_chi2_%s_%s",plane[i],hypothesis[j]),2000,1500);
-      canv_chi2[i][j]->cd(1);
-      h_chi2[i][j] = new THStack(Form("h_chi2_%s_%s",plane[i],hypothesis[j]),Form("h_chi2_%s_%s",plane[i],hypothesis[j]));
-      pad_chi2[i][j] = new TPad(Form("pad_chi2_%s_%s",plane[i],hypothesis[j]),Form("pad_chi2_%s_%s",plane[i],hypothesis[j]),0,0.28,1.0,1.0);
-      pad_chi2[i][j]->SetBottomMargin(0.0);
-      pad_chi2[i][j]->SetGridx();
-      pad_chi2[i][j]->SetBorderMode(0);
-      pad_chi2[i][j]->Draw();
-      pad_chi2[i][j]->cd();
-
-      //Stacked Histrogram parameters
-      h_chi2[i][j]->Draw("HIST");
-      h_chi2[i][j]->SetTitle("");
-      h_chi2[i][j]->SetMaximum(ylim_chi2[i][j]); 
-      
-      for(int k=1; k < num_particles ; k++){
-	h_overlay_chi2[i][j][k]->SetLineColor(colors_chi2[k]);
-	h_overlay_chi2[i][j][k]->SetFillColor(colors_chi2[k]);
-	h_overlay_chi2[i][j][k]->SetLineWidth(1);
-	h_chi2[i][j]->Add(h_overlay_chi2[i][j][k]);
-      }
-
-      //EXT
-      h_chi2[i][j]->Add(h_ext_chi2[i][j][0]);
-      h_ext_chi2[i][j][0]->SetFillColor(kViolet-7);
-      h_ext_chi2[i][j][0]->SetFillStyle(3005);
-      h_ext_chi2[i][j][0]->SetLineWidth(1);
-      
-      //BNB
-      h_bnb_chi2[i][j][0]->Draw("e1SAME");
-      h_bnb_chi2[i][j][0]->SetLineColor(kBlack);
-      h_bnb_chi2[i][j][0]->SetLineWidth(1);
-      
-      //if you want to plot the total for sanity sake:
-      if(plot_total_chi2){
-      h_overlay_chi2[i][j][0]->Draw("SAME");
+  ///////////////////////////////////
+  //Plots of the Reconstructed Vertex
+  ///////////////////////////////////
+  for(int i = 0; i< num_cuts; i++){
+    for(int j = 0; j< num_variables; j++){
+      for(int k=0; k < num_channels; k++){
+	h_overlay_vec.push_back(h_overlay[i][j][k]);
       }
       
-      //Make sure to do overlay statistical uncertainty
-      OverlayStatistics(h_overlay0_chi2[i][j][0],h_ext_chi2[i][j][2]);
-      h_overlay0_chi2[i][j][0]->Draw("e2SAME");
-      h_overlay0_chi2[i][j][0]->SetLineColor(kBlack);
-      h_overlay0_chi2[i][j][0]->SetFillColor(kBlack);
-      h_overlay0_chi2[i][j][0]->SetFillStyle(3004);
-      h_overlay0_chi2[i][j][0]->SetMarkerSize(0);
-      h_overlay0_chi2[i][j][0]->SetLineWidth(1);
-
-      legend_chi2[i][j] = new TLegend(0.71, 0.54, 0.899, 0.89);
-      legend_chi2[i][j]->AddEntry(h_bnb_chi2[i][j][0],"Data (Beam-On)","lepf");
-      legend_chi2[i][j]->AddEntry(h_overlay0_chi2[i][j][0],"Stat. Unc.","f");
-      legend_chi2[i][j]->AddEntry(h_ext_chi2[i][j][0],"Data (Beam-Off)","f");
-      for(int k =1; k < num_particles; k++){	
-	legend_chi2[i][j]->AddEntry(h_overlay_chi2[i][j][num_particles-k],Form("%s",channel_legend_chi2[num_particles-k]),"f");
-
-      }
-      legend_chi2[i][j]->SetLineWidth(0);
-      //legend_chi2[i][j]->SetFillStyle(1);
-      legend_chi2[i][j]->SetFillColor(kWhite);
-      legend_chi2[i][j]->SetTextSize(0.03);
-      legend_chi2[i][j]->Draw("same");
-      t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s: %s}",titles_planes[i],titles_chi2[j]));
-      t->DrawLatex(0.195,0.92,Form("%s",pot_num));
-      t->DrawLatex(0.82,0.92,Form("%s",sample_name));
-      
-      canv_chi2[i][j]->cd();
-      pad0_chi2[i][j] = new TPad(Form("pad0_chi2_%s_%s",plane[i],hypothesis[j]),Form("pad0_%s_%s",plane[i],hypothesis[j]),0,0.0,1.0,0.294);
-      pad0_chi2[i][j]->SetTopMargin(0);                
-      pad0_chi2[i][j]->SetBottomMargin(0.19);
-      pad0_chi2[i][j]->SetGridx();
-      pad0_chi2[i][j]->Draw();
-      pad0_chi2[i][j]->cd();
-
-      h_ext_chi2[i][j][1]->Add(h_overlay0_chi2[i][j][1]);
-      h_bnb_chi2[i][j][1]->Divide(h_bnb_chi2[i][j][1],h_ext_chi2[i][j][1],1,1,"B");
-      h_bnb_chi2[i][j][1]->Draw("e1p");
-      h_bnb_chi2[i][j][1]->SetStats(kFALSE);
-      h_bnb_chi2[i][j][1]->SetTitle("");
-      
-      TF1 *a_chi2 = new TF1("a_chi2","1", -150000 , 150000);
-      a_chi2->SetLineColor(kRed);
-      a_chi2->Draw("SAME");
-
-      //Calculate the Chi2
-      double chisqv1_chi2 = calculatePearsonChiSq(h_bnb_chi2[i][j][0], h_overlay0_chi2[i][j][2]);
-      int nBins1_chi2 = h_overlay0_chi2[i][j][2]->GetXaxis()->GetNbins();
-      //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv_chi2, nBins_chi2, chisqv/nBins_chi2);
-      t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1_chi2/nBins1_chi2));
-      
-      h_bnb_chi2[i][j][1]->GetYaxis()->SetTitle("Ratio");
-      h_bnb_chi2[i][j][1]->GetYaxis()->SetTitleSize(25);
-      h_bnb_chi2[i][j][1]->GetYaxis()->SetTitleFont(43);
-      h_bnb_chi2[i][j][1]->GetYaxis()->SetTitleOffset(1.5);
-      h_bnb_chi2[i][j][1]->GetYaxis()->SetLabelFont(43);
-      h_bnb_chi2[i][j][1]->GetYaxis()->SetLabelSize(25);
-      h_bnb_chi2[i][j][1]->GetXaxis()->SetTitle(Form("%s",titles_chi2[j]));
-      h_bnb_chi2[i][j][1]->GetXaxis()->SetTitleSize(25);
-      h_bnb_chi2[i][j][1]->GetXaxis()->SetTitleFont(43);
-      h_bnb_chi2[i][j][1]->GetXaxis()->SetTitleOffset(3);
-      h_bnb_chi2[i][j][1]->GetXaxis()->SetLabelFont(43);
-      h_bnb_chi2[i][j][1]->GetXaxis()->SetLabelSize(25);
-      
-      canv_chi2[i][j]->Print(Form("%s_%s_%s.png",path.c_str(),plane[i],hypothesis[j]));
-      canv_chi2[i][j]->Print(Form("%s_%s_%s.pdf",path.c_str(),plane[i],hypothesis[j]));
+      Plot_Histograms(colors, h_overlay_vec, h_overlay0[i][j][0],h_overlay0[i][j][1],h_overlay0[i][j][2], h_ext[i][j][0], h_ext[i][j][1], h_ext[i][j][2], h_dirt[i][j][0],h_dirt[i][j][1],h_dirt[i][j][2],h_bnb[i][j][0],h_bnb[i][j][1],
+		      canv[i][j], h[i][j], pad[i][j], pad0[i][j], legend[i][j],ylim[i][j],ymin[i][j], num_channels, titles[j], path, "", plots[j], cut[i], false, false);
+      h_overlay_vec.clear();
       
     }
   }
+
+  ////////////////////////////////////////
+  //Chi2 Plots
+  ////////////////////////////////////////
+  for(int i = 0; i< num_planes; i++){
+    for(int j = 0; j< num_hypothesis; j++){
+      for(int k=0; k < num_particles; k++){
+	h_overlay_chi2_vec.push_back(h_overlay_chi2[i][j][k]);
+      } 
+      
+      Plot_Histograms(colors_chi2, h_overlay_chi2_vec, h_overlay0_chi2[i][j][0],h_overlay0_chi2[i][j][1],h_overlay0_chi2[i][j][2], h_ext_chi2[i][j][0], h_ext_chi2[i][j][1], h_ext_chi2[i][j][2], h_dirt_chi2[i][j][0],h_dirt_chi2[i][j][1],h_dirt_chi2[i][j][2],h_bnb_chi2[i][j][0],h_bnb_chi2[i][j][1],canv_chi2[i][j], h_chi2[i][j], pad_chi2[i][j], pad0_chi2[i][j], legend_chi2[i][j],ylim_chi2[i][j], ymin_chi2[i][j], num_particles, titles_chi2[j], path,titles_planes[i], plane[i], hypothesis[j], false, false);
+
+      h_overlay_chi2_vec.clear();
+    }
+  }
+
+  ///////////////////////////////
+  //3D Chi2 Plots
+  ///////////////////////////////   
+  for(int i = 0; i < num_cuts_3D; i++){
+    for(int j = 0; j< num_hypothesis_3D; j++){
+      for(int k=0; k < num_particles; k++){
+	h_overlay_chi2_3D_vec.push_back(h_overlay_chi2_3D[i][j][k]);
+      } 
+      
+      Plot_Histograms(colors_chi2, h_overlay_chi2_3D_vec, h_overlay0_chi2_3D[i][j][0],h_overlay0_chi2_3D[i][j][1],h_overlay0_chi2_3D[i][j][2],
+		      h_ext_chi2_3D[i][j][0], h_ext_chi2_3D[i][j][1], h_ext_chi2_3D[i][j][2],
+		      h_dirt_chi2_3D[i][j][0],h_dirt_chi2_3D[i][j][1],h_dirt_chi2_3D[i][j][2],
+		      h_bnb_chi2_3D[i][j][0],h_bnb_chi2_3D[i][j][1],canv_chi2_3D[i][j], h_chi2_3D[i][j],
+		      pad_chi2_3D[i][j], pad0_chi2_3D[i][j], legend_chi2_3D[i][j],
+		      ylim_chi2_3D[i][j], ymin_chi2_3D[i][j], num_particles, titles_chi2_3D[j], path, cuts_3D_titles[i], Form("3D_%s",hypothesis_3D[j]), cuts_3D[i],false, false);
+
+      h_overlay_chi2_3D_vec.clear();
+    } //end of number of hypothesis
+  }
+  
+
+  //////////////////////////////
+  //Particle specific plots
+  //////////////////////////
+  for(int i = 0; i < num_var; i++){
+    for(int k=0; k < num_channels; k++){
+      h_muon_overlay_vec.push_back(h_muon_overlay[i][k]);
+      h_recoil_overlay_vec.push_back(h_recoil_overlay[i][k]);
+      h_leading_overlay_vec.push_back(h_leading_overlay[i][k]);
+    }
+
+    //muon
+    Plot_Histograms(colors, h_muon_overlay_vec, h_muon_overlay0[i][0],h_muon_overlay0[i][1],h_muon_overlay0[i][2],
+		    h_muon_ext[i][0], h_muon_ext[i][1], h_muon_ext[i][2],
+		    h_muon_dirt[i][0],h_muon_dirt[i][1],h_muon_dirt[i][2],
+		    h_muon_bnb[i][0],h_muon_bnb[i][1],canv_muon[i], h_muon[i],
+		    pad_muon[i], pad0_muon[i], legend_muon[i],
+		    muon_ylim[i], muon_ymin[i], num_channels, Form("Muon: %s",titles_var[i]), path,"", Form("_muon%s",var[i]), "",false, false);
+
+    h_muon_overlay_vec.clear();
+
+    //recoil proton
+    Plot_Histograms(colors, h_recoil_overlay_vec, h_recoil_overlay0[i][0],h_recoil_overlay0[i][1],h_recoil_overlay0[i][2],
+		    h_recoil_ext[i][0], h_recoil_ext[i][1], h_recoil_ext[i][2],
+		    h_recoil_dirt[i][0],h_recoil_dirt[i][1],h_recoil_dirt[i][2],
+		    h_recoil_bnb[i][0],h_recoil_bnb[i][1],canv_recoil[i], h_recoil[i],
+		    pad_recoil[i], pad0_recoil[i], legend_recoil[i],
+		    recoil_ylim[i], recoil_ymin[i], num_channels, Form("Recoil Proton: %s",titles_var[i]), path,"", Form("_recoil%s",var[i]), "",false, false);
+
+    h_recoil_overlay_vec.clear();
+
+    //leading proton
+    Plot_Histograms(colors, h_leading_overlay_vec, h_leading_overlay0[i][0],h_leading_overlay0[i][1],h_leading_overlay0[i][2],
+		    h_leading_ext[i][0], h_leading_ext[i][1], h_leading_ext[i][2],
+		    h_leading_dirt[i][0],h_leading_dirt[i][1],h_leading_dirt[i][2],
+		    h_leading_bnb[i][0],h_leading_bnb[i][1],canv_leading[i], h_leading[i],
+		    pad_leading[i], pad0_leading[i], legend_leading[i],
+		    leading_ylim[i], leading_ymin[i], num_channels, Form("Leading Proton: %s",titles_var[i]), path,"", Form("_leading%s",var[i]), "",false, false);
+
+    h_leading_overlay_vec.clear();
+
+  }
+    
+  //PHYSICS PLOTS!!!
+  ////////////////////////////////
+  for(int i=0; i < num_phys; i++){
+    h_phys_ext[i][1] = (TH1D*)h_phys_ext[i][0]->Clone();
+    h_phys_ext[i][2] = (TH1D*)h_phys_ext[i][0]->Clone();
+    h_phys_dirt[i][1] = (TH1D*)h_phys_dirt[i][0]->Clone();
+    h_phys_dirt[i][2] = (TH1D*)h_phys_dirt[i][0]->Clone();  
+    h_phys_bnb[i][1] = (TH1D*)h_phys_bnb[i][0]->Clone();
+    h_phys_overlay0[i][0] = (TH1D*)h_phys_overlay[i][0]->Clone();
+    h_phys_overlay0[i][1] = (TH1D*)h_phys_overlay[i][0]->Clone();
+    h_phys_overlay0[i][2] = (TH1D*)h_phys_overlay[i][0]->Clone();
+      
+    canv_phys[i] = new TCanvas(Form("C_phys%s",var[i]),Form("C_phys%s",var[i]),2000,1500);
+    canv_phys[i]->cd(1);
+    h_phys[i] = new THStack(Form("h_phys%s",var[i]),Form("h_phys%s",var[i]));
+    pad_phys[i] = new TPad(Form("pad_phys%s",var[i]),Form("pad_phys%s",var[i]),0,0.35,1.0,1.0);
+    pad_phys[i]->SetBottomMargin(0.0);
+    pad_phys[i]->SetGridx();
+    pad_phys[i]->SetBorderMode(0);
+    pad_phys[i]->Draw();
+    pad_phys[i]->cd();
+
+    //Stacked Histrogram parameters
+    h_phys[i]->Draw("HIST");
+    h_phys[i]->SetTitle("");
+    h_phys[i]->SetMaximum(physics_ylim[i]);
+    h_phys[i]->SetMinimum(-2);
+
+    //MC
+    if(plot_ccnue){
+      z = num_channels;
+      f = 11;
+    }else{
+      z = num_channels -1;
+      f = 10;
+    }
+      
+    for(int k=1; k < z ; k++){
+      h_phys_overlay[i][k]->SetLineColor(colors[k]);
+      h_phys_overlay[i][k]->SetFillColor(colors[k]);
+      h_phys_overlay[i][k]->SetLineWidth(1);
+      h_phys[i]->Add(h_phys_overlay[i][k]);
+    }
+
+      
+    //Dirt
+    h_phys[i]->Add(h_phys_dirt[i][0]);
+    h_phys_dirt[i][0]->SetFillColor(kOrange-8);
+    h_phys_dirt[i][0]->SetLineColor(kOrange-8);
+    h_phys_dirt[i][0]->SetLineWidth(1);
+   
+    //EXT
+    h_phys[i]->Add(h_phys_ext[i][0]);
+    h_phys_ext[i][0]->SetFillColor(kViolet-7);
+    h_phys_ext[i][0]->SetFillStyle(3005);
+    h_phys_ext[i][0]->SetLineWidth(1);
+      
+    //BNB
+    h_phys_bnb[i][0]->Draw("e1SAME");
+    h_phys_bnb[i][0]->SetLineColor(kBlack);
+    h_phys_bnb[i][0]->SetLineWidth(1);
+
+    h_phys[i]->GetYaxis()->SetTitle("No. Events");
+      
+    //if you want to plot the total for sanity sake:
+    if(plot_total){
+      h_phys_overlay[i][0]->Draw("SAME");
+    }
+      
+    //Make sure to do overlay statistical uncertainty
+    OverlayStatistics(h_phys_overlay0[i][0],h_phys_ext[i][2],h_phys_dirt[i][2]);
+    h_phys_overlay0[i][0]->Draw("e2SAME");
+    h_phys_overlay0[i][0]->SetLineColor(kBlack);
+    h_phys_overlay0[i][0]->SetFillColor(kBlack);
+    h_phys_overlay0[i][0]->SetFillStyle(3004);
+    h_phys_overlay0[i][0]->SetMarkerSize(0);
+    h_phys_overlay0[i][0]->SetLineWidth(1);
+
+    legend_phys[i] = new TLegend(0.71, 0.54, 0.899, 0.89);
+    legend_phys[i]->AddEntry(h_phys_bnb[i][0],"Data (Beam-On)","lepf");
+    legend_phys[i]->AddEntry(h_phys_overlay0[i][0],"Stat. Unc.","f");
+    legend_phys[i]->AddEntry(h_phys_ext[i][0],"Data (Beam-Off)","f");
+    legend_phys[i]->AddEntry(h_phys_dirt[i][0],"Dirt","f"); 
+    for(int k =1; k < z; k++){	
+      legend_phys[i]->AddEntry(h_phys_overlay[i][f-k],Form("%s",channel_legend[f-k]),"f");  
+    }
+    legend_phys[i]->SetLineWidth(0);
+    //legend_phys[i]->SetFillStyle(1);
+    legend_phys[i]->SetFillColor(kWhite);
+    legend_phys[i]->SetTextSize(0.03);
+    legend_phys[i]->Draw("same");
+    t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s}",physics_titles[i]));
+    t->DrawLatex(0.195,0.92,Form("%s",pot_num));
+    t->DrawLatex(0.82,0.92,Form("%s",sample_name));
+      
+    canv_phys[i]->cd();
+    pad0_phys[i] = new TPad(Form("pad0_phys%s",var[i]),Form("pad0_phys%s",var[i]),0,0.0,1.0,0.35);
+    pad0_phys[i]->SetTopMargin(0);                
+    pad0_phys[i]->SetBottomMargin(0.19);
+    pad0_phys[i]->SetGridx();
+    pad0_phys[i]->Draw();
+    pad0_phys[i]->cd();
+
+    h_phys_ext[i][1]->Add(h_phys_overlay0[i][1]);
+    h_phys_ext[i][1]->Add(h_phys_dirt[i][1]);
+    h_phys_ext[i][1]->Sumw2();
+    h_phys_bnb[i][1]->Divide(h_phys_bnb[i][1],h_phys_ext[i][1],1,1);
+    h_phys_bnb[i][1]->Sumw2();
+    h_phys_bnb[i][1]->Draw("e1p");
+    h_phys_bnb[i][1]->SetStats(kFALSE);
+    h_phys_bnb[i][1]->SetTitle("");
+      
+    TF1 *a4 = new TF1("a4","1", -150000 , 150000);
+    a4->SetLineColor(kRed);
+    a4->Draw("SAME");
+
+    //Calculate the Chi2
+    double chisqv1_phys = calculatePearsonChiSq(h_phys_bnb[i][0], h_phys_overlay0[i][2]);
+    int nBins1_phys = h_phys_overlay0[i][2]->GetXaxis()->GetNbins();
+    //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv, nBins, chisqv/nBins);
+    t->DrawLatex(0.83,0.92,Form("#scale[1.3]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1_phys/nBins1_phys));
+      
+    h_phys_bnb[i][1]->GetYaxis()->SetTitle("Beam-On/(Simulation + Beam-Off)");
+    h_phys_bnb[i][1]->GetYaxis()->CenterTitle();
+    h_phys_bnb[i][1]->GetYaxis()->SetTitleSize(28);
+    h_phys_bnb[i][1]->GetYaxis()->SetTitleFont(43);
+    h_phys_bnb[i][1]->GetYaxis()->SetTitleOffset(1.5);
+    h_phys_bnb[i][1]->GetYaxis()->SetLabelFont(43);
+    h_phys_bnb[i][1]->GetYaxis()->SetLabelSize(30);
+    h_phys_bnb[i][1]->GetXaxis()->SetTitle(Form("%s",physics_titles[i]));
+    h_phys_bnb[i][1]->GetXaxis()->SetTitleSize(35);
+    h_phys_bnb[i][1]->GetXaxis()->SetTitleFont(43);
+    h_phys_bnb[i][1]->GetXaxis()->SetTitleOffset(3);
+    h_phys_bnb[i][1]->GetXaxis()->SetLabelFont(43);
+    h_phys_bnb[i][1]->GetXaxis()->SetLabelSize(35);
+    
+    canv_phys[i]->Print(Form("%s%s.png",path.c_str(),physics[i]));
+    canv_phys[i]->Print(Form("%s%s.pdf",path.c_str(),physics[i]));
+
+  }
+  
+  //PHYSICS PLOTS RAQUEL
+  //////////////////////////////
+  for(int i=0; i < num_phys; i++){
+    h_phys_ext[i][1] = (TH1D*)h_phys_ext[i][0]->Clone();
+    h_phys_ext[i][2] = (TH1D*)h_phys_ext[i][0]->Clone();
+    h_phys_dirt[i][1] = (TH1D*)h_phys_dirt[i][0]->Clone();
+    h_phys_dirt[i][2] = (TH1D*)h_phys_dirt[i][0]->Clone();  
+    h_phys_bnb[i][1] = (TH1D*)h_phys_bnb[i][0]->Clone();
+    h_phys_overlay0_raquel[i][0] = (TH1D*)h_phys_overlay_raquel[i][0]->Clone();
+    h_phys_overlay0_raquel[i][1] = (TH1D*)h_phys_overlay_raquel[i][0]->Clone();
+    h_phys_overlay0_raquel[i][2] = (TH1D*)h_phys_overlay_raquel[i][0]->Clone();
+      
+    canv_phys_raquel[i] = new TCanvas(Form("C_phys_raquel%s",var[i]),Form("C_phys_raquel%s",var[i]),2000,1500);
+    canv_phys_raquel[i]->cd(1);
+    h_phys_raquel[i] = new THStack(Form("h_phys%s",var[i]),Form("h_phys%s",var[i]));
+    pad_phys_raquel[i] = new TPad(Form("pad_phys_raquel%s",var[i]),Form("pad_phys_raquel%s",var[i]),0,0.35,1.0,1.0);
+    pad_phys_raquel[i]->SetBottomMargin(0.0);
+    pad_phys_raquel[i]->SetGridx();
+    pad_phys_raquel[i]->SetBorderMode(0);
+    pad_phys_raquel[i]->Draw();
+    pad_phys_raquel[i]->cd();
+
+    //Stacked Histrogram parameters
+    h_phys_raquel[i]->Draw("HIST");
+    h_phys_raquel[i]->SetTitle("");
+    h_phys_raquel[i]->SetMaximum(physics_ylim[i]);
+    h_phys_raquel[i]->SetMinimum(-2);
+
+    //MC
+    if(plot_ccnue_raquel){
+      z_raquel = num_channels_raquel;
+      f_raquel = 10;
+    }else{
+      z_raquel = num_channels_raquel -1;
+      f_raquel = 9;
+    }
+    
+    for(int k=1; k < z_raquel ; k++){
+      h_phys_overlay_raquel[i][k]->SetLineColor(colors_raquel[k]);
+      h_phys_overlay_raquel[i][k]->SetFillColor(colors_raquel[k]);
+      h_phys_overlay_raquel[i][k]->SetLineWidth(1);
+      h_phys_raquel[i]->Add(h_phys_overlay_raquel[i][k]);
+    }
+
+    //Dirt
+    h_phys_raquel[i]->Add(h_phys_dirt[i][0]);
+    h_phys_dirt[i][0]->SetFillColor(kOrange-8);
+    h_phys_dirt[i][0]->SetLineColor(kOrange-8);
+    h_phys_dirt[i][0]->SetLineWidth(1);
+   
+    //EXT
+    h_phys_raquel[i]->Add(h_phys_ext[i][0]);
+    h_phys_ext[i][0]->SetFillColor(kViolet-7);
+    h_phys_ext[i][0]->SetFillStyle(3005);
+    h_phys_ext[i][0]->SetLineWidth(1);
+      
+    //BNB
+    h_phys_bnb[i][0]->Draw("e1SAME");
+    h_phys_bnb[i][0]->SetLineColor(kBlack);
+    h_phys_bnb[i][0]->SetLineWidth(1);
+
+    h_phys_raquel[i]->GetYaxis()->SetTitle("No. Events");
+      
+    //if you want to plot the total for sanity sake:
+    if(plot_total_raquel){
+      h_phys_overlay_raquel[i][0]->Draw("SAME");
+    }
+      
+    //Make sure to do overlay statistical uncertainty
+    OverlayStatistics(h_phys_overlay0_raquel[i][0],h_phys_ext[i][2],h_phys_dirt[i][2]);
+    h_phys_overlay0_raquel[i][0]->Draw("e2SAME");
+    h_phys_overlay0_raquel[i][0]->SetLineColor(kBlack);
+    h_phys_overlay0_raquel[i][0]->SetFillColor(kBlack);
+    h_phys_overlay0_raquel[i][0]->SetFillStyle(3004);
+    h_phys_overlay0_raquel[i][0]->SetMarkerSize(0);
+    h_phys_overlay0_raquel[i][0]->SetLineWidth(1);
+
+    legend_phys_raquel[i] = new TLegend(0.71, 0.54, 0.899, 0.89);
+    legend_phys_raquel[i]->AddEntry(h_phys_bnb[i][0],"Data (Beam-On)","lepf");
+    legend_phys_raquel[i]->AddEntry(h_phys_overlay0[i][0],"Stat. Unc.","f");
+    legend_phys_raquel[i]->AddEntry(h_phys_ext[i][0],"Data (Beam-Off)","f");
+    legend_phys_raquel[i]->AddEntry(h_phys_dirt[i][0],"Dirt","f"); 
+    for(int k =1; k < z_raquel; k++){	
+      legend_phys_raquel[i]->AddEntry(h_phys_overlay_raquel[i][f_raquel-k],Form("%s",channel_legend_raquel[f_raquel-k]),"f");  
+    }
+    legend_phys_raquel[i]->SetLineWidth(0);
+    //legend_phys[i]->SetFillStyle(1);
+    legend_phys_raquel[i]->SetFillColor(kWhite);
+    legend_phys_raquel[i]->SetTextSize(0.03);
+    legend_phys_raquel[i]->Draw("same");
+    t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s}",physics_titles[i]));
+    t->DrawLatex(0.195,0.92,Form("%s",pot_num));
+    t->DrawLatex(0.82,0.92,Form("%s",sample_name));
+      
+    canv_phys_raquel[i]->cd();
+    pad0_phys_raquel[i] = new TPad(Form("pad0_phys_raquel%s",var[i]),Form("pad0_phys_raquel%s",var[i]),0,0.0,1.0,0.35);
+    pad0_phys_raquel[i]->SetTopMargin(0);                
+    pad0_phys_raquel[i]->SetBottomMargin(0.19);
+    pad0_phys_raquel[i]->SetGridx();
+    pad0_phys_raquel[i]->Draw();
+    pad0_phys_raquel[i]->cd();
+
+    h_phys_ext[i][1]->Add(h_phys_overlay0_raquel[i][1]);
+    h_phys_ext[i][1]->Add(h_phys_dirt[i][1]);
+    h_phys_ext[i][1]->Sumw2();
+    h_phys_bnb[i][1]->Divide(h_phys_bnb[i][1],h_phys_ext[i][1],1,1);
+    h_phys_bnb[i][1]->Sumw2();
+    h_phys_bnb[i][1]->Draw("e1p");
+    h_phys_bnb[i][1]->SetStats(kFALSE);
+    h_phys_bnb[i][1]->SetTitle("");
+      
+    TF1 *a4 = new TF1("a4","1", -150000 , 150000);
+    a4->SetLineColor(kRed);
+    a4->Draw("SAME");
+
+    //Calculate the Chi2
+    double chisqv1_phys = calculatePearsonChiSq(h_phys_bnb[i][0], h_phys_overlay0_raquel[i][2]);
+    int nBins1_phys = h_phys_overlay0_raquel[i][2]->GetXaxis()->GetNbins();
+    //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv, nBins, chisqv/nBins);
+    t->DrawLatex(0.83,0.92,Form("#scale[1.3]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1_phys/nBins1_phys));
+      
+    h_phys_bnb[i][1]->GetYaxis()->SetTitle("Beam-On/(Simulation + Beam-Off)");
+    h_phys_bnb[i][1]->GetYaxis()->CenterTitle();
+    h_phys_bnb[i][1]->GetYaxis()->SetTitleSize(28);
+    h_phys_bnb[i][1]->GetYaxis()->SetTitleFont(43);
+    h_phys_bnb[i][1]->GetYaxis()->SetTitleOffset(1.5);
+    h_phys_bnb[i][1]->GetYaxis()->SetLabelFont(43);
+    h_phys_bnb[i][1]->GetYaxis()->SetLabelSize(30);
+    h_phys_bnb[i][1]->GetXaxis()->SetTitle(Form("%s",physics_titles[i]));
+    h_phys_bnb[i][1]->GetXaxis()->SetTitleSize(35);
+    h_phys_bnb[i][1]->GetXaxis()->SetTitleFont(43);
+    h_phys_bnb[i][1]->GetXaxis()->SetTitleOffset(3);
+    h_phys_bnb[i][1]->GetXaxis()->SetLabelFont(43);
+    h_phys_bnb[i][1]->GetXaxis()->SetLabelSize(35);
+    
+    canv_phys_raquel[i]->Print(Form("%s%s_raquel.png",path.c_str(),physics[i]));
+    canv_phys_raquel[i]->Print(Form("%s%s_raquel.pdf",path.c_str(),physics[i]));
+
+  }
+  
+
+  //STV PLOTS
+  ///////////////////////////////////////////
+  for(int i=0; i < num_stv; i++){
+    h_stv_ext[i][1] = (TH1D*)h_stv_ext[i][0]->Clone();
+    h_stv_ext[i][2] = (TH1D*)h_stv_ext[i][0]->Clone();
+    h_stv_dirt[i][1] = (TH1D*)h_stv_dirt[i][0]->Clone();
+    h_stv_dirt[i][2] = (TH1D*)h_stv_dirt[i][0]->Clone();  
+    h_stv_bnb[i][1] = (TH1D*)h_stv_bnb[i][0]->Clone();
+    h_stv_overlay0[i][0] = (TH1D*)h_stv_overlay[i][0]->Clone();
+    h_stv_overlay0[i][1] = (TH1D*)h_stv_overlay[i][0]->Clone();
+    h_stv_overlay0[i][2] = (TH1D*)h_stv_overlay[i][0]->Clone();
+      
+    canv_stv[i] = new TCanvas(Form("C_stv%s",var[i]),Form("C_stv%s",var[i]),2000,1500);
+    canv_stv[i]->cd(1);
+    h_stv[i] = new THStack(Form("h_stv%s",var[i]),Form("h_stv%s",var[i]));
+    pad_stv[i] = new TPad(Form("pad_stv%s",var[i]),Form("pad_stv%s",var[i]),0,0.35,1.0,1.0);
+    pad_stv[i]->SetBottomMargin(0.01);
+    pad_stv[i]->SetGridx();
+    pad_stv[i]->SetBorderMode(0);
+    pad_stv[i]->Draw();
+    pad_stv[i]->cd();
+
+    //Stacked Histrogram parameters
+    h_stv[i]->Draw("HIST");
+    h_stv[i]->SetTitle("");
+    h_stv[i]->SetMaximum(stv_ylim[i]);
+    h_stv[i]->SetMinimum(-2);
+
+    //MC
+    if(plot_ccnue){
+      z = num_channels;
+      f = 11;
+    }else{
+      z = num_channels -1;
+      f = 10;
+    }
+      
+    for(int k=1; k < z ; k++){
+      h_stv_overlay[i][k]->SetLineColor(colors[k]);
+      h_stv_overlay[i][k]->SetFillColor(colors[k]);
+      h_stv_overlay[i][k]->SetLineWidth(1);
+      h_stv[i]->Add(h_stv_overlay[i][k]);
+    }
+
+      
+    //Dirt
+    h_stv[i]->Add(h_stv_dirt[i][0]);
+    h_stv_dirt[i][0]->SetFillColor(kOrange-8);
+    h_stv_dirt[i][0]->SetLineColor(kOrange-8);
+    h_stv_dirt[i][0]->SetLineWidth(1);
+   
+    //EXT
+    h_stv[i]->Add(h_stv_ext[i][0]);
+    h_stv_ext[i][0]->SetFillColor(kViolet-7);
+    h_stv_ext[i][0]->SetFillStyle(3005);
+    h_stv_ext[i][0]->SetLineWidth(1);
+      
+    //BNB
+    h_stv_bnb[i][0]->Draw("e1SAME");
+    h_stv_bnb[i][0]->SetLineColor(kBlack);
+    h_stv_bnb[i][0]->SetLineWidth(1);
+
+    h_stv[i]->GetYaxis()->SetTitle("No. Events");
+      
+    //if you want to plot the total for sanity sake:
+    if(plot_total){
+      h_stv_overlay[i][0]->Draw("SAME");
+    }
+      
+    //Make sure to do overlay statistical uncertainty
+    OverlayStatistics(h_stv_overlay0[i][0],h_stv_ext[i][2],h_stv_dirt[i][2]);
+    h_stv_overlay0[i][0]->Draw("e2SAME");
+    h_stv_overlay0[i][0]->SetLineColor(kBlack);
+    h_stv_overlay0[i][0]->SetFillColor(kBlack);
+    h_stv_overlay0[i][0]->SetFillStyle(3004);
+    h_stv_overlay0[i][0]->SetMarkerSize(0);
+    h_stv_overlay0[i][0]->SetLineWidth(1);
+
+    legend_stv[i] = new TLegend(0.71, 0.54, 0.899, 0.89);
+    legend_stv[i]->AddEntry(h_stv_bnb[i][0],"Data (Beam-On)","lepf");
+    legend_stv[i]->AddEntry(h_stv_overlay0[i][0],"Stat. Unc.","f");
+    legend_stv[i]->AddEntry(h_stv_ext[i][0],"Data (Beam-Off)","f");
+    legend_stv[i]->AddEntry(h_stv_dirt[i][0],"Dirt","f"); 
+    for(int k =1; k < z; k++){	
+      legend_stv[i]->AddEntry(h_stv_overlay[i][f-k],Form("%s",channel_legend[f-k]),"f");  
+    }
+    legend_stv[i]->SetLineWidth(0);
+    //legend_stv[i]->SetFillStyle(1);
+    legend_stv[i]->SetFillColor(kWhite);
+    legend_stv[i]->SetTextSize(0.03);
+    legend_stv[i]->Draw("same");
+    t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s}",stv_titles[i]));
+    t->DrawLatex(0.195,0.92,Form("%s",pot_num));
+    t->DrawLatex(0.82,0.92,Form("%s",sample_name));
+      
+    canv_stv[i]->cd();
+    pad0_stv[i] = new TPad(Form("pad0_stv%s",var[i]),Form("pad0_stv%s",var[i]),0,0.0,1.0,0.35);
+    pad0_stv[i]->SetTopMargin(0);                
+    pad0_stv[i]->SetBottomMargin(0.19);
+    pad0_stv[i]->SetGridx();
+    pad0_stv[i]->Draw();
+    pad0_stv[i]->cd();
+
+    h_stv_ext[i][1]->Add(h_stv_overlay0[i][1]);
+    h_stv_ext[i][1]->Add(h_stv_dirt[i][1]);
+    h_stv_ext[i][1]->Sumw2();
+    h_stv_bnb[i][1]->Divide(h_stv_bnb[i][1],h_stv_ext[i][1],1,1);
+    h_stv_bnb[i][1]->Sumw2();
+    h_stv_bnb[i][1]->Draw("e1p");
+    h_stv_bnb[i][1]->SetStats(kFALSE);
+    h_stv_bnb[i][1]->SetTitle("");
+      
+    TF1 *a4 = new TF1("a4","1", -150000 , 150000);
+    a4->SetLineColor(kRed);
+    a4->Draw("SAME");
+
+    //Calculate the Chi2
+    double chisqv1_stv = calculatePearsonChiSq(h_stv_bnb[i][0], h_stv_overlay0[i][2]);
+    int nBins1_stv = h_stv_overlay0[i][2]->GetXaxis()->GetNbins();
+    //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv, nBins, chisqv/nBins);
+    t->DrawLatex(0.83,0.92,Form("#scale[1.3]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1_stv/nBins1_stv));
+      
+    h_stv_bnb[i][1]->GetYaxis()->SetTitle("Beam-On/(Simulation + Beam-Off)");
+    h_stv_bnb[i][1]->GetYaxis()->CenterTitle();
+    h_stv_bnb[i][1]->GetYaxis()->SetTitleSize(28);
+    h_stv_bnb[i][1]->GetYaxis()->SetTitleFont(43);
+    h_stv_bnb[i][1]->GetYaxis()->SetTitleOffset(1.5);
+    h_stv_bnb[i][1]->GetYaxis()->SetLabelFont(43);
+    h_stv_bnb[i][1]->GetYaxis()->SetLabelSize(30);
+    h_stv_bnb[i][1]->GetXaxis()->SetTitle(Form("%s",stv_titles[i]));
+    h_stv_bnb[i][1]->GetXaxis()->SetTitleSize(35);
+    h_stv_bnb[i][1]->GetXaxis()->SetTitleFont(43);
+    h_stv_bnb[i][1]->GetXaxis()->SetTitleOffset(3);
+    h_stv_bnb[i][1]->GetXaxis()->SetLabelFont(43);
+    h_stv_bnb[i][1]->GetXaxis()->SetLabelSize(35);
+    
+    canv_stv[i]->Print(Form("%s%s.png",path.c_str(),stv[i]));
+    canv_stv[i]->Print(Form("%s%s.pdf",path.c_str(),stv[i]));
+
+  }
+  
+  //STV PLOTS: RAQUEL
+  ///////////////////////////////////////////
+  for(int i=0; i < num_stv; i++){
+    h_stv_ext[i][1] = (TH1D*)h_stv_ext[i][0]->Clone();
+    h_stv_ext[i][2] = (TH1D*)h_stv_ext[i][0]->Clone();
+    h_stv_dirt[i][1] = (TH1D*)h_stv_dirt[i][0]->Clone();
+    h_stv_dirt[i][2] = (TH1D*)h_stv_dirt[i][0]->Clone();  
+    h_stv_bnb[i][1] = (TH1D*)h_stv_bnb[i][0]->Clone();
+    h_stv_overlay0_raquel[i][0] = (TH1D*)h_stv_overlay_raquel[i][0]->Clone();
+    h_stv_overlay0_raquel[i][1] = (TH1D*)h_stv_overlay_raquel[i][0]->Clone();
+    h_stv_overlay0_raquel[i][2] = (TH1D*)h_stv_overlay_raquel[i][0]->Clone();
+      
+    canv_stv_raquel[i] = new TCanvas(Form("C_stv_raquel%s",var[i]),Form("C_stv_raquel%s",var[i]),2000,1500);
+    canv_stv_raquel[i]->cd(1);
+    h_stv_raquel[i] = new THStack(Form("h_stv_raquel%s",var[i]),Form("h_stv_raquel%s",var[i]));
+    pad_stv_raquel[i] = new TPad(Form("pad_stv_raquel%s",var[i]),Form("pad_stv_raquel%s",var[i]),0,0.35,1.0,1.0);
+    pad_stv_raquel[i]->SetBottomMargin(0.01);
+    pad_stv_raquel[i]->SetGridx();
+    pad_stv_raquel[i]->SetBorderMode(0);
+    pad_stv_raquel[i]->Draw();
+    pad_stv_raquel[i]->cd();
+
+    //Stacked Histrogram parameters
+    h_stv_raquel[i]->Draw("HIST");
+    h_stv_raquel[i]->SetTitle("");
+    h_stv_raquel[i]->SetMaximum(stv_ylim[i]);
+    h_stv_raquel[i]->SetMinimum(-2);
+
+    //MC                                                                                                                                                                                                                                
+    if(plot_ccnue_raquel){
+      z_raquel = num_channels_raquel;
+      f_raquel = 10;
+    }else{
+      z_raquel = num_channels_raquel -1;
+      f_raquel = 9;
+    }
+    
+    for(int k=1; k < z_raquel ; k++){
+      h_stv_overlay_raquel[i][k]->SetLineColor(colors_raquel[k]);
+      h_stv_overlay_raquel[i][k]->SetFillColor(colors_raquel[k]);
+      h_stv_overlay_raquel[i][k]->SetLineWidth(1);
+      h_stv_raquel[i]->Add(h_stv_overlay_raquel[i][k]);
+    }
+
+      
+    //Dirt
+    h_stv_raquel[i]->Add(h_stv_dirt[i][0]);
+    h_stv_dirt[i][0]->SetFillColor(kOrange-8);
+    h_stv_dirt[i][0]->SetLineColor(kOrange-8);
+    h_stv_dirt[i][0]->SetLineWidth(1);
+   
+    //EXT
+    h_stv_raquel[i]->Add(h_stv_ext[i][0]);
+    h_stv_ext[i][0]->SetFillColor(kViolet-7);
+    h_stv_ext[i][0]->SetFillStyle(3005);
+    h_stv_ext[i][0]->SetLineWidth(1);
+      
+    //BNB
+    h_stv_bnb[i][0]->Draw("e1SAME");
+    h_stv_bnb[i][0]->SetLineColor(kBlack);
+    h_stv_bnb[i][0]->SetLineWidth(1);
+
+    h_stv_raquel[i]->GetYaxis()->SetTitle("No. Events");
+      
+    //if you want to plot the total for sanity sake:
+    if(plot_total){
+      h_stv_overlay_raquel[i][0]->Draw("SAME");
+    }
+      
+    //Make sure to do overlay statistical uncertainty
+    OverlayStatistics(h_stv_overlay0_raquel[i][0],h_stv_ext[i][2],h_stv_dirt[i][2]);
+    h_stv_overlay0_raquel[i][0]->Draw("e2SAME");
+    h_stv_overlay0_raquel[i][0]->SetLineColor(kBlack);
+    h_stv_overlay0_raquel[i][0]->SetFillColor(kBlack);
+    h_stv_overlay0_raquel[i][0]->SetFillStyle(3004);
+    h_stv_overlay0_raquel[i][0]->SetMarkerSize(0);
+    h_stv_overlay0_raquel[i][0]->SetLineWidth(1);
+
+    legend_stv_raquel[i] = new TLegend(0.71, 0.54, 0.899, 0.89);
+    legend_stv_raquel[i]->AddEntry(h_stv_bnb[i][0],"Data (Beam-On)","lepf");
+    legend_stv_raquel[i]->AddEntry(h_stv_overlay0[i][0],"Stat. Unc.","f");
+    legend_stv_raquel[i]->AddEntry(h_stv_ext[i][0],"Data (Beam-Off)","f");
+    legend_stv_raquel[i]->AddEntry(h_stv_dirt[i][0],"Dirt","f"); 
+    for(int k =1; k < z_raquel; k++){	
+      legend_stv_raquel[i]->AddEntry(h_stv_overlay_raquel[i][f_raquel-k],Form("%s",channel_legend_raquel[f_raquel-k]),"f");  
+    }
+    legend_stv_raquel[i]->SetLineWidth(0);
+    //legend_stv_raquel[i]->SetFillStyle(1);
+    legend_stv_raquel[i]->SetFillColor(kWhite);
+    legend_stv_raquel[i]->SetTextSize(0.03);
+    legend_stv_raquel[i]->Draw("same");
+    t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s}",stv_titles[i]));
+    t->DrawLatex(0.195,0.92,Form("%s",pot_num));
+    t->DrawLatex(0.82,0.92,Form("%s",sample_name));
+      
+    canv_stv_raquel[i]->cd();
+    pad0_stv_raquel[i] = new TPad(Form("pad0_stv_raquel%s",var[i]),Form("pad0_stv_raquel%s",var[i]),0,0.0,1.0,0.35);
+    pad0_stv_raquel[i]->SetTopMargin(0);                
+    pad0_stv_raquel[i]->SetBottomMargin(0.19);
+    pad0_stv_raquel[i]->SetGridx();
+    pad0_stv_raquel[i]->Draw();
+    pad0_stv_raquel[i]->cd();
+
+    h_stv_ext[i][1]->Add(h_stv_overlay0_raquel[i][1]);
+    h_stv_ext[i][1]->Add(h_stv_dirt[i][1]);
+    h_stv_ext[i][1]->Sumw2();
+    h_stv_bnb[i][1]->Divide(h_stv_bnb[i][1],h_stv_ext[i][1],1,1);
+    h_stv_bnb[i][1]->Sumw2();
+    h_stv_bnb[i][1]->Draw("e1p");
+    h_stv_bnb[i][1]->SetStats(kFALSE);
+    h_stv_bnb[i][1]->SetTitle("");
+      
+    TF1 *a4 = new TF1("a4","1", -150000 , 150000);
+    a4->SetLineColor(kRed);
+    a4->Draw("SAME");
+
+    //Calculate the Chi2
+    double chisqv1_stv = calculatePearsonChiSq(h_stv_bnb[i][0], h_stv_overlay0_raquel[i][2]);
+    int nBins1_stv = h_stv_overlay0_raquel[i][2]->GetXaxis()->GetNbins();
+    //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv, nBins, chisqv/nBins);
+    t->DrawLatex(0.83,0.92,Form("#scale[1.3]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1_stv/nBins1_stv));
+      
+    h_stv_bnb[i][1]->GetYaxis()->SetTitle("Beam-On/(Simulation + Beam-Off)");
+    h_stv_bnb[i][1]->GetYaxis()->CenterTitle();
+    h_stv_bnb[i][1]->GetYaxis()->SetTitleSize(28);
+    h_stv_bnb[i][1]->GetYaxis()->SetTitleFont(43);
+    h_stv_bnb[i][1]->GetYaxis()->SetTitleOffset(1.5);
+    h_stv_bnb[i][1]->GetYaxis()->SetLabelFont(43);
+    h_stv_bnb[i][1]->GetYaxis()->SetLabelSize(30);
+    h_stv_bnb[i][1]->GetXaxis()->SetTitle(Form("%s",stv_titles[i]));
+    h_stv_bnb[i][1]->GetXaxis()->SetTitleSize(35);
+    h_stv_bnb[i][1]->GetXaxis()->SetTitleFont(43);
+    h_stv_bnb[i][1]->GetXaxis()->SetTitleOffset(3);
+    h_stv_bnb[i][1]->GetXaxis()->SetLabelFont(43);
+    h_stv_bnb[i][1]->GetXaxis()->SetLabelSize(35);
+    
+    canv_stv_raquel[i]->Print(Form("%s%s_raquel.png",path.c_str(),stv[i]));
+    canv_stv_raquel[i]->Print(Form("%s%s_raquel.pdf",path.c_str(),stv[i]));
+
+  }
+  
+
+
+  
   
 } //end of program

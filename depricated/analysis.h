@@ -17,7 +17,7 @@ class analysis
 public:
   virtual void main();
   virtual void Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TFile* f_dirt);
-  virtual void Plot_Histograms(Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 = "", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false);
+  virtual void Plot_Histograms(Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false);
 
   
 
@@ -100,15 +100,10 @@ public:
  int ylim_chi2[num_planes][num_hypothesis] = {{250,400},
 					      {250,250},
 					      {600,300}};
-  int ymin_chi2[num_planes][num_hypothesis] = {{0,0},
-					       {0,0},
-					       {0,0}};
-
-  Color_t colors_chi2[6] = {kBlack,kRed,kBlue,kGreen,kYellow,204};
+ Color_t colors_chi2[6] = {kBlack,kRed,kBlue,kGreen,kYellow,204};
  bool plot_total_chi2 = false;
  TH1D* h_overlay_chi2[num_planes][num_hypothesis][num_particles];
-  std::vector<TH1D*> h_overlay_chi2_vec;
-  TH1D* h_overlay0_chi2[num_planes][num_hypothesis][3]; //copies for statistics
+ TH1D* h_overlay0_chi2[num_planes][num_hypothesis][3]; //copies for statistics
  TH1D* h_dirt_chi2[num_planes][num_hypothesis][3];
  TH1D* h_ext_chi2[num_planes][num_hypothesis][3]; 
  TH1D* h_bnb_chi2[num_planes][num_hypothesis][2];
@@ -128,15 +123,12 @@ public:
  const char* titles_chi2_3D[num_hypothesis_3D] = {"3D #chi^{2}_{p}","3D #chi^{2}_{#mu}", "3D #chi^{2}_{#pi}"};
  int ylim_chi2_3D[num_cuts_3D][num_hypothesis_3D] = {{600,300,300},
 						     {100,100,100}};
- int ymin_chi2_3D[num_cuts_3D][num_hypothesis_3D] = {{0,0,0},
-						     {0,0,0}};
  double xlim_chi2_3D[num_cuts_3D][num_hypothesis_3D] = {{70,-9999,-9999},
 							{-9999,-9999,-9999}};
-  TLine* a_3D[num_cuts_3D][num_hypothesis_3D];
-  bool plot_total_chi2_3D = false;
-  TH1D* h_overlay_chi2_3D[num_cuts_3D][num_hypothesis_3D][num_particles];
-  std::vector<TH1D*> h_overlay_chi2_3D_vec;
-  TH1D* h_overlay0_chi2_3D[num_cuts_3D][num_hypothesis_3D][3]; //copies for statistics
+ TLine* a_3D[num_cuts_3D][num_hypothesis_3D];
+ bool plot_total_chi2_3D = false;
+ TH1D* h_overlay_chi2_3D[num_cuts_3D][num_hypothesis_3D][num_particles];
+ TH1D* h_overlay0_chi2_3D[num_cuts_3D][num_hypothesis_3D][3]; //copies for statistics
  TH1D* h_dirt_chi2_3D[num_cuts_3D][num_hypothesis_3D][3]; 
  TH1D* h_ext_chi2_3D[num_cuts_3D][num_hypothesis_3D][3]; //copies for statistics
  TH1D* h_bnb_chi2_3D[num_cuts_3D][num_hypothesis_3D][2]; //copies for statistics
@@ -172,7 +164,7 @@ public:
 				      {40,40,40}};
   int ymin[num_cuts][num_variables] = {{-3,-3,-4},
 				      {-4,-3,-3},
-		 		      {-3,-3,-3},
+				      {-3,-3,-3},
 				      {-2,-2,-2}};
   bool plot_total = false; //sanity check on total overlay
   bool plot_ccnue = false; //do you want to plot ccnue?
@@ -202,7 +194,7 @@ public:
  bool plot_total_truth = true;
  bool plot_ccnue_truth = true;
  TH1D* h_mc[num_cuts][num_truth][num_channels];
-  TCanvas* canv_truth[num_cuts][num_truth];
+ TCanvas* canv_truth[num_cuts][num_truth];
  THStack* h_truth[num_cuts][num_truth];
  TLegend* legend_truth[num_cuts][num_truth];
 
@@ -214,8 +206,7 @@ public:
 
  //Muon
  TH1D* h_muon_overlay[num_var][num_channels]; //actual overlay
-  std::vector<TH1D*> h_muon_overlay_vec;
-  TH1D* h_muon_overlay0[num_var][3]; //copies for statistics
+ TH1D* h_muon_overlay0[num_var][3]; //copies for statistics
  TH1D* h_muon_bnb[num_var][2];
  TH1D* h_muon_ext[num_var][3];
  TH1D* h_muon_dirt[num_var][3];
@@ -224,12 +215,10 @@ public:
  TLegend* legend_muon[num_var];
  TPad* pad_muon[num_var];
  TPad* pad0_muon[num_var];
- int muon_ylim[num_var] = {40,40,160,100};
-  int muon_ymin[num_var] = {0,0,0,0};
-  
+ double muon_ylim[num_var] = {40,40,160,100};
+
  //Recoil Proton
  TH1D* h_recoil_overlay[num_var][num_channels];
-  std::vector<TH1D*> h_recoil_overlay_vec;
  TH1D* h_recoil_overlay0[num_var][3];
  TH1D* h_recoil_bnb[num_var][2];
  TH1D* h_recoil_ext[num_var][3];
@@ -240,11 +229,9 @@ public:
  TPad* pad_recoil[num_var];
  TPad* pad0_recoil[num_var];
  double recoil_ylim[num_var] = {60,60,80,150};
-  int recoil_ymin[num_var] = {0,0,0,0};
 
  //Leading Proton
  TH1D* h_leading_overlay[num_var][num_channels];
-  std::vector<TH1D*> h_leading_overlay_vec;
  TH1D* h_leading_overlay0[num_var][3];
  TH1D* h_leading_bnb[num_var][2];
  TH1D* h_leading_ext[num_var][3];
@@ -255,7 +242,6 @@ public:
  TPad* pad_leading[num_var];
  TPad* pad0_leading[num_var];
  double leading_ylim[num_var] = {50,50,160,100};
-  int leading_ymin[num_var] = {0,0,0,0};
 
  //Random Physics Variables
  ///////////////////////////
@@ -478,7 +464,7 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
 
 }
 
-void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 ="", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false)
+void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false)
 {      
 
   h_ext1 = (TH1D*)h_ext->Clone();
@@ -545,14 +531,14 @@ void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH
   }
       
   //Make sure to do overlay statistical uncertainty
-  OverlayStatistics(h_overlay00,h_ext2, h_dirt2);
+  /*OverlayStatistics(h_overlay00,h_ext2, h_dirt2);
   h_overlay00->Draw("e2SAME");
   h_overlay00->SetLineColor(kBlack);
   h_overlay00->SetFillColor(kBlack);
   h_overlay00->SetFillStyle(3004);
   h_overlay00->SetMarkerSize(0);
   h_overlay00->SetLineWidth(1);
-  
+  */
   legend = new TLegend(0.71, 0.54, 0.899, 0.89);
   legend->AddEntry(h_bnb,"Data (Beam-On)","lepf");
   legend->AddEntry(h_overlay00,"Stat. Unc.","f");
@@ -567,7 +553,7 @@ void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH
   legend->Draw("same");
   t->SetNDC();
   t->SetTextAlign(22);
-  t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s: %s}",titles,titles2));
+  t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s}",titles));
   t->DrawLatex(0.195,0.92,Form("%s",pot_num));
   t->DrawLatex(0.82,0.92,Form("%s",sample_name));
       
