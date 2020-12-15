@@ -213,7 +213,7 @@ void analysis::main(){
       for(int k=0; k < num_channels; k++){
 	h_overlay_vec.push_back(h_overlay[i][j][k]);
       }
-      Plot_Histograms(colors, h_overlay_vec, h_overlay0[i][j][0],h_overlay0[i][j][1],h_overlay0[i][j][2], h_ext[i][j][0], h_ext[i][j][1], h_ext[i][j][2], h_dirt[i][j][0],h_dirt[i][j][1],h_dirt[i][j][2],h_bnb[i][j][0],h_bnb[i][j][1],canv[i][j], h[i][j], pad[i][j], pad0[i][j], legend[i][j],ylim[i][j],ymin[i][j], num_channels, titles[j], path, "", plots[j], cut[i], false, false);
+      Plot_Histograms(colors, h_overlay_vec, h_overlay0[i][j][0],h_overlay0[i][j][1],h_overlay0[i][j][2], h_ext[i][j][0], h_ext[i][j][1], h_ext[i][j][2], h_dirt[i][j][0],h_dirt[i][j][1],h_dirt[i][j][2],h_bnb[i][j][0],h_bnb[i][j][1],canv[i][j], h[i][j], pad[i][j], pad0[i][j], legend[i][j],channel_legend, ylim[i][j],ymin[i][j], num_channels, titles[j], path, "", plots[j], cut[i], false, false);
       h_overlay_vec.clear();
     }
   }
@@ -226,7 +226,7 @@ void analysis::main(){
       for(int k=0; k < num_particles; k++){
 	h_overlay_chi2_vec.push_back(h_overlay_chi2[i][j][k]);
       } 
-      Plot_Histograms(colors_chi2, h_overlay_chi2_vec, h_overlay0_chi2[i][j][0],h_overlay0_chi2[i][j][1],h_overlay0_chi2[i][j][2], h_ext_chi2[i][j][0], h_ext_chi2[i][j][1], h_ext_chi2[i][j][2], h_dirt_chi2[i][j][0],h_dirt_chi2[i][j][1],h_dirt_chi2[i][j][2],h_bnb_chi2[i][j][0],h_bnb_chi2[i][j][1],canv_chi2[i][j], h_chi2[i][j], pad_chi2[i][j], pad0_chi2[i][j], legend_chi2[i][j],ylim_chi2[i][j], ymin_chi2[i][j], num_particles, titles_chi2[j], path,titles_planes[i], plane[i], hypothesis[j], false, false);
+      Plot_Histograms(colors_chi2, h_overlay_chi2_vec, h_overlay0_chi2[i][j][0],h_overlay0_chi2[i][j][1],h_overlay0_chi2[i][j][2], h_ext_chi2[i][j][0], h_ext_chi2[i][j][1], h_ext_chi2[i][j][2], h_dirt_chi2[i][j][0],h_dirt_chi2[i][j][1],h_dirt_chi2[i][j][2],h_bnb_chi2[i][j][0],h_bnb_chi2[i][j][1],canv_chi2[i][j], h_chi2[i][j], pad_chi2[i][j], pad0_chi2[i][j], legend_chi2[i][j],channel_legend_chi2,ylim_chi2[i][j], ymin_chi2[i][j], num_particles, titles_chi2[j], path,titles_planes[i], plane[i], hypothesis[j], false, false);
       h_overlay_chi2_vec.clear();
     }
   }
@@ -243,7 +243,7 @@ void analysis::main(){
 		      h_ext_chi2_3D[i][j][0], h_ext_chi2_3D[i][j][1], h_ext_chi2_3D[i][j][2],
 		      h_dirt_chi2_3D[i][j][0],h_dirt_chi2_3D[i][j][1],h_dirt_chi2_3D[i][j][2],
 		      h_bnb_chi2_3D[i][j][0],h_bnb_chi2_3D[i][j][1],canv_chi2_3D[i][j], h_chi2_3D[i][j],
-		      pad_chi2_3D[i][j], pad0_chi2_3D[i][j], legend_chi2_3D[i][j],
+		      pad_chi2_3D[i][j], pad0_chi2_3D[i][j], legend_chi2_3D[i][j],channel_legend_chi2,
 		      ylim_chi2_3D[i][j], ymin_chi2_3D[i][j], num_particles, titles_chi2_3D[j], path, cuts_3D_titles[i], Form("3D_%s",hypothesis_3D[j]), cuts_3D[i],false, false, 0.01, 0.15);
       h_overlay_chi2_3D_vec.clear();
     } 
@@ -270,7 +270,7 @@ void analysis::main(){
 		    h_muon_ext[i][0], h_muon_ext[i][1], h_muon_ext[i][2],
 		    h_muon_dirt[i][0],h_muon_dirt[i][1],h_muon_dirt[i][2],
 		    h_muon_bnb[i][0],h_muon_bnb[i][1],canv_muon[i], h_muon[i],
-		    pad_muon[i], pad0_muon[i], legend_muon[i],
+		    pad_muon[i], pad0_muon[i], legend_muon[i],channel_legend,
 		    muon_ylim[i], muon_ymin[i], num_channels, Form("Muon: %s",titles_var[i]), path,"", Form("_muon%s",var[i]), "",false, false);
     h_muon_overlay_vec.clear();
     
@@ -289,7 +289,7 @@ void analysis::main(){
 		    h_recoil_ext[i][0], h_recoil_ext[i][1], h_recoil_ext[i][2],
 		    h_recoil_dirt[i][0],h_recoil_dirt[i][1],h_recoil_dirt[i][2],
 		    h_recoil_bnb[i][0],h_recoil_bnb[i][1],canv_recoil[i], h_recoil[i],
-		    pad_recoil[i], pad0_recoil[i], legend_recoil[i],
+		    pad_recoil[i], pad0_recoil[i], legend_recoil[i],channel_legend,
 		    recoil_ylim[i], recoil_ymin[i], num_channels, Form("Recoil Proton: %s",titles_var[i]), path,"", Form("_recoil%s",var[i]), "",false, false, 0.0105, 0.19, 3.7, -1.0);
     h_recoil_overlay_vec.clear();
 
@@ -307,7 +307,7 @@ void analysis::main(){
 		    h_leading_ext[i][0], h_leading_ext[i][1], h_leading_ext[i][2],
 		    h_leading_dirt[i][0],h_leading_dirt[i][1],h_leading_dirt[i][2],
 		    h_leading_bnb[i][0],h_leading_bnb[i][1],canv_leading[i], h_leading[i],
-		    pad_leading[i], pad0_leading[i], legend_leading[i],
+		    pad_leading[i], pad0_leading[i], legend_leading[i],channel_legend,
 		    leading_ylim[i], leading_ymin[i], num_channels, Form("Leading Proton: %s",titles_var[i]), path,"", Form("_leading%s",var[i]), "",false, false, 0.0, 0.19,-2.0, 4.5);
     h_leading_overlay_vec.clear();
 
@@ -337,7 +337,7 @@ void analysis::main(){
                     h_phys_ext[i][0], h_phys_ext[i][1], h_phys_ext[i][2],
                     h_phys_dirt[i][0],h_phys_dirt[i][1],h_phys_dirt[i][2],
                     h_phys_bnb[i][0],h_phys_bnb[i][1],canv_phys[i], h_phys[i],
-                    pad_phys[i], pad0_phys[i], legend_phys[i],
+                    pad_phys[i], pad0_phys[i], legend_phys[i],channel_legend,
                     phys_ylim[i], phys_ymin[i], num_channels, physics_titles[i], path,"", physics[i], "",false, false, 0.0, 0.19);
     h_phys_overlay_vec.clear();
 
@@ -346,7 +346,7 @@ void analysis::main(){
                     h_phys_ext[i][0], h_phys_ext[i][1], h_phys_ext[i][2],
                     h_phys_dirt[i][0],h_phys_dirt[i][1],h_phys_dirt[i][2],
                     h_phys_bnb[i][0],h_phys_bnb[i][1],canv_phys_raquel[i], h_phys_raquel[i],
-                    pad_phys_raquel[i], pad0_phys_raquel[i], legend_phys_raquel[i],
+                    pad_phys_raquel[i], pad0_phys_raquel[i], legend_phys_raquel[i],channel_legend_raquel,
                     phys_ylim[i], phys_ymin[i], num_channels_raquel, physics_titles[i], path,"", Form("%s_raquel",physics[i]), "",false, false, 0.0,0.19);
     h_phys_overlay_raquel_vec.clear();
   }
@@ -368,7 +368,7 @@ void analysis::main(){
                     h_stv_ext[i][0], h_stv_ext[i][1], h_stv_ext[i][2],
                     h_stv_dirt[i][0],h_stv_dirt[i][1],h_stv_dirt[i][2],
                     h_stv_bnb[i][0],h_stv_bnb[i][1],canv_stv[i], h_stv[i],
-                    pad_stv[i], pad0_stv[i], legend_stv[i],
+                    pad_stv[i], pad0_stv[i], legend_stv[i],channel_legend,
                     stv_ylim[i], stv_ymin[i], num_channels, stv_titles[i], path,"", stv[i], "",false, false);
     h_stv_overlay_vec.clear();
     
@@ -377,9 +377,9 @@ void analysis::main(){
                     h_stv_ext[i][0], h_stv_ext[i][1], h_stv_ext[i][2],
                     h_stv_dirt[i][0],h_stv_dirt[i][1],h_stv_dirt[i][2],
                     h_stv_bnb[i][0],h_stv_bnb[i][1],canv_stv_raquel[i], h_stv_raquel[i],
-                    pad_stv_raquel[i], pad0_stv_raquel[i], legend_stv_raquel[i],
+                    pad_stv_raquel[i], pad0_stv_raquel[i], legend_stv_raquel[i],channel_legend_raquel,
                     stv_ylim[i], stv_ymin[i], num_channels_raquel, stv_titles[i], path,"", Form("%s_raquel",stv[i]), "",false, false);
     h_stv_overlay_raquel_vec.clear();
   }
-   
+  
 } //end of program

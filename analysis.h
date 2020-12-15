@@ -17,7 +17,7 @@ class analysis
 public:
   virtual void main();
   virtual void Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TFile* f_dirt);
-  virtual void Plot_Histograms(Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 = "", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, double pad_lim = 0.0, double pad0_lim = 0.19,double bnb_min = 0.0, double bnb_max = 2.7);
+  virtual void Plot_Histograms(Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 = "", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, double pad_lim = 0.0, double pad0_lim = 0.19,double bnb_min = 0.0, double bnb_max = 2.7);
 
   
 
@@ -94,8 +94,9 @@ public:
  const char* plane[num_planes] = {"Plane_0","Plane_1","Plane_2"};
  const char* particles[num_particles] = {"total","proton","muon","pion","electron","other"};
  const char* hypothesis[num_hypothesis] = {"chi2p","chi2mu"};
- const char* channel_legend_chi2[num_particles] = {"Total Overlay","Proton","Muon","Pion","Electron","Other"};
- const char* titles_chi2[num_hypothesis] = {"#chi^{2}_{p}","#chi^{2}_{#mu}"};
+  //const char* channel_legend_chi2[num_particles] = {"Total Overlay","Proton","Muon","Pion","Electron","Other"};
+  std::vector<const char*> channel_legend_chi2 = {"Total Overlay","Proton","Muon","Pion","Electron","Other"};
+  const char* titles_chi2[num_hypothesis] = {"#chi^{2}_{p}","#chi^{2}_{#mu}"};
  const char* titles_planes[num_planes] ={"U Plane","V Plane","Y Plane"};
  int ylim_chi2[num_planes][num_hypothesis] = {{250,400},
 					      {250,250},
@@ -156,7 +157,8 @@ public:
  static const int num_channels = 11; //number of various overlay channels
  const char* cut[num_cuts] = {"_before_selection","_after_3goodtrks","_after_containment","_after_PID"}; 
  const char* channel[num_channels] = {"_total", "_cc2p0pi","_ccNp1pi","_ccNp0pi","_cc1p0pi","_nc","_ccNpNpi","_cc0p0pi","_other","_outfv","_ccnue"};
- const char* channel_legend[num_channels] = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
+  //const char* channel_legend[num_channels] = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
+  std::vector<const char*> channel_legend = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
   const char* cut_titles[num_cuts] = {"Before Selection", "After 3 Track Quality Cuts","After Containment Cut","After PID Cuts"};
   int z = 0; //dumb indices
   int f = 0; //dumb indices
@@ -307,8 +309,9 @@ public:
  int f_raquel = 0; //dumb indices 
  static const int num_channels_raquel = 10;
  const char* channel_raquel[num_channels_raquel] = {"_total", "_ccRES","_ccQE","_ccMEC","_nc","_ccDIS","_ccCOH","_outfv","_other","_ccNue"};
- const char* channel_legend_raquel[num_channels_raquel] = {"Total Overlay","CCRES","CCQE","CCMEC","NC","CCDIS","CCCOH","OOFV","Other","CC$\nu_{e}$"};
-
+  //const char* channel_legend_raquel[num_channels_raquel] = {"Total Overlay","CCRES","CCQE","CCMEC","NC","CCDIS","CCCOH","OOFV","Other","CC$\nu_{e}$"};
+  std::vector<const char*> channel_legend_raquel = {"Total Overlay","CCRES","CCQE","CCMEC","NC","CCDIS","CCCOH","OOFV","Other","CC$\nu_{e}$"};
+  
  //Plots of the individual particle quantities
  //Note: we are taking all the variables from my definintions since they are the same for Raquel's plots                                                                                                                              
  //We are just defining new cavases, legends, pads, and overlay histograms 
@@ -487,7 +490,7 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
 
 }
 
-void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 ="", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, double pad_lim = 0.0, double pad0_lim = 0.19, double bnb_min = 0.0, double bnb_max = 2.7)
+void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend,int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 ="", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, double pad_lim = 0.0, double pad0_lim = 0.19, double bnb_min = 0.0, double bnb_max = 2.7)
 {      
 
   h_ext1 = (TH1D*)h_ext->Clone();
