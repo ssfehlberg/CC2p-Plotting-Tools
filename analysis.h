@@ -262,9 +262,11 @@ public:
   static const int num_phys =5; //NOTE: These values are the same for Raquel's plots. If this changes in the future, be sure to chage this!
   const char* physics[num_phys] = {"_cos_gamma_cm","_opening_angle_protons","_opening_angle_mu_leading","_mom_struck_nuc","_tot_pz"};
   const char* physics_titles[num_phys] = {"cos(#gamma_{cm})","cos(#gamma_{Lab})","Opening Angle Between the Muon and Leading Proton (Rad.)","Momentum of Struck Nucleon (GeV)","Total P_{z} of the Two Protons"};
-  double physics_ylim[num_phys] =  {130,60,60,60,80};
+  int phys_ylim[num_phys] =  {130,60,60,60,80};
+  int phys_ymin[num_phys] =  {0,0,0,0};
   TH1D* h_phys_overlay[num_phys][num_channels];
- TH1D* h_phys_overlay0[num_phys][3];
+  std::vector<TH1D*> h_phys_overlay_vec;
+  TH1D* h_phys_overlay0[num_phys][3];
  TH1D* h_phys_bnb[num_phys][2];
  TH1D* h_phys_ext[num_phys][3];
  TH1D* h_phys_dirt[num_phys][3];
@@ -274,22 +276,24 @@ public:
  TPad* pad_phys[num_phys];
  TPad* pad0_phys[num_phys];
 
- //STVs
- //////////////////////////
- static const int num_stv =3;
- const char* stv[num_stv] = {"_delta_PT","_delta_phiT","_delta_alphaT"};
- const char* stv_titles[num_stv] = {"#delta P_{T} (GeV/c)","#delta #phi_{T} (Deg.)","#delta #alpha_{T} (Deg.)"};
- double stv_ylim[num_stv] = {130,150,120};
- TH1D* h_stv_overlay[num_stv][num_channels];
- TH1D* h_stv_overlay0[num_stv][3];
- TH1D* h_stv_bnb[num_stv][2];
- TH1D* h_stv_ext[num_stv][3];
- TH1D* h_stv_dirt[num_stv][3];
- THStack* h_stv[num_stv];
- TCanvas* canv_stv[num_stv];
- TLegend* legend_stv[num_stv];
- TPad* pad_stv[num_stv];
- TPad* pad0_stv[num_stv];
+  //STVs
+  //////////////////////////
+  static const int num_stv =3;
+  const char* stv[num_stv] = {"_delta_PT","_delta_phiT","_delta_alphaT"};
+  const char* stv_titles[num_stv] = {"#delta P_{T} (GeV/c)","#delta #phi_{T} (Deg.)","#delta #alpha_{T} (Deg.)"};
+  int stv_ylim[num_stv] = {130,150,120};
+  int stv_ymin[num_stv] = {0,0,0};  
+  TH1D* h_stv_overlay[num_stv][num_channels];
+  std::vector<TH1D*> h_stv_overlay_vec;
+  TH1D* h_stv_overlay0[num_stv][3];
+  TH1D* h_stv_bnb[num_stv][2];
+  TH1D* h_stv_ext[num_stv][3];
+  TH1D* h_stv_dirt[num_stv][3];
+  THStack* h_stv[num_stv];
+  TCanvas* canv_stv[num_stv];
+  TLegend* legend_stv[num_stv];
+  TPad* pad_stv[num_stv];
+  TPad* pad0_stv[num_stv];
 
  //////////////////////////////////////////////////
  //PLOTS WITH RAQUEL'S MOTE-CARLO DEFINITIONS
@@ -312,6 +316,7 @@ public:
 
  //Muon
  TH1D* h_muon_overlay_raquel[num_var][num_channels_raquel]; //actual overlay
+  std::vector<TH1D*> h_muon_overlay_raquel_vec;
  TH1D* h_muon_overlay0_raquel[num_var][3]; //copies for statistics
  THStack* h_muon_raquel[num_var];
  TCanvas* canv_muon_raquel[num_var];
@@ -321,6 +326,7 @@ public:
 
  //Recoil Proton
  TH1D* h_recoil_overlay_raquel[num_var][num_channels_raquel];
+  std::vector<TH1D*> h_recoil_overlay_raquel_vec;
  TH1D* h_recoil_overlay0_raquel[num_var][3];
  THStack* h_recoil_raquel[num_var];
  TCanvas* canv_recoil_raquel[num_var];
@@ -330,6 +336,7 @@ public:
 
  //Leading Proton
  TH1D* h_leading_overlay_raquel[num_var][num_channels_raquel];
+  std::vector<TH1D*> h_leading_overlay_raquel_vec;
  TH1D* h_leading_overlay0_raquel[num_var][3];
  THStack* h_leading_raquel[num_var];
  TCanvas* canv_leading_raquel[num_var];
@@ -342,6 +349,7 @@ public:
  //We are just defining new cavases, legends, pads, and overlay histograms 
  ////////////////////////////////////////////////////////
  TH1D* h_phys_overlay_raquel[num_phys][num_channels_raquel];
+  std::vector<TH1D*> h_phys_overlay_raquel_vec;
  TH1D* h_phys_overlay0_raquel[num_phys][3];
  THStack* h_phys_raquel[num_phys];
  TCanvas* canv_phys_raquel[num_phys];
@@ -354,6 +362,7 @@ public:
  //We are just defining new cavases, legends, pads, and overlay histograms
  ////////////////////////////   
  TH1D* h_stv_overlay_raquel[num_stv][num_channels_raquel];
+  std::vector<TH1D*> h_stv_overlay_raquel_vec;
  TH1D* h_stv_overlay0_raquel[num_stv][3];
  THStack* h_stv_raquel[num_stv];
  TCanvas* canv_stv_raquel[num_stv];

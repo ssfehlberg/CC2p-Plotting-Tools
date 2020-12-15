@@ -1,6 +1,5 @@
 #define analysis_cxx
 #include "analysis.h"
-
 #include "paul_tol_colors.hpp"
 #include <iostream>
 #include <ctime>
@@ -66,10 +65,6 @@ void analysis::main(){
   //GRAB ALL THE HISTOGRAMS FROM THE FILES
   ////////////////////////////////////////
   Grab_Histograms(f1, f2, f3, f4, f_dirt);
-  
-  /////////////////////////////////////////////
-  //PLOTTING TIME
-  ///////////////////////////////////////////
 
   ///////////////////////////////////
   //Plots of the Truth Variables
@@ -218,11 +213,8 @@ void analysis::main(){
       for(int k=0; k < num_channels; k++){
 	h_overlay_vec.push_back(h_overlay[i][j][k]);
       }
-      
-      Plot_Histograms(colors, h_overlay_vec, h_overlay0[i][j][0],h_overlay0[i][j][1],h_overlay0[i][j][2], h_ext[i][j][0], h_ext[i][j][1], h_ext[i][j][2], h_dirt[i][j][0],h_dirt[i][j][1],h_dirt[i][j][2],h_bnb[i][j][0],h_bnb[i][j][1],
-		      canv[i][j], h[i][j], pad[i][j], pad0[i][j], legend[i][j],ylim[i][j],ymin[i][j], num_channels, titles[j], path, "", plots[j], cut[i], false, false);
+      Plot_Histograms(colors, h_overlay_vec, h_overlay0[i][j][0],h_overlay0[i][j][1],h_overlay0[i][j][2], h_ext[i][j][0], h_ext[i][j][1], h_ext[i][j][2], h_dirt[i][j][0],h_dirt[i][j][1],h_dirt[i][j][2],h_bnb[i][j][0],h_bnb[i][j][1],canv[i][j], h[i][j], pad[i][j], pad0[i][j], legend[i][j],ylim[i][j],ymin[i][j], num_channels, titles[j], path, "", plots[j], cut[i], false, false);
       h_overlay_vec.clear();
-      
     }
   }
 
@@ -234,9 +226,7 @@ void analysis::main(){
       for(int k=0; k < num_particles; k++){
 	h_overlay_chi2_vec.push_back(h_overlay_chi2[i][j][k]);
       } 
-      
       Plot_Histograms(colors_chi2, h_overlay_chi2_vec, h_overlay0_chi2[i][j][0],h_overlay0_chi2[i][j][1],h_overlay0_chi2[i][j][2], h_ext_chi2[i][j][0], h_ext_chi2[i][j][1], h_ext_chi2[i][j][2], h_dirt_chi2[i][j][0],h_dirt_chi2[i][j][1],h_dirt_chi2[i][j][2],h_bnb_chi2[i][j][0],h_bnb_chi2[i][j][1],canv_chi2[i][j], h_chi2[i][j], pad_chi2[i][j], pad0_chi2[i][j], legend_chi2[i][j],ylim_chi2[i][j], ymin_chi2[i][j], num_particles, titles_chi2[j], path,titles_planes[i], plane[i], hypothesis[j], false, false);
-
       h_overlay_chi2_vec.clear();
     }
   }
@@ -249,346 +239,152 @@ void analysis::main(){
       for(int k=0; k < num_particles; k++){
 	h_overlay_chi2_3D_vec.push_back(h_overlay_chi2_3D[i][j][k]);
       } 
-      
       Plot_Histograms(colors_chi2, h_overlay_chi2_3D_vec, h_overlay0_chi2_3D[i][j][0],h_overlay0_chi2_3D[i][j][1],h_overlay0_chi2_3D[i][j][2],
 		      h_ext_chi2_3D[i][j][0], h_ext_chi2_3D[i][j][1], h_ext_chi2_3D[i][j][2],
 		      h_dirt_chi2_3D[i][j][0],h_dirt_chi2_3D[i][j][1],h_dirt_chi2_3D[i][j][2],
 		      h_bnb_chi2_3D[i][j][0],h_bnb_chi2_3D[i][j][1],canv_chi2_3D[i][j], h_chi2_3D[i][j],
 		      pad_chi2_3D[i][j], pad0_chi2_3D[i][j], legend_chi2_3D[i][j],
 		      ylim_chi2_3D[i][j], ymin_chi2_3D[i][j], num_particles, titles_chi2_3D[j], path, cuts_3D_titles[i], Form("3D_%s",hypothesis_3D[j]), cuts_3D[i],false, false);
-
       h_overlay_chi2_3D_vec.clear();
-    } //end of number of hypothesis
+    } 
   }
   
-
   //////////////////////////////
   //Particle specific plots
-  //////////////////////////
+  /////////////////////////////
   for(int i = 0; i < num_var; i++){
     for(int k=0; k < num_channels; k++){
       h_muon_overlay_vec.push_back(h_muon_overlay[i][k]);
       h_recoil_overlay_vec.push_back(h_recoil_overlay[i][k]);
       h_leading_overlay_vec.push_back(h_leading_overlay[i][k]);
     }
-
-    //muon
+    for(int k=0; k < num_channels_raquel; k++){
+      h_muon_overlay_raquel_vec.push_back(h_muon_overlay_raquel[i][k]);
+      h_recoil_overlay_raquel_vec.push_back(h_recoil_overlay_raquel[i][k]);
+      h_leading_overlay_raquel_vec.push_back(h_leading_overlay_raquel[i][k]);
+      
+    }
+    
+    //muon:mine
     Plot_Histograms(colors, h_muon_overlay_vec, h_muon_overlay0[i][0],h_muon_overlay0[i][1],h_muon_overlay0[i][2],
 		    h_muon_ext[i][0], h_muon_ext[i][1], h_muon_ext[i][2],
 		    h_muon_dirt[i][0],h_muon_dirt[i][1],h_muon_dirt[i][2],
 		    h_muon_bnb[i][0],h_muon_bnb[i][1],canv_muon[i], h_muon[i],
 		    pad_muon[i], pad0_muon[i], legend_muon[i],
 		    muon_ylim[i], muon_ymin[i], num_channels, Form("Muon: %s",titles_var[i]), path,"", Form("_muon%s",var[i]), "",false, false);
-
     h_muon_overlay_vec.clear();
+    
+    //muon:raquel
+    /* Plot_Histograms(colors_raquel, h_muon_overlay_raquel_vec, h_muon_overlay0_raquel[i][0],h_muon_overlay0_raquel[i][1],h_muon_overlay0_raquel[i][2],
+		    h_muon_ext[i][0], h_muon_ext[i][1], h_muon_ext[i][2],
+		    h_muon_dirt[i][0],h_muon_dirt[i][1],h_muon_dirt[i][2],
+		    h_muon_bnb[i][0],h_muon_bnb[i][1],canv_muon_raquel[i], h_muon_raquel[i],
+		    pad_muon_raquel[i], pad0_muon_raquel[i], legend_muon_raquel[i],
+		    muon_ylim[i], muon_ymin[i], num_channels_raquel, Form("Muon: %s",titles_var[i]), path,"", Form("_muon_raquel%s",var[i]), "",false, false);
+    h_muon_overlay_raquel_vec.clear();
+    */
 
-    //recoil proton
+    //recoil proton:mine
     Plot_Histograms(colors, h_recoil_overlay_vec, h_recoil_overlay0[i][0],h_recoil_overlay0[i][1],h_recoil_overlay0[i][2],
 		    h_recoil_ext[i][0], h_recoil_ext[i][1], h_recoil_ext[i][2],
 		    h_recoil_dirt[i][0],h_recoil_dirt[i][1],h_recoil_dirt[i][2],
 		    h_recoil_bnb[i][0],h_recoil_bnb[i][1],canv_recoil[i], h_recoil[i],
 		    pad_recoil[i], pad0_recoil[i], legend_recoil[i],
 		    recoil_ylim[i], recoil_ymin[i], num_channels, Form("Recoil Proton: %s",titles_var[i]), path,"", Form("_recoil%s",var[i]), "",false, false);
-
     h_recoil_overlay_vec.clear();
 
-    //leading proton
+    //recoil proton:raquel
+    /*Plot_Histograms(colors_raquel, h_recoil_overlay_raquel_vec, h_recoil_overlay0_raquel[i][0],h_recoil_overlay0_raquel[i][1],h_recoil_overlay0_raquel[i][2],
+		    h_recoil_ext[i][0], h_recoil_ext[i][1], h_recoil_ext[i][2],
+		    h_recoil_dirt[i][0],h_recoil_dirt[i][1],h_recoil_dirt[i][2],
+		    h_recoil_bnb[i][0],h_recoil_bnb[i][1],canv_recoil_raquel[i], h_recoil_raquel[i],
+		    pad_recoil_raquel[i], pad0_recoil_raquel[i], legend_recoil_raquel[i],
+		    recoil_ylim[i], recoil_ymin[i], num_channels_raquel, Form("Recoil Proton: %s",titles_var[i]), path,"", Form("_recoil_raquel%s",var[i]), "",false, false);
+    h_recoil_overlay_raquel_vec.clear();
+    */
+    //leading proton:mine
     Plot_Histograms(colors, h_leading_overlay_vec, h_leading_overlay0[i][0],h_leading_overlay0[i][1],h_leading_overlay0[i][2],
 		    h_leading_ext[i][0], h_leading_ext[i][1], h_leading_ext[i][2],
 		    h_leading_dirt[i][0],h_leading_dirt[i][1],h_leading_dirt[i][2],
 		    h_leading_bnb[i][0],h_leading_bnb[i][1],canv_leading[i], h_leading[i],
 		    pad_leading[i], pad0_leading[i], legend_leading[i],
 		    leading_ylim[i], leading_ymin[i], num_channels, Form("Leading Proton: %s",titles_var[i]), path,"", Form("_leading%s",var[i]), "",false, false);
-
     h_leading_overlay_vec.clear();
 
+    //leading proton:raquel
+    /*Plot_Histograms(colors_raquel, h_leading_overlay_raquel_vec, h_leading_overlay0_raquel[i][0],h_leading_overlay0_raquel[i][1],h_leading_overlay0_raquel[i][2],
+		    h_leading_ext[i][0], h_leading_ext[i][1], h_leading_ext[i][2],
+		    h_leading_dirt[i][0],h_leading_dirt[i][1],h_leading_dirt[i][2],
+		    h_leading_bnb[i][0],h_leading_bnb[i][1],canv_leading_raquel[i], h_leading_raquel[i],
+		    pad_leading_raquel[i], pad0_leading_raquel[i], legend_leading_raquel[i],
+		    leading_ylim[i], leading_ymin[i], num_channels_raquel, Form("Leading Proton: %s",titles_var[i]), path,"", Form("_leading_raquel%s",var[i]), "",false, false);
+    h_leading_overlay_raquel_vec.clear();
+    */
   }
     
   //PHYSICS PLOTS!!!
   ////////////////////////////////
   for(int i=0; i < num_phys; i++){
-    h_phys_ext[i][1] = (TH1D*)h_phys_ext[i][0]->Clone();
-    h_phys_ext[i][2] = (TH1D*)h_phys_ext[i][0]->Clone();
-    h_phys_dirt[i][1] = (TH1D*)h_phys_dirt[i][0]->Clone();
-    h_phys_dirt[i][2] = (TH1D*)h_phys_dirt[i][0]->Clone();  
-    h_phys_bnb[i][1] = (TH1D*)h_phys_bnb[i][0]->Clone();
-    h_phys_overlay0[i][0] = (TH1D*)h_phys_overlay[i][0]->Clone();
-    h_phys_overlay0[i][1] = (TH1D*)h_phys_overlay[i][0]->Clone();
-    h_phys_overlay0[i][2] = (TH1D*)h_phys_overlay[i][0]->Clone();
-      
-    canv_phys[i] = new TCanvas(Form("C_phys%s",var[i]),Form("C_phys%s",var[i]),2000,1500);
-    canv_phys[i]->cd(1);
-    h_phys[i] = new THStack(Form("h_phys%s",var[i]),Form("h_phys%s",var[i]));
-    pad_phys[i] = new TPad(Form("pad_phys%s",var[i]),Form("pad_phys%s",var[i]),0,0.35,1.0,1.0);
-    pad_phys[i]->SetBottomMargin(0.0);
-    pad_phys[i]->SetGridx();
-    pad_phys[i]->SetBorderMode(0);
-    pad_phys[i]->Draw();
-    pad_phys[i]->cd();
-
-    //Stacked Histrogram parameters
-    h_phys[i]->Draw("HIST");
-    h_phys[i]->SetTitle("");
-    h_phys[i]->SetMaximum(physics_ylim[i]);
-    h_phys[i]->SetMinimum(-2);
-
-    //MC
-    if(plot_ccnue){
-      z = num_channels;
-      f = 11;
-    }else{
-      z = num_channels -1;
-      f = 10;
+    for(int j=0; j < num_channels; j++){
+      h_phys_overlay_vec.push_back(h_phys_overlay[i][j]);
     }
-      
-    for(int k=1; k < z ; k++){
-      h_phys_overlay[i][k]->SetLineColor(colors[k]);
-      h_phys_overlay[i][k]->SetFillColor(colors[k]);
-      h_phys_overlay[i][k]->SetLineWidth(1);
-      h_phys[i]->Add(h_phys_overlay[i][k]);
+    for(int j=0; j < num_channels_raquel; j++){
+      h_phys_overlay_raquel_vec.push_back(h_phys_overlay_raquel[i][j]);
     }
-
-      
-    //Dirt
-    h_phys[i]->Add(h_phys_dirt[i][0]);
-    h_phys_dirt[i][0]->SetFillColor(kOrange-8);
-    h_phys_dirt[i][0]->SetLineColor(kOrange-8);
-    h_phys_dirt[i][0]->SetLineWidth(1);
-   
-    //EXT
-    h_phys[i]->Add(h_phys_ext[i][0]);
-    h_phys_ext[i][0]->SetFillColor(kViolet-7);
-    h_phys_ext[i][0]->SetFillStyle(3005);
-    h_phys_ext[i][0]->SetLineWidth(1);
-      
-    //BNB
-    h_phys_bnb[i][0]->Draw("e1SAME");
-    h_phys_bnb[i][0]->SetLineColor(kBlack);
-    h_phys_bnb[i][0]->SetLineWidth(1);
-
-    h_phys[i]->GetYaxis()->SetTitle("No. Events");
-      
-    //if you want to plot the total for sanity sake:
-    if(plot_total){
-      h_phys_overlay[i][0]->Draw("SAME");
-    }
-      
-    //Make sure to do overlay statistical uncertainty
-    OverlayStatistics(h_phys_overlay0[i][0],h_phys_ext[i][2],h_phys_dirt[i][2]);
-    h_phys_overlay0[i][0]->Draw("e2SAME");
-    h_phys_overlay0[i][0]->SetLineColor(kBlack);
-    h_phys_overlay0[i][0]->SetFillColor(kBlack);
-    h_phys_overlay0[i][0]->SetFillStyle(3004);
-    h_phys_overlay0[i][0]->SetMarkerSize(0);
-    h_phys_overlay0[i][0]->SetLineWidth(1);
-
-    legend_phys[i] = new TLegend(0.71, 0.54, 0.899, 0.89);
-    legend_phys[i]->AddEntry(h_phys_bnb[i][0],"Data (Beam-On)","lepf");
-    legend_phys[i]->AddEntry(h_phys_overlay0[i][0],"Stat. Unc.","f");
-    legend_phys[i]->AddEntry(h_phys_ext[i][0],"Data (Beam-Off)","f");
-    legend_phys[i]->AddEntry(h_phys_dirt[i][0],"Dirt","f"); 
-    for(int k =1; k < z; k++){	
-      legend_phys[i]->AddEntry(h_phys_overlay[i][f-k],Form("%s",channel_legend[f-k]),"f");  
-    }
-    legend_phys[i]->SetLineWidth(0);
-    //legend_phys[i]->SetFillStyle(1);
-    legend_phys[i]->SetFillColor(kWhite);
-    legend_phys[i]->SetTextSize(0.03);
-    legend_phys[i]->Draw("same");
-    t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s}",physics_titles[i]));
-    t->DrawLatex(0.195,0.92,Form("%s",pot_num));
-    t->DrawLatex(0.82,0.92,Form("%s",sample_name));
-      
-    canv_phys[i]->cd();
-    pad0_phys[i] = new TPad(Form("pad0_phys%s",var[i]),Form("pad0_phys%s",var[i]),0,0.0,1.0,0.35);
-    pad0_phys[i]->SetTopMargin(0);                
-    pad0_phys[i]->SetBottomMargin(0.19);
-    pad0_phys[i]->SetGridx();
-    pad0_phys[i]->Draw();
-    pad0_phys[i]->cd();
-
-    h_phys_ext[i][1]->Add(h_phys_overlay0[i][1]);
-    h_phys_ext[i][1]->Add(h_phys_dirt[i][1]);
-    h_phys_ext[i][1]->Sumw2();
-    h_phys_bnb[i][1]->Divide(h_phys_bnb[i][1],h_phys_ext[i][1],1,1);
-    h_phys_bnb[i][1]->Sumw2();
-    h_phys_bnb[i][1]->Draw("e1p");
-    h_phys_bnb[i][1]->SetStats(kFALSE);
-    h_phys_bnb[i][1]->SetTitle("");
-      
-    TF1 *a4 = new TF1("a4","1", -150000 , 150000);
-    a4->SetLineColor(kRed);
-    a4->Draw("SAME");
-
-    //Calculate the Chi2
-    double chisqv1_phys = calculatePearsonChiSq(h_phys_bnb[i][0], h_phys_overlay0[i][2]);
-    int nBins1_phys = h_phys_overlay0[i][2]->GetXaxis()->GetNbins();
-    //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv, nBins, chisqv/nBins);
-    t->DrawLatex(0.83,0.92,Form("#scale[1.3]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1_phys/nBins1_phys));
-      
-    h_phys_bnb[i][1]->GetYaxis()->SetTitle("Beam-On/(Simulation + Beam-Off)");
-    h_phys_bnb[i][1]->GetYaxis()->CenterTitle();
-    h_phys_bnb[i][1]->GetYaxis()->SetTitleSize(28);
-    h_phys_bnb[i][1]->GetYaxis()->SetTitleFont(43);
-    h_phys_bnb[i][1]->GetYaxis()->SetTitleOffset(1.5);
-    h_phys_bnb[i][1]->GetYaxis()->SetLabelFont(43);
-    h_phys_bnb[i][1]->GetYaxis()->SetLabelSize(30);
-    h_phys_bnb[i][1]->GetXaxis()->SetTitle(Form("%s",physics_titles[i]));
-    h_phys_bnb[i][1]->GetXaxis()->SetTitleSize(35);
-    h_phys_bnb[i][1]->GetXaxis()->SetTitleFont(43);
-    h_phys_bnb[i][1]->GetXaxis()->SetTitleOffset(3);
-    h_phys_bnb[i][1]->GetXaxis()->SetLabelFont(43);
-    h_phys_bnb[i][1]->GetXaxis()->SetLabelSize(35);
     
-    canv_phys[i]->Print(Form("%s%s.png",path.c_str(),physics[i]));
-    canv_phys[i]->Print(Form("%s%s.pdf",path.c_str(),physics[i]));
+    //mine 
+    Plot_Histograms(colors, h_phys_overlay_vec, h_phys_overlay0[i][0],h_phys_overlay0[i][1],h_phys_overlay0[i][2],
+                    h_phys_ext[i][0], h_phys_ext[i][1], h_phys_ext[i][2],
+                    h_phys_dirt[i][0],h_phys_dirt[i][1],h_phys_dirt[i][2],
+                    h_phys_bnb[i][0],h_phys_bnb[i][1],canv_phys[i], h_phys[i],
+                    pad_phys[i], pad0_phys[i], legend_phys[i],
+                    phys_ylim[i], phys_ymin[i], num_channels, physics_titles[i], path,"", physics[i], "",false, false);
+    h_phys_overlay_vec.clear();
 
+    //raquel
+    Plot_Histograms(colors_raquel, h_phys_overlay_raquel_vec, h_phys_overlay0_raquel[i][0],h_phys_overlay0_raquel[i][1],h_phys_overlay0_raquel[i][2],
+                    h_phys_ext[i][0], h_phys_ext[i][1], h_phys_ext[i][2],
+                    h_phys_dirt[i][0],h_phys_dirt[i][1],h_phys_dirt[i][2],
+                    h_phys_bnb[i][0],h_phys_bnb[i][1],canv_phys_raquel[i], h_phys_raquel[i],
+                    pad_phys_raquel[i], pad0_phys_raquel[i], legend_phys_raquel[i],
+                    phys_ylim[i], phys_ymin[i], num_channels_raquel, physics_titles[i], path,"", Form("%s_raquel",physics[i]), "",false, false);
+    h_phys_overlay_raquel_vec.clear();
   }
-  
-  //PHYSICS PLOTS RAQUEL
-  //////////////////////////////
-  for(int i=0; i < num_phys; i++){
-    h_phys_ext[i][1] = (TH1D*)h_phys_ext[i][0]->Clone();
-    h_phys_ext[i][2] = (TH1D*)h_phys_ext[i][0]->Clone();
-    h_phys_dirt[i][1] = (TH1D*)h_phys_dirt[i][0]->Clone();
-    h_phys_dirt[i][2] = (TH1D*)h_phys_dirt[i][0]->Clone();  
-    h_phys_bnb[i][1] = (TH1D*)h_phys_bnb[i][0]->Clone();
-    h_phys_overlay0_raquel[i][0] = (TH1D*)h_phys_overlay_raquel[i][0]->Clone();
-    h_phys_overlay0_raquel[i][1] = (TH1D*)h_phys_overlay_raquel[i][0]->Clone();
-    h_phys_overlay0_raquel[i][2] = (TH1D*)h_phys_overlay_raquel[i][0]->Clone();
-      
-    canv_phys_raquel[i] = new TCanvas(Form("C_phys_raquel%s",var[i]),Form("C_phys_raquel%s",var[i]),2000,1500);
-    canv_phys_raquel[i]->cd(1);
-    h_phys_raquel[i] = new THStack(Form("h_phys%s",var[i]),Form("h_phys%s",var[i]));
-    pad_phys_raquel[i] = new TPad(Form("pad_phys_raquel%s",var[i]),Form("pad_phys_raquel%s",var[i]),0,0.35,1.0,1.0);
-    pad_phys_raquel[i]->SetBottomMargin(0.0);
-    pad_phys_raquel[i]->SetGridx();
-    pad_phys_raquel[i]->SetBorderMode(0);
-    pad_phys_raquel[i]->Draw();
-    pad_phys_raquel[i]->cd();
 
-    //Stacked Histrogram parameters
-    h_phys_raquel[i]->Draw("HIST");
-    h_phys_raquel[i]->SetTitle("");
-    h_phys_raquel[i]->SetMaximum(physics_ylim[i]);
-    h_phys_raquel[i]->SetMinimum(-2);
-
-    //MC
-    if(plot_ccnue_raquel){
-      z_raquel = num_channels_raquel;
-      f_raquel = 10;
-    }else{
-      z_raquel = num_channels_raquel -1;
-      f_raquel = 9;
-    }
-    
-    for(int k=1; k < z_raquel ; k++){
-      h_phys_overlay_raquel[i][k]->SetLineColor(colors_raquel[k]);
-      h_phys_overlay_raquel[i][k]->SetFillColor(colors_raquel[k]);
-      h_phys_overlay_raquel[i][k]->SetLineWidth(1);
-      h_phys_raquel[i]->Add(h_phys_overlay_raquel[i][k]);
-    }
-
-    //Dirt
-    h_phys_raquel[i]->Add(h_phys_dirt[i][0]);
-    h_phys_dirt[i][0]->SetFillColor(kOrange-8);
-    h_phys_dirt[i][0]->SetLineColor(kOrange-8);
-    h_phys_dirt[i][0]->SetLineWidth(1);
-   
-    //EXT
-    h_phys_raquel[i]->Add(h_phys_ext[i][0]);
-    h_phys_ext[i][0]->SetFillColor(kViolet-7);
-    h_phys_ext[i][0]->SetFillStyle(3005);
-    h_phys_ext[i][0]->SetLineWidth(1);
-      
-    //BNB
-    h_phys_bnb[i][0]->Draw("e1SAME");
-    h_phys_bnb[i][0]->SetLineColor(kBlack);
-    h_phys_bnb[i][0]->SetLineWidth(1);
-
-    h_phys_raquel[i]->GetYaxis()->SetTitle("No. Events");
-      
-    //if you want to plot the total for sanity sake:
-    if(plot_total_raquel){
-      h_phys_overlay_raquel[i][0]->Draw("SAME");
-    }
-      
-    //Make sure to do overlay statistical uncertainty
-    OverlayStatistics(h_phys_overlay0_raquel[i][0],h_phys_ext[i][2],h_phys_dirt[i][2]);
-    h_phys_overlay0_raquel[i][0]->Draw("e2SAME");
-    h_phys_overlay0_raquel[i][0]->SetLineColor(kBlack);
-    h_phys_overlay0_raquel[i][0]->SetFillColor(kBlack);
-    h_phys_overlay0_raquel[i][0]->SetFillStyle(3004);
-    h_phys_overlay0_raquel[i][0]->SetMarkerSize(0);
-    h_phys_overlay0_raquel[i][0]->SetLineWidth(1);
-
-    legend_phys_raquel[i] = new TLegend(0.71, 0.54, 0.899, 0.89);
-    legend_phys_raquel[i]->AddEntry(h_phys_bnb[i][0],"Data (Beam-On)","lepf");
-    legend_phys_raquel[i]->AddEntry(h_phys_overlay0[i][0],"Stat. Unc.","f");
-    legend_phys_raquel[i]->AddEntry(h_phys_ext[i][0],"Data (Beam-Off)","f");
-    legend_phys_raquel[i]->AddEntry(h_phys_dirt[i][0],"Dirt","f"); 
-    for(int k =1; k < z_raquel; k++){	
-      legend_phys_raquel[i]->AddEntry(h_phys_overlay_raquel[i][f_raquel-k],Form("%s",channel_legend_raquel[f_raquel-k]),"f");  
-    }
-    legend_phys_raquel[i]->SetLineWidth(0);
-    //legend_phys[i]->SetFillStyle(1);
-    legend_phys_raquel[i]->SetFillColor(kWhite);
-    legend_phys_raquel[i]->SetTextSize(0.03);
-    legend_phys_raquel[i]->Draw("same");
-    t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s}",physics_titles[i]));
-    t->DrawLatex(0.195,0.92,Form("%s",pot_num));
-    t->DrawLatex(0.82,0.92,Form("%s",sample_name));
-      
-    canv_phys_raquel[i]->cd();
-    pad0_phys_raquel[i] = new TPad(Form("pad0_phys_raquel%s",var[i]),Form("pad0_phys_raquel%s",var[i]),0,0.0,1.0,0.35);
-    pad0_phys_raquel[i]->SetTopMargin(0);                
-    pad0_phys_raquel[i]->SetBottomMargin(0.19);
-    pad0_phys_raquel[i]->SetGridx();
-    pad0_phys_raquel[i]->Draw();
-    pad0_phys_raquel[i]->cd();
-
-    h_phys_ext[i][1]->Add(h_phys_overlay0_raquel[i][1]);
-    h_phys_ext[i][1]->Add(h_phys_dirt[i][1]);
-    h_phys_ext[i][1]->Sumw2();
-    h_phys_bnb[i][1]->Divide(h_phys_bnb[i][1],h_phys_ext[i][1],1,1);
-    h_phys_bnb[i][1]->Sumw2();
-    h_phys_bnb[i][1]->Draw("e1p");
-    h_phys_bnb[i][1]->SetStats(kFALSE);
-    h_phys_bnb[i][1]->SetTitle("");
-      
-    TF1 *a4 = new TF1("a4","1", -150000 , 150000);
-    a4->SetLineColor(kRed);
-    a4->Draw("SAME");
-
-    //Calculate the Chi2
-    double chisqv1_phys = calculatePearsonChiSq(h_phys_bnb[i][0], h_phys_overlay0_raquel[i][2]);
-    int nBins1_phys = h_phys_overlay0_raquel[i][2]->GetXaxis()->GetNbins();
-    //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv, nBins, chisqv/nBins);
-    t->DrawLatex(0.83,0.92,Form("#scale[1.3]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1_phys/nBins1_phys));
-      
-    h_phys_bnb[i][1]->GetYaxis()->SetTitle("Beam-On/(Simulation + Beam-Off)");
-    h_phys_bnb[i][1]->GetYaxis()->CenterTitle();
-    h_phys_bnb[i][1]->GetYaxis()->SetTitleSize(28);
-    h_phys_bnb[i][1]->GetYaxis()->SetTitleFont(43);
-    h_phys_bnb[i][1]->GetYaxis()->SetTitleOffset(1.5);
-    h_phys_bnb[i][1]->GetYaxis()->SetLabelFont(43);
-    h_phys_bnb[i][1]->GetYaxis()->SetLabelSize(30);
-    h_phys_bnb[i][1]->GetXaxis()->SetTitle(Form("%s",physics_titles[i]));
-    h_phys_bnb[i][1]->GetXaxis()->SetTitleSize(35);
-    h_phys_bnb[i][1]->GetXaxis()->SetTitleFont(43);
-    h_phys_bnb[i][1]->GetXaxis()->SetTitleOffset(3);
-    h_phys_bnb[i][1]->GetXaxis()->SetLabelFont(43);
-    h_phys_bnb[i][1]->GetXaxis()->SetLabelSize(35);
-    
-    canv_phys_raquel[i]->Print(Form("%s%s_raquel.png",path.c_str(),physics[i]));
-    canv_phys_raquel[i]->Print(Form("%s%s_raquel.pdf",path.c_str(),physics[i]));
-
-  }
-  
 
   //STV PLOTS
   ///////////////////////////////////////////
   for(int i=0; i < num_stv; i++){
+    for(int j=0; j < num_channels; j++){
+      h_stv_overlay_vec.push_back(h_stv_overlay[i][j]);
+      h_stv_overlay[i][j]->Draw("hist");
+    }
+    for(int j=0; j < num_channels_raquel; j++){
+      h_stv_overlay_raquel_vec.push_back(h_stv_overlay_raquel[i][j]);
+    }
+
+    //mine 
+    Plot_Histograms(colors, h_stv_overlay_vec, h_stv_overlay0[i][0],h_stv_overlay0[i][1],h_stv_overlay0[i][2],
+                    h_stv_ext[i][0], h_stv_ext[i][1], h_stv_ext[i][2],
+                    h_stv_dirt[i][0],h_stv_dirt[i][1],h_stv_dirt[i][2],
+                    h_stv_bnb[i][0],h_stv_bnb[i][1],canv_stv[i], h_stv[i],
+                    pad_stv[i], pad0_stv[i], legend_stv[i],
+                    stv_ylim[i], stv_ymin[i], num_channels, stv_titles[i], path,"", stv[i], "",false, false);
+    h_stv_overlay_vec.clear();
+    
+    //raquel
+    Plot_Histograms(colors_raquel, h_stv_overlay_raquel_vec, h_stv_overlay0_raquel[i][0],h_stv_overlay0_raquel[i][1],h_stv_overlay0_raquel[i][2],
+                    h_stv_ext[i][0], h_stv_ext[i][1], h_stv_ext[i][2],
+                    h_stv_dirt[i][0],h_stv_dirt[i][1],h_stv_dirt[i][2],
+                    h_stv_bnb[i][0],h_stv_bnb[i][1],canv_stv_raquel[i], h_stv_raquel[i],
+                    pad_stv_raquel[i], pad0_stv_raquel[i], legend_stv_raquel[i],
+                    stv_ylim[i], stv_ymin[i], num_channels_raquel, stv_titles[i], path,"", Form("%s_raquel",stv[i]), "",false, false);
+    h_stv_overlay_raquel_vec.clear();
+    
+
+  }
+    
+  /*
     h_stv_ext[i][1] = (TH1D*)h_stv_ext[i][0]->Clone();
     h_stv_ext[i][2] = (TH1D*)h_stv_ext[i][0]->Clone();
     h_stv_dirt[i][1] = (TH1D*)h_stv_dirt[i][0]->Clone();
@@ -869,7 +665,7 @@ void analysis::main(){
   }
   
 
-
+    */
   
   
 } //end of program
