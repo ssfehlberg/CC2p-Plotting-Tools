@@ -17,9 +17,7 @@ class analysis
 public:
   virtual void main();
   virtual void Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TFile* f_dirt);
-  virtual void Plot_Histograms(Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 = "", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, double pad_lim = 0.0, double pad0_lim = 0.19,double bnb_min = 0.0, double bnb_max = 2.7);
-
-  
+  virtual void Plot_Histograms(Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 = "", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false,double pad_lim = 0.0, double pad0_lim = 0.19,double bnb_min = 0.0, double bnb_max = 2.7);
 
   private:
 
@@ -28,7 +26,7 @@ public:
   //////////////////
   
   //POT number and In Progress
-  char const * pot_num="#scale[0.6]{Accumulated POT: 4.566e+19}";//pot number printed on the plots
+  char const * pot_num="#scale[0.6]{Accumulated POT: 4.54e+19}";//pot number printed on the plots
   char const * sample_name="#scale[0.6]{MicroBooNE In-Progress}";//sample name printed on the plots
 
   //latex stuff
@@ -65,39 +63,48 @@ public:
  const char* group2d[num_group2d] = {"reco","truth","truth_sce"};
  TH2D* h_overlay2D[num_group2d];
  TCanvas* canv_2d[num_group2d];
-
+  
  //Plots of Efficiency
  ///////////////////////
- static const int num_eff = 6;
- const char* eff[num_eff] = {"nue","q2","X","Y","muon_mom","proton_mom"};//,"recoil_mom","leading_mom"};
- const char* titles_eff[num_eff] = {"True Neutrino Energy (GeV)","True Q^{2} (GeV^{2})","True X","True Y","True Muon Momentum (GeV/c)","True Proton Momentum (GeV/c)"};//"True Recoil Proton Momentum (GeV/c)","True Leading Proton Momentum (GeV/c)"};
- int ylim_eff[num_eff] = {8000,8000,8000,8000,8000,8000};
- double xlim_eff[num_eff] = {-9999,-9999,-9999,-9999,0.1,0.25};
- TLine* a[num_eff];
- TH1D* h_num[num_eff]; //numerator
- TH1D* h_num0[num_eff]; //numerator clone
- TH1D* h_num1[num_eff]; //numerator clone
- TH1D* h_denom[num_eff]; //denominator
- TH1D* h_denom0[num_eff]; //denominator clone
- TH1D* h_denom1[num_eff]; //denominator clone
- TCanvas* canv_eff[num_eff];
- TCanvas* canv_both[num_eff];
- TLegend* legend_eff[num_eff];
-
+ //static const int num_eff = 6;
+ //const char* eff[num_eff] = {"nue","q2","X","Y","muon_mom","proton_mom"};//,"recoil_mom","leading_mom"};
+  //const char* titles_eff[num_eff] = {"True Neutrino Energy (GeV)","True Q^{2} (GeV^{2})","True X","True Y","True Muon Momentum (GeV/c)","True Proton Momentum (GeV/c)"};//"True Recoil Proton Momentum (GeV/c)","True Leading Proton Momentum (GeV/c)"};
+  //int ylim_eff[num_eff] = {8000,8000,8000,8000,8000,8000};
+  //double xlim_eff[num_eff] = {-9999,-9999,-9999,-9999,0.1,0.25};
+  
+  static const int num_eff = 6;
+  const char* eff[num_eff] = {"muon_contained","muon_uncontained","proton","pion_plus","pion_minus","pion0"};
+  const char* titles_eff[num_eff] = {"True Contained #mu Momentum (GeV/c)","True Uncontained #mu Momentum","True Proton Momentum (GeV/c)","True #pi^{+} Momentum (GeV/c)","True #pi^{-} Momentum (GeV/c)","True #pi^{0} Momentum (GeV/c)"};
+  int ylim_eff[num_eff] = {150,150,150,20,20,20};
+  double xlim_eff[num_eff] = {0.1,0.1,0.25,0.065,0.065,0.065};
+  TLine* a[num_eff];
+  TH1D* h_num[num_eff]; //numerator
+  TH1D* h_num0[num_eff]; //numerator clone
+  TH1D* h_num1[num_eff]; //numerator clone
+  TH1D* h_denom[num_eff]; //denominator
+  TH1D* h_denom0[num_eff]; //denominator clone
+  TH1D* h_denom1[num_eff]; //denominator clone
+  TCanvas* canv_eff[num_eff];
+  TCanvas* canv_both[num_eff];
+  TLegend* legend_eff[num_eff];
+  TGraph* eff_graph; //efficiency aas function of cuts
+  TGraph* pur_graph; //purity as function of cuts
+  
+  
  //Chi2 Plots
  ///////////////////////////////////
  int z0=0; //dumb indices                                                                                                                                                     
  int f0 = 0; //dumb indices
  static const int num_planes = 3;
- static const int num_particles = 6;
+ static const int num_particles = 10;
  static const int num_hypothesis = 2;
- const char* plane[num_planes] = {"Plane_0","Plane_1","Plane_2"};
- const char* particles[num_particles] = {"total","proton","muon","pion","electron","other"};
+  const char* plane[num_planes] = {"Plane_0","Plane_1","Plane_2"};
+  const char* particles[num_particles] = {"_total","_proton_contained","_proton_uncontained","_muon","_pionpm","_pion0","_electron","_gamma","_kaon","_other"};//{"total","proton","muon","pion","electron","other"};
  const char* hypothesis[num_hypothesis] = {"chi2p","chi2mu"};
   //const char* channel_legend_chi2[num_particles] = {"Total Overlay","Proton","Muon","Pion","Electron","Other"};
-  std::vector<const char*> channel_legend_chi2 = {"Total Overlay","Proton","Muon","Pion","Electron","Other"};
+  std::vector<const char*> channel_legend_chi2 = {"Total Overlay","Protons:Contained","Protons:Uncontained","Muon","Pion#pm","Pion0,","Electron","#gamma","Kaon","Other"};
   const char* titles_chi2[num_hypothesis] = {"#chi^{2}_{p}","#chi^{2}_{#mu}"};
- const char* titles_planes[num_planes] ={"U Plane","V Plane","Y Plane"};
+  const char* titles_planes[num_planes] ={"U Plane","V Plane","Y Plane"};
  int ylim_chi2[num_planes][num_hypothesis] = {{250,400},
 					      {250,250},
 					      {600,300}};
@@ -105,19 +112,18 @@ public:
 					       {-2,-2},
 					       {-2,-2}};
 
-  Color_t colors_chi2[6] = {kBlack,kRed,kBlue,kGreen,kYellow,204};
- bool plot_total_chi2 = false;
- TH1D* h_overlay_chi2[num_planes][num_hypothesis][num_particles];
+  bool plot_total_chi2 = false;
+  TH1D* h_overlay_chi2[num_planes][num_hypothesis][num_particles];
   std::vector<TH1D*> h_overlay_chi2_vec;
   TH1D* h_overlay0_chi2[num_planes][num_hypothesis][3]; //copies for statistics
- TH1D* h_dirt_chi2[num_planes][num_hypothesis][3];
- TH1D* h_ext_chi2[num_planes][num_hypothesis][3]; 
- TH1D* h_bnb_chi2[num_planes][num_hypothesis][2];
- THStack* h_chi2[num_planes][num_hypothesis];
- TCanvas* canv_chi2[num_planes][num_hypothesis];
- TLegend* legend_chi2[num_planes][num_hypothesis];
- TPad* pad_chi2[num_planes][num_hypothesis];
- TPad* pad0_chi2[num_planes][num_hypothesis];
+  TH1D* h_dirt_chi2[num_planes][num_hypothesis][3];
+  TH1D* h_ext_chi2[num_planes][num_hypothesis][3]; 
+  TH1D* h_bnb_chi2[num_planes][num_hypothesis][2];
+  THStack* h_chi2[num_planes][num_hypothesis];
+  TCanvas* canv_chi2[num_planes][num_hypothesis];
+  TLegend* legend_chi2[num_planes][num_hypothesis];
+  TPad* pad_chi2[num_planes][num_hypothesis];
+  TPad* pad0_chi2[num_planes][num_hypothesis];
 
  //3D Chi2 plots
  ///////////////////////////////////////////
@@ -147,37 +153,62 @@ public:
  TPad* pad_chi2_3D[num_cuts_3D][num_hypothesis_3D];
  TPad* pad0_chi2_3D[num_cuts_3D][num_hypothesis_3D];
 
+
+  //Various Track Variables for Cut Tracking
+  /////////////////////////////////////////
+  static const int num_track = 4;
+  const char* variable[num_track] = {"_track_score","_track_vertex_distance","_track_length","_track_pid"};
+  TH1D* h_track_overlay[num_track][num_particles];
+  std::vector<TH1D*> h_track_overlay_vec;
+  TH1D* h_track_overlay0[num_track][3]; 
+  TH1D* h_track_bnb[num_track][2];
+  TH1D* h_track_ext[num_track][3];
+  TH1D* h_track_dirt[num_track][3];
+  THStack* h_track[num_track];
+  TCanvas* canv_track[num_track];
+  TLegend* legend_track[num_track];
+  TPad* pad_track[num_track];
+  TPad* pad0_track[num_track];
+  int ymin_track[num_track] = {0,0,0,0};
+  int ymax_track[num_track] = {3500,2000,700,300};
+  const char* titles_track[num_track] = {"Track Score","Track Vertex Distance (cm)","Track Length (cm)","Track PID"};
+  
  ///////////////////////////////////////
  //PLOTS WITH MY MONTEC-CARLO DEFINITIONS
  ////////////////////////////////////////
 
  //General
  /////////
- static const int num_cuts = 4; //number of applied cuts
+ static const int num_cuts = 3; //number of applied cuts
  static const int num_channels = 11; //number of various overlay channels
- const char* cut[num_cuts] = {"_before_selection","_after_3goodtrks","_after_containment","_after_PID"}; 
+  const char* cut[num_cuts] = {"_before_selection","_after_fv","_after_three_pfps"};//,"_after_track_cut","_after_coonnection_cut","_after_pid"}; 
  const char* channel[num_channels] = {"_total", "_cc2p0pi","_ccNp1pi","_ccNp0pi","_cc1p0pi","_nc","_ccNpNpi","_cc0p0pi","_other","_outfv","_ccnue"};
   //const char* channel_legend[num_channels] = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
   std::vector<const char*> channel_legend = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
-  const char* cut_titles[num_cuts] = {"Before Selection", "After 3 Track Quality Cuts","After Containment Cut","After PID Cuts"};
+  const char* cut_titles[num_cuts] = {"Before Selection", "After FV", "After PFP Cut"};//,"After Track Score Cut","After Vertex Attachment Cut","After PID"};
   int z = 0; //dumb indices
   int f = 0; //dumb indices
 
   //Plots of the reconstructed vertex: MC, Dirt, BNB, & EXT
   /////////////////////////////////////////////////////////
-  static const int num_variables = 3; //number of various variables to plot
- const char* plots[num_variables] = {"_vtx_x","_vtx_y","_vtx_z"};
- const char* titles[num_variables] = {"Reconstructed X of Vertex (cm)", "Reconstructed Y of Vertex (cm)", "Reconstructed Z of Vertex (cm)"};
- int ylim[num_cuts][num_variables] = {{80,80,80},
-				      {80,80,80},
-				      {80,80,80},
-				      {40,40,40}};
-  int ymin[num_cuts][num_variables] = {{-3,-3,-4},
-				      {-4,-3,-3},
-		 		      {-3,-3,-3},
-				      {-2,-2,-2}};
+  static const int num_variables = 5; //number of various variables to plot
+  const char* plots[num_variables] = {"_vtx_x","_vtx_y","_vtx_z","_cosmic_impact_parameter","_topological_score"};
+  const char* titles[num_variables] = {"Reconstructed X of Vertex (cm)", "Reconstructed Y of Vertex (cm)", "Reconstructed Z of Vertex (cm)","Cosmic Impact Parameter","Topological Score"};
+  int ylim[num_cuts][num_variables] = {{1000,1000,1000,2000,3500},
+				       {1000,1000,600,600,3500},
+				       {1000,1000,600,450,3500}};/*
+				       {1000,1000,600,450,3500},
+				       {1000,1000,600,450,3500},
+				       {1000,1000,600,450,3500}};*/
+  int ymin[num_cuts][num_variables] = {{-3,-3,-4,-4,-4},
+				       {-4,-3,-3,-3,-3},
+				       {-2,-2,-2,-4,-4}}; /*
+				       {-2,-2,-2,-4,-4},
+				       {-2,-2,-2,-4,-4},
+				       {-2,-2,-2,-4,-4}};*/
   bool plot_total = false; //sanity check on total overlay
   bool plot_ccnue = false; //do you want to plot ccnue?
+  bool flip_legend = false;
   std::vector<TH1D*> h_overlay_vec; //overlay plots
   TH1D* h_overlay[num_cuts][num_variables][num_channels];
   TH1D* h_overlay0[num_cuts][num_variables][3]; //copies of the overlay plots for statistics
@@ -197,75 +228,81 @@ public:
  const char* truth_titles[num_truth] = {"True Vertex X (cm)","True Vertex Y (cm)","True Vertex Z (cm)",
 					"True Vertex w/ SCE X (cm)","True Vertex w/ SCE Y (cm)","True Vertex w/ SCE Z (cm)",
 					"True Q^{2} (GeV^{2})","True Bjorken X","True Bjorken Y"};
- int ylim_truth[num_cuts][num_truth] = {{80,80,80,80,80,80,200,200,200},
-					{60,60,60,60,60,60,200,200,200},
-					{60,60,60,60,60,60,200,200,200},
-					{60,60,60,60,60,60,200,200,200}};
+ int ylim_truth[num_cuts][num_truth] = {{2000,2000,2000,2000,2000,2000,2000,2000,2000},
+					{6000,60,60,60,60,60,200,200,200},
+					{6000,60,60,60,60,60,200,200,200}};
  bool plot_total_truth = true;
  bool plot_ccnue_truth = true;
  TH1D* h_mc[num_cuts][num_truth][num_channels];
-  TCanvas* canv_truth[num_cuts][num_truth];
+ TCanvas* canv_truth[num_cuts][num_truth];
  THStack* h_truth[num_cuts][num_truth];
  TLegend* legend_truth[num_cuts][num_truth];
 
  //Plots of the individual particle quantities
  ////////////////////////////////////////////
- static const int num_var = 4;
- const char* var[num_var] = {"_mom","_E","_theta","_phi"};
- const char* titles_var[num_var] = {"Momentum (GeV/c)","Energy (GeV)","cos(#theta)","#phi (Rad)"};
-
+  static const int num_var = 4;
+  const char* var[num_var] = {"_mom","_E","_theta","_phi"};
+  const char* titles_var[num_var] = {"Momentum (GeV/c)","Energy (GeV)","cos(#theta)","#phi (Rad)"};
+  //std::vector<const char*> channel_legend_raquel = {"Total Overlay","CCRES","CCQE","CCMEC","NC","CCDIS","CCCOH","OOFV","Other","CC$\nu_{e}$"};
+  //std::vector<const char*> channel_legend = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
+  
+  
  //Muon
- TH1D* h_muon_overlay[num_var][num_channels]; //actual overlay
+  TH1D* h_muon_overlay[num_var][num_channels]; //actual overlay
   std::vector<TH1D*> h_muon_overlay_vec;
   TH1D* h_muon_overlay0[num_var][3]; //copies for statistics
- TH1D* h_muon_bnb[num_var][2];
- TH1D* h_muon_ext[num_var][3];
- TH1D* h_muon_dirt[num_var][3];
- THStack* h_muon[num_var];
- TCanvas* canv_muon[num_var];
- TLegend* legend_muon[num_var];
- TPad* pad_muon[num_var];
- TPad* pad0_muon[num_var];
- int muon_ylim[num_var] = {40,40,160,100};
+  TH1D* h_muon_bnb[num_var][2];
+  TH1D* h_muon_ext[num_var][3];
+  TH1D* h_muon_dirt[num_var][3];
+  THStack* h_muon[num_var];
+  TCanvas* canv_muon[num_var];
+  TLegend* legend_muon[num_var];
+  TPad* pad_muon[num_var];
+  TPad* pad0_muon[num_var];
+   std::vector<bool> flip_muon = {false,false,true,false};
+  int muon_ylim[num_var] = {40,40,160,100};
   int muon_ymin[num_var] = {-2,-2,-2,-2};
   
- //Recoil Proton
- TH1D* h_recoil_overlay[num_var][num_channels];
+  //Recoil Proton
+  TH1D* h_recoil_overlay[num_var][num_channels];
   std::vector<TH1D*> h_recoil_overlay_vec;
- TH1D* h_recoil_overlay0[num_var][3];
- TH1D* h_recoil_bnb[num_var][2];
- TH1D* h_recoil_ext[num_var][3];
- TH1D* h_recoil_dirt[num_var][3];
- THStack* h_recoil[num_var];
- TCanvas* canv_recoil[num_var];
- TLegend* legend_recoil[num_var];
- TPad* pad_recoil[num_var];
- TPad* pad0_recoil[num_var];
- double recoil_ylim[num_var] = {60,60,80,150};
+  TH1D* h_recoil_overlay0[num_var][3];
+  TH1D* h_recoil_bnb[num_var][2];
+  TH1D* h_recoil_ext[num_var][3];
+  TH1D* h_recoil_dirt[num_var][3];
+  THStack* h_recoil[num_var];
+  TCanvas* canv_recoil[num_var];
+  TLegend* legend_recoil[num_var];
+  TPad* pad_recoil[num_var];
+  TPad* pad0_recoil[num_var];
+  std::vector<bool> flip_recoil = {false,false,true,false};
+  int recoil_ylim[num_var] = {60,60,80,150};
   int recoil_ymin[num_var] = {-2,-2,-2,-2};
 
  //Leading Proton
- TH1D* h_leading_overlay[num_var][num_channels];
+  TH1D* h_leading_overlay[num_var][num_channels];
   std::vector<TH1D*> h_leading_overlay_vec;
- TH1D* h_leading_overlay0[num_var][3];
- TH1D* h_leading_bnb[num_var][2];
- TH1D* h_leading_ext[num_var][3];
- TH1D* h_leading_dirt[num_var][3];
- THStack* h_leading[num_var];
- TCanvas* canv_leading[num_var];
- TLegend* legend_leading[num_var];
- TPad* pad_leading[num_var];
- TPad* pad0_leading[num_var];
- double leading_ylim[num_var] = {50,50,160,100};
+  TH1D* h_leading_overlay0[num_var][3];
+  TH1D* h_leading_bnb[num_var][2];
+  TH1D* h_leading_ext[num_var][3];
+  TH1D* h_leading_dirt[num_var][3];
+  THStack* h_leading[num_var];
+  TCanvas* canv_leading[num_var];
+  TLegend* legend_leading[num_var];
+  TPad* pad_leading[num_var];
+  TPad* pad0_leading[num_var];
+  std::vector<bool> flip_lead = {false,false,false,false};
+  int leading_ylim[num_var] = {35,50,160,100}; //50,50,160,100
   int leading_ymin[num_var] = {-2,-2,-2,-2};
 
  //Random Physics Variables
  ///////////////////////////
-  static const int num_phys =5; //NOTE: These values are the same for Raquel's plots. If this changes in the future, be sure to chage this!
-  const char* physics[num_phys] = {"_cos_gamma_cm","_opening_angle_protons","_opening_angle_mu_leading","_mom_struck_nuc","_tot_pz"};
-  const char* physics_titles[num_phys] = {"cos(#gamma_{cm})","cos(#gamma_{Lab})","Opening Angle Between the Muon and Leading Proton (Rad.)","Momentum of Struck Nucleon (GeV)","Total P_{z} of the Two Protons"};
-  int phys_ylim[num_phys] =  {130,60,60,60,80};
-  int phys_ymin[num_phys] =  {-2,-2,-2,-2};
+  static const int num_phys =7; //NOTE: These values are the same for Raquel's plots. If this changes in the future, be sure to chage this!
+  const char* physics[num_phys] = {"_cos_gamma_cm","_opening_angle_protons","_opening_angle_mu_leading","_mom_struck_nuc","_tot_pz","_tot_E","_tot_E_minus_beam"};
+  const char* physics_titles[num_phys] = {"cos(#gamma_{cm})","cos(#gamma_{Lab})","Opening Angle Between the Muon and Leading Proton (Rad.)","Momentum of Struck Nucleon (GeV)","Total P_{z} of the Two Protons",
+					  "Total Kinetic Energy of System (GeV/c)","Total Kinetic Energy - Beam Energy (GeV/c)"};
+  int phys_ylim[num_phys] =  {60,60,60,60,80,50,375};
+  int phys_ymin[num_phys] =  {-2,-2,-2,-2,-2,-2};
   TH1D* h_phys_overlay[num_phys][num_channels];
   std::vector<TH1D*> h_phys_overlay_vec;
   TH1D* h_phys_overlay0[num_phys][3];
@@ -283,7 +320,7 @@ public:
   static const int num_stv =3;
   const char* stv[num_stv] = {"_delta_PT","_delta_phiT","_delta_alphaT"};
   const char* stv_titles[num_stv] = {"#delta P_{T} (GeV/c)","#delta #phi_{T} (Deg.)","#delta #alpha_{T} (Deg.)"};
-  int stv_ylim[num_stv] = {130,150,120};
+  int stv_ylim[num_stv] = {100,150,120}; //130, 150,120
   int stv_ymin[num_stv] = {-2,-2,-2};  
   TH1D* h_stv_overlay[num_stv][num_channels];
   std::vector<TH1D*> h_stv_overlay_vec;
@@ -313,7 +350,17 @@ public:
   std::vector<const char*> channel_legend_raquel = {"Total Overlay","CCRES","CCQE","CCMEC","NC","CCDIS","CCCOH","OOFV","Other","CC$\nu_{e}$"};
   
  //Plots of the individual particle quantities
- //Note: we are taking all the variables from my definintions since they are the same for Raquel's plots                                                                                                                              
+ //Note: we are taking all the variables from my definintions since they are the same for Raquel's plots
+  std::vector<TH1D*> h_overlay_raquel_vec; //overlay plots
+  TH1D* h_overlay_raquel[num_cuts][num_variables][num_channels];
+  TH1D* h_overlay0_raquel[num_cuts][num_variables][3]; //copies of the overlay plots for statistics
+  THStack* h_raquel[num_cuts][num_variables];
+  TCanvas* canv_raquel[num_cuts][num_variables];
+  TLegend* legend_raquel[num_cuts][num_variables];
+  TPad* pad_raquel[num_cuts][num_variables];
+  TPad* pad0_raquel[num_cuts][num_variables];
+
+  
  //We are just defining new cavases, legends, pads, and overlay histograms 
  ////////////////////////////////////////////
 
@@ -387,9 +434,12 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
     for(int j = 0; j < num_variables; j++){
       h_bnb[i][j][0] = (TH1D*)f2->Get(Form("h%s%s_bnb",plots[j],cut[i]));
       h_ext[i][j][0] = (TH1D*)f3->Get(Form("h%s%s_ext",plots[j],cut[i]));
-      h_dirt[i][j][0] = (TH1D*)f_dirt->Get(Form("h%s%s_dirt",plots[j],cut[i]));
+      h_dirt[i][j][0] = (TH1D*)f_dirt->Get(Form("h%s%s_dirt_wgt",plots[j],cut[i]));
       for(int k = 0; k < num_channels; k++){
 	h_overlay[i][j][k] = (TH1D*)f1->Get(Form("h%s%s%s",plots[j],cut[i],channel[k]));
+      }
+      for(int k=0; k < num_channels_raquel; k++){
+	h_overlay_raquel[i][j][k] = (TH1D*)f1->Get(Form("h%s_raquel%s%s",plots[j],cut[i],channel_raquel[k]));
       }
     }
     
@@ -404,8 +454,8 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
   //grabbing things related the PFP's
   for(int i=0; i < num_group; i++){
     h_overlay_pfp[i] = (TH1D*)f1->Get(Form("h_%s_overlay",group[i]));
-    h_bnb_pfp[i] = (TH1D*)f2->Get(Form("h_%s_overlay",group[i]));
-    h_ext_pfp[i] =(TH1D*)f3->Get(Form("h_%s_overlay",group[i]));
+    h_bnb_pfp[i] = (TH1D*)f2->Get(Form("h_%s_bnb",group[i]));
+    h_ext_pfp[i] =(TH1D*)f3->Get(Form("h_%s_ext",group[i]));
   }
   
   //grabbing the 2D histograms
@@ -415,17 +465,18 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
 
   //grabbing efficiency plots:
   for(int i=0; i < num_eff; i++){
-    h_num[i] =  (TH1D*)f4->Get(Form("h_num_overlay_%s",eff[i]));
-    h_denom[i] =  (TH1D*)f4->Get(Form("h_denom_overlay_%s",eff[i]));
-    
+    h_num[i] =  (TH1D*)f1->Get(Form("h_mom_threshold_num_%s",eff[i]));
+    h_denom[i] =  (TH1D*)f1->Get(Form("h_mom_threshold_denom_%s",eff[i]));
   }
+  eff_graph = (TGraph*)f1->Get("eff_graph");
+  pur_graph = (TGraph*)f1->Get("pur_graph"); 
   
   //grabbing the chi2 plots
   for(int i = 0; i < num_planes; i ++){
     for(int j = 0; j < num_hypothesis; j++){
       h_ext_chi2[i][j][0] = (TH1D*)f3->Get(Form("h_%s_%s_ext",hypothesis[j],plane[i]));
       h_bnb_chi2[i][j][0] = (TH1D*)f2->Get(Form("h_%s_%s_bnb",hypothesis[j],plane[i]));
-      h_dirt_chi2[i][j][0] = (TH1D*)f_dirt->Get(Form("h_%s_%s_dirt",hypothesis[j],plane[i]));    
+      h_dirt_chi2[i][j][0] = (TH1D*)f_dirt->Get(Form("h_%s_%s_dirt_wgt",hypothesis[j],plane[i]));    
       for(int k =0; k < num_particles; k++){
 	h_overlay_chi2[i][j][k] = (TH1D*)f1->Get(Form("h_%s_%s_%s",hypothesis[j],plane[i],particles[k]));
       }
@@ -437,49 +488,69 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
     for(int j = 0; j < num_hypothesis_3D; j++){
       h_ext_chi2_3D[i][j][0] = (TH1D*)f3->Get(Form("h_%s_3D%s_ext",hypothesis_3D[j],cuts_3D[i]));
       h_bnb_chi2_3D[i][j][0] = (TH1D*)f2->Get(Form("h_%s_3D%s_bnb",hypothesis_3D[j],cuts_3D[i]));
-      h_dirt_chi2_3D[i][j][0] = (TH1D*)f_dirt->Get(Form("h_%s_3D%s_dirt",hypothesis_3D[j],cuts_3D[i]));    
+      h_dirt_chi2_3D[i][j][0] = (TH1D*)f_dirt->Get(Form("h_%s_3D%s_dirt_wgt",hypothesis_3D[j],cuts_3D[i]));    
       for(int k =0; k < num_particles; k++){
 	h_overlay_chi2_3D[i][j][k] = (TH1D*)f1->Get(Form("h_%s_3D%s_%s",hypothesis_3D[j],cuts_3D[i],particles[k]));
       }
     }
   }
+
+  //random track variables
+  for(int i =0; i < num_track; i++){
+    h_track_bnb[i][0] = (TH1D*)f2->Get(Form("h_track%s",variable[i]));
+    h_track_ext[i][0] = (TH1D*)f3->Get(Form("h_track%s",variable[i]));
+    h_track_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h_track%s",variable[i]));
+    for(int j = 0; j < num_particles; j++){
+      h_track_overlay[i][j] = (TH1D*)f1->Get(Form("h_track%s%s",variable[i],particles[j]));
+    }
+  }
   
   //grabbing particle plots
   for(int i = 0; i < num_var; i++){
-    h_muon_ext[i][0] = (TH1D*)f3->Get(Form("h_muon%s",var[i]));
-    h_recoil_ext[i][0] = (TH1D*)f3->Get(Form("h_recoil%s",var[i]));
-    h_leading_ext[i][0] = (TH1D*)f3->Get(Form("h_leading%s",var[i]));
-    h_muon_bnb[i][0] = (TH1D*)f2->Get(Form("h_muon%s",var[i]));
-    h_recoil_bnb[i][0] = (TH1D*)f2->Get(Form("h_recoil%s",var[i]));
-    h_leading_bnb[i][0] = (TH1D*)f2->Get(Form("h_leading%s",var[i]));
-    h_muon_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h_muon%s",var[i]));
-    h_recoil_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h_recoil%s",var[i]));
-    h_leading_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h_leading%s",var[i]));
+    h_muon_ext[i][0] = (TH1D*)f3->Get(Form("h_muon%s_ext",var[i]));
+    h_recoil_ext[i][0] = (TH1D*)f3->Get(Form("h_recoil%s_ext",var[i]));
+    h_leading_ext[i][0] = (TH1D*)f3->Get(Form("h_leading%s_ext",var[i]));
+    h_muon_bnb[i][0] = (TH1D*)f2->Get(Form("h_muon%s_bnb",var[i]));
+    h_recoil_bnb[i][0] = (TH1D*)f2->Get(Form("h_recoil%s_bnb",var[i]));
+    h_leading_bnb[i][0] = (TH1D*)f2->Get(Form("h_leading%s_bnb",var[i]));
+    h_muon_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h_muon%s_dirt_wgt",var[i]));
+    h_recoil_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h_recoil%s_dirt_wgt",var[i]));
+    h_leading_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h_leading%s_dirt_wgt",var[i]));
     for(int j =0; j < num_channels; j++){
       h_muon_overlay[i][j] = (TH1D*)f1->Get(Form("h_muon%s%s",var[i],channel[j]));
       h_recoil_overlay[i][j] = (TH1D*)f1->Get(Form("h_recoil%s%s",var[i],channel[j]));
       h_leading_overlay[i][j] = (TH1D*)f1->Get(Form("h_leading%s%s",var[i],channel[j]));
     }
+
+    for(int j=0; j < num_channels_raquel; j++){
+      h_muon_overlay_raquel[i][j] = (TH1D*)f1->Get(Form("h_muon_raquel%s%s",var[i],channel_raquel[j]));
+      h_recoil_overlay_raquel[i][j] = (TH1D*)f1->Get(Form("h_recoil_raquel%s%s",var[i],channel_raquel[j]));
+      h_leading_overlay_raquel[i][j] = (TH1D*)f1->Get(Form("h_leading_raquel%s%s",var[i],channel_raquel[j]));
+
+    }
+    
   }
 
   //grabbing physics plots
   for(int i=0; i < num_phys; i++){
-    h_phys_ext[i][0] = (TH1D*)f3->Get(Form("h%s",physics[i]));
-    h_phys_bnb[i][0] = (TH1D*)f2->Get(Form("h%s",physics[i]));
-    h_phys_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h%s",physics[i]));
+    //std::cout<<"Physics[i]: "<<physics[i]<<std::endl;
+    h_phys_ext[i][0] = (TH1D*)f3->Get(Form("h%s_ext",physics[i]));
+    h_phys_bnb[i][0] = (TH1D*)f2->Get(Form("h%s_bnb",physics[i]));
+    h_phys_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h%s_dirt_wgt",physics[i]));
     for(int j=0; j < num_channels; j++){
+      //std::cout<<"Channel[j]: "<<channel[j]<<std::endl;
       h_phys_overlay[i][j] = (TH1D*)f1->Get(Form("h%s%s",physics[i],channel[j])); 
     }
     for(int j=0; j < num_channels_raquel; j++){
-      h_phys_overlay_raquel[i][j] = (TH1D*)f1->Get(Form("h%s_raquel%s",physics[i],channel_raquel[j])); 
+      h_phys_overlay_raquel[i][j] = (TH1D*)f1->Get(Form("h%s_raquel%s",physics[i],channel_raquel[j]));
     }  
   }
 
   //grabbing stvs plots
   for(int i=0; i < num_stv; i++){
-    h_stv_ext[i][0] = (TH1D*)f3->Get(Form("h%s",stv[i]));
-    h_stv_bnb[i][0] = (TH1D*)f2->Get(Form("h%s",stv[i]));
-    h_stv_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h%s",stv[i]));
+    h_stv_ext[i][0] = (TH1D*)f3->Get(Form("h%s_ext",stv[i]));
+    h_stv_bnb[i][0] = (TH1D*)f2->Get(Form("h%s_bnb",stv[i]));
+    h_stv_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h%s_dirt_wgt",stv[i]));
     for(int j=0; j < num_channels; j++){
       h_stv_overlay[i][j] = (TH1D*)f1->Get(Form("h%s%s",stv[i],channel[j])); 
     }
@@ -490,7 +561,7 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
 
 }
 
-void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend,int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 ="", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, double pad_lim = 0.0, double pad0_lim = 0.19, double bnb_min = 0.0, double bnb_max = 2.7)
+void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend,int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 ="", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false, double pad_lim = 0.0, double pad0_lim = 0.19, double bnb_min = 0.0, double bnb_max = 2.7)
 {      
 
   h_ext1 = (TH1D*)h_ext->Clone();
@@ -501,7 +572,7 @@ void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH
   h_overlay00 = (TH1D*)h_overlay[0]->Clone();
   h_overlay1 = (TH1D*)h_overlay[0]->Clone();
   h_overlay2 = (TH1D*)h_overlay[0]->Clone();
-      
+  
   canv = new TCanvas(Form("C%s%s",plots,cut),Form("C%s%s",plots,cut),2000,1500);
   canv->cd(1);
   h = new THStack(Form("h%s%s",plots,cut),Form("h%s%s",plots,cut));
@@ -511,7 +582,7 @@ void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH
   pad->SetBorderMode(0);
   pad->Draw();
   pad->cd();
-  
+   
   //Stacked Histrogram parameters
   h->Draw("HIST");
   h->SetTitle("");
@@ -520,11 +591,16 @@ void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH
   
   //MC
   int z;
+  int f;
   if(plot_ccnue){
     z = num_channels;
-  }else{ z = num_channels - 1;}
-  int f = num_channels-1;
-      
+    f = num_channels;
+  }else{
+    z = num_channels-1;
+    f = num_channels-1;
+  }
+  
+        
   for(int k=1; k < z ; k++){
     h_overlay[k]->SetLineColor(colors[k]);
     h_overlay[k]->SetFillColor(colors[k]);
@@ -537,6 +613,7 @@ void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH
   h_dirt->SetFillColor(kOrange-8);
   h_dirt->SetLineColor(kOrange-8);
   h_dirt->SetLineWidth(1);
+
   
   //EXT
   h->Add(h_ext);
@@ -564,8 +641,12 @@ void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH
   h_overlay00->SetFillStyle(3004);
   h_overlay00->SetMarkerSize(0);
   h_overlay00->SetLineWidth(1);
-  
-  legend = new TLegend(0.71, 0.54, 0.899, 0.89);
+
+  if(flip_legend){
+    legend = new TLegend(0.101, 0.54, 0.290, 0.89);
+  }else{
+    legend = new TLegend(0.71, 0.54, 0.899, 0.89);
+  }
   legend->AddEntry(h_bnb,"Data (Beam-On)","lepf");
   legend->AddEntry(h_overlay00,"Stat. Unc.","f");
   legend->AddEntry(h_ext,"Data (Beam-Off)","f");
@@ -594,7 +675,7 @@ void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH
   h_ext1->Add(h_overlay1); //causing problems
   h_ext1->Add(h_dirt1);
   h_ext1->Sumw2();
-  h_bnb1->Divide(h_bnb1,h_ext1,1,1);
+  h_bnb1->Divide(h_bnb1,h_ext1,1.0,1.0);
   h_bnb1->Sumw2();
   h_bnb1->Draw("e1p");
   h_bnb1->SetStats(kFALSE);
@@ -607,6 +688,10 @@ void analysis::Plot_Histograms(Color_t colors[],std::vector<TH1D*> h_overlay, TH
   //Calculate the Chi2
   double chisqv1 = calculatePearsonChiSq(h_bnb, h_overlay[0]);
   int nBins1 = h_overlay[0]->GetXaxis()->GetNbins();
+
+  std::cout<<"Value of chisqv1: "<<chisqv1<<std::endl;
+  std::cout<<"Value of Bins1: "<<nBins1<<std::endl;
+  
   //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv, nBins, chisqv/nBins);
   t->DrawLatex(0.83,0.92,Form("#scale[1.3]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1/nBins1));
   t->SetNDC();

@@ -20,11 +20,11 @@ void analysis::main(){
   ///////////////////////////////////////////////////////
   //SECOND: DEFINE HISTOGRAMS FILES AND GENERAL VARIABLES
   //////////////////////////////////////////////////////
-  TFile *f1=new TFile(Form("histograms_%s_wgt.root",sample));//overlay histograms. Note: be sure to use weighted for both dirt and overlay
-  TFile *f_dirt=new TFile(Form("histograms_%s_dirt_wgt.root",sample));//dirt histograms 
-  TFile *f2=new TFile(Form("histograms_%s_bnb.root",sample));//bnb histograms  
-  TFile *f3=new TFile(Form("histograms_%s_ext.root",sample));//extbnb histograms 
-  TFile *f4=new TFile("histograms_efficiency.root"); //efficiency histograms
+  TFile *f1=new TFile(Form("../pelee/histograms_%s_wgt.root",sample));//overlay histograms. Note: be sure to use weighted for both dirt and overlay
+  TFile *f_dirt=new TFile(Form("../pelee/histograms_%s_dirt_wgt.root",sample));//dirt histograms 
+  TFile *f2=new TFile(Form("../pelee/histograms_%s_bnb.root",sample));//bnb histograms  
+  TFile *f3=new TFile(Form("../pelee/histograms_%s_ext.root",sample));//extbnb histograms 
+  TFile *f4=new TFile("../histograms_efficiency.root"); //efficiency histograms
   
   //Color Scheme
   tolcols::init();
