@@ -297,12 +297,11 @@ public:
 
  //Random Physics Variables
  ///////////////////////////
-  static const int num_phys =7; //NOTE: These values are the same for Raquel's plots. If this changes in the future, be sure to chage this!
-  const char* physics[num_phys] = {"_cos_gamma_cm","_opening_angle_protons","_opening_angle_mu_leading","_mom_struck_nuc","_tot_pz","_tot_E","_tot_E_minus_beam"};
-  const char* physics_titles[num_phys] = {"cos(#gamma_{cm})","cos(#gamma_{Lab})","Opening Angle Between the Muon and Leading Proton (Rad.)","Momentum of Struck Nucleon (GeV)","Total P_{z} of the Two Protons",
-					  "Total Kinetic Energy of System (GeV/c)","Total Kinetic Energy - Beam Energy (GeV/c)"};
-  int phys_ylim[num_phys] =  {60,60,60,60,80,50,375};
-  int phys_ymin[num_phys] =  {-2,-2,-2,-2,-2,-2};
+  static const int num_phys =9; //NOTE: These values are the same for Raquel's plots. If this changes in the future, be sure to chage this!
+  const char* physics[num_phys] = {"_cos_gamma_cm","_opening_angle_protons","_opening_angle_mu_leading","_opening_angle_mu_both","_mom_struck_nuc","_tot_pz","_tot_E","_tot_E_minus_beam","_E_neutrino"};
+  const char* physics_titles[num_phys] = {"cos(#gamma_{cm})","cos(#gamma_{Lab})","Opening Angle Between the Muon and Leading Proton (Rad.)","Opening Angle Between the Muon and Both Protons (Rad.)","Momentum of Struck Nucleon (GeV)","Total P_{z} of the Two Protons", "Total Kinetic Energy of System (GeV/c)","Total Kinetic Energy - Beam Energy (MeV/c)","Neutrino Energy (GeV/c)"};
+  int phys_ylim[num_phys] =  {60,60,60,60,60,80,50,150,50};
+  int phys_ymin[num_phys] =  {-2,-2,-2,-2,-2,-2,-2,-2};
   TH1D* h_phys_overlay[num_phys][num_channels];
   std::vector<TH1D*> h_phys_overlay_vec;
   TH1D* h_phys_overlay0[num_phys][3];

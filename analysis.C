@@ -19,11 +19,11 @@ void analysis::main(){
   ///////////////////////////////////////////////////////
   //SECOND: DEFINE HISTOGRAMS FILES AND GENERAL VARIABLES
   //////////////////////////////////////////////////////
-  TFile *f1=new TFile(Form("pelee/histograms_%s_wgt.root",sample));//overlay histograms. Note: be sure to use weighted for both dirt and overlay
-  TFile *f_dirt=new TFile(Form("pelee/histograms_%s_dirt_wgt.root",sample));//dirt histograms 
-  TFile *f2=new TFile(Form("pelee/histograms_%s_bnb.root",sample));//bnb histograms  
-  TFile *f3=new TFile(Form("pelee/histograms_%s_ext.root",sample));//extbnb histograms 
-  TFile *f4=new TFile("histograms_efficiency.root"); //efficiency histograms
+  TFile *f1=new TFile(Form("root_files/%s/histograms_%s_overlay_wgt.root",sample,sample));//overlay histograms. Note: be sure to use weighted for both dirt and overlay
+  TFile *f_dirt=new TFile(Form("root_files/%s/histograms_%s_dirt_wgt.root",sample,sample));//dirt histograms 
+  TFile *f2=new TFile(Form("root_files/%s/histograms_%s_bnb.root",sample,sample));//bnb histograms  
+  TFile *f3=new TFile(Form("root_files/%s/histograms_%s_ext.root",sample,sample));//extbnb histograms 
+  TFile *f4=new TFile("root_files/unfiltered/histograms_efficiency.root"); //efficiency histograms. This is only for unfiltered. efficinecy is now baked into the overlay pelee file
   
   //Color Scheme
   tolcols::init();
@@ -401,7 +401,6 @@ void analysis::main(){
     }
     for(int j=0; j < num_channels_raquel; j++){
       h_phys_overlay_raquel_vec.push_back(h_phys_overlay_raquel[i][j]);
-      std::cout<<"Drawing "<<i<<" & "<<j<<" :"<<std::endl;
       h_phys_overlay_raquel[i][j]->Draw("hist");
     }
 

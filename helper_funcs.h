@@ -5,15 +5,18 @@ const char* which_sample(){
 
   char response;
   const char* sample;
-  std::cout<<"Is this the filtered sample (Y/N)?"<<std::endl;
+  std::cout<<"Which Sample is This?"<<std::endl;
+  std::cout<<" 0 = pelee \n 1 = filtered \n 2 = unfiltered"<<std::endl;
   std::cin>>response;
 
-  if(response =='Y'){
-    sample = "filtered";
-  }else if (response =='N'){
+  if(response =='0'){
+    sample = "pelee";
+  }else if (response =='1'){
+    sample = "unfiltered";
+  }else if(response == '2'){
     sample = "unfiltered";
   }else{
-      std::cout<<"Invalid Response. Please Type Y for yes or N for no."<<std::endl;
+      std::cout<<"Invalid Response. Please Type 0, 1, or 2 for pelee, filtered, and unfiltered samples respectively."<<std::endl;
   }
 
   return sample;
