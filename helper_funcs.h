@@ -3,33 +3,62 @@
 
 const char* which_sample(){
 
+  //Get the correct Sample
   char response;
-  const char* sample;
+  const char* Sample;
   std::cout<<"Which Sample is This?"<<std::endl;
   std::cout<<" 0 = pelee \n 1 = filtered \n 2 = unfiltered"<<std::endl;
   std::cin>>response;
 
-  if(response =='0'){
-    sample = "pelee";
-  }else if (response =='1'){
-    sample = "unfiltered";
+  if(response == '0'){
+    Sample = "pelee";
+  }else if (response == '1'){
+    Sample = "unfiltered";
   }else if(response == '2'){
-    sample = "unfiltered";
+    Sample = "unfiltered";
   }else{
       std::cout<<"Invalid Response. Please Type 0, 1, or 2 for pelee, filtered, and unfiltered samples respectively."<<std::endl;
   }
 
-  return sample;
+  return Sample;
+
 }
 
-/******************************************************************************                                                                                                                                                      
- * Checks to see if a directory exists. Note: This method only checks the                                                                                                                                                            
- * existence of the full path AND if path leaf is a dir.                                                                                                                                                                             
- *                                                                                                                                                                                                                                   
- * @return  >0 if dir exists AND is a dir,                                                                                                                                                                                           
- *           0 if dir does not exist OR exists but not a dir,                                                                                                                                                                        
- *          <0 if an error occurred (errno is also set)                                                                                                                                                                              
- *****************************************************************************/
+std::pair<const char*, const char*> which_run(){
+  
+  //Get the Correct Run
+  char response1;
+  const char* Run;
+  const char* Run_Title;
+  std::cout<<"Which Run is This?"<<std::endl;
+  std::cout<<" 0 = Jan \n 1 = Run 1 \n 2 = Run 2 \n 3 = Run 3 \n 4 = Runs 1+2+3"<<std::endl;
+  std::cin>>response1;
+
+  if(response1 == '0'){
+    Run = "Jan";
+    Run_Title = "January Sample";
+  } else if(response1 == '1'){
+    Run = "Run1";
+    Run_Title = "Run 1";
+  } else if(response1 == '2') {
+    Run = "Run2";
+    Run_Title = "Run 2";
+  } else if (response1 == '3'){
+    Run = "Run3";
+    Run_Title = "Run 3";
+  }else if(response1 == '4'){
+    Run = "Run_all";
+    Run_Title = "Runs 1+2+3";
+  }else{
+      std::cout<<"Invalid Response. Please Type 0, 1, 2 , or 3 for January, Run 1, Run2 ,and Run 3 for pelee, filtered, and respectively."<<std::endl;
+  }
+
+  return std::make_pair(Run,Run_Title);
+
+}
+
+/******************************************************************************  
+                                             * Checks to see if a directory exists. Note: This method only checks the                                                     * existence of the full path AND if path leaf is a dir.                                                                      *                                                                                                                            * @return  >0 if dir exists AND is a dir,                                                                                    *           0 if dir does not exist OR exists but not a dir,                                                                 *          <0 if an error occurred (errno is also set)                                                                       *****************************************************************************/
 
 int dirExists(const char* const path)
 {
@@ -52,13 +81,18 @@ double calculatePearsonChiSq(TH1D* O, TH1D* E){
         double O_i = O->GetBinContent(i);
         double E_i = E->GetBinContent(i);
         if (O_i == 0 && E_i == 0){
-            chisq += 0;
-        }
+	  chisq += 0;
 
-        else{
-            chisq += std::pow(O_i - E_i,2)/((O_i+E_i)/2);
-        }
-    }
+	} else if (E_i == 0){
+	  chisq += 0;
+
+	}else{
+	  //chisq += std::pow(O_i - E_i,2)/((O_i+E_i)/2);
+	  chisq += std::pow(O_i - E_i,2)/(E_i);
+
+        } //end of else
+    } //end of for loop
+
     return chisq;
 }
 
