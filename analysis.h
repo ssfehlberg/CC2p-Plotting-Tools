@@ -19,7 +19,7 @@ public:
   virtual void main();
   virtual void Define_Parameters(const char* run);
   virtual void Grab_Histograms(TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TFile* f_dirt);
-  virtual void Plot_Histograms(char const* pot_num, const char* sample_name,Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend, int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 = "", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false,double pad_lim = 0.0, double pad0_lim = 0.19,double bnb_min = 0.0, double bnb_max = 2.7);
+  virtual void Plot_Histograms(char const* pot_num, const char* sample_name,Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend, int ymax, int ymin, int num_channels, const char* titles, string path,  TLine* a2,const char* titles2 = "", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false,double pad_lim = 0.0, double pad0_lim = 0.19,double bnb_min = 0.0, double bnb_max = 2.7, Double_t xlim = -9999.0);
 
   
 private:
@@ -37,6 +37,9 @@ private:
 
   //Latex
   TLatex* t = new TLatex();
+
+  //dummy line
+  TLine* a1;
 
   //POT Num and sample name:
   char const* pot_num;
@@ -82,20 +85,20 @@ private:
   //int ylim_eff[num_eff] = {8000,8000,8000,8000,8000,8000};
   //double xlim_eff[num_eff] = {-9999,-9999,-9999,-9999,0.1,0.25};
   
-  static const int num_eff = 6;
-  const char* eff[num_eff] = {"muon_contained","muon_uncontained","proton","pion_plus","pion_minus","pion0"};
-  const char* titles_eff[num_eff] = {"True Contained #mu Momentum (GeV/c)","True Uncontained #mu Momentum","True Proton Momentum (GeV/c)","True #pi^{+} Momentum (GeV/c)","True #pi^{-} Momentum (GeV/c)","True #pi^{0} Momentum (GeV/c)"};
-  int ylim_eff[num_runs][num_eff] = {{150,150,150,20,20,20},//jan 
-				     {150,150,150,20,20,20},//run1
-				     {150,150,150,20,20,20},///run2
-				     {150,150,150,20,20,20},//run3
-				     {150,150,150,20,20,20}};//runs1+2+3
+  static const int num_eff = 9;
+  const char* eff[num_eff] = {"muon_all","muon_contained","muon_uncontained","proton_all","proton_leading","proton_recoil","pion_plus","pion_minus","pion0"};
+  const char* titles_eff[num_eff] = {"True Muon Momentum (GeV/c)","True Contained #mu Momentum (GeV/c)","True Uncontained #mu Momentum","True Proton Momentum (GeV/c)","True Leading Proton Momentum (GeV/c)","True Recoil Proton Momentum (GeV/c)","True #pi^{+} Momentum (GeV/c)","True #pi^{-} Momentum (GeV/c)","True #pi^{0} Momentum (GeV/c)"};
+  int ylim_eff[num_runs][num_eff] = {{150,150,150,150,150,150,20,20,20},//jan 
+				     {150,150,150,150,150,150,20,20,20},//run1
+				     {150,150,150,150,150,150,20,20,20},///run2
+				     {150,150,150,150,150,150,20,20,20},//run3
+				     {150,150,150,150,150,150,20,20,20}};//runs1+2+3
 
-  double xlim_eff[num_runs][num_eff] = {{0.1,0.1,0.25,0.065,0.065,0.065},//jan
-					{0.1,0.1,0.25,0.065,0.065,0.065},//run1
-					{0.1,0.1,0.25,0.065,0.065,0.065},//run2
-					{0.1,0.1,0.25,0.065,0.065,0.065},//run3
-					{0.1,0.1,0.25,0.065,0.065,0.065}};//runs 1+2+3
+  double xlim_eff[num_runs][num_eff] = {{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065},//jan
+					{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065},//run1
+					{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065},//run2
+					{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065},//run3
+					{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065}};//runs 1+2+3
   TLine* a[num_eff];
   TH1D* h_num[num_eff]; //numerator
   TH1D* h_num0[num_eff]; //numerator clone
@@ -108,6 +111,26 @@ private:
   TLegend* legend_eff[num_eff];
   TGraph* eff_graph; //efficiency aas function of cuts
   TGraph* pur_graph; //purity as function of cuts
+
+
+  static const int num_particles_eff_plots = 2;                                                                                                                                                                                        
+  const char* particles_eff_var[num_particles_eff_plots] = {"_costheta","_phi"};                                                                                                                                                                         
+  const char* particles_eff_var_titles[num_particles_eff_plots] = {"True cos(#theta)","True #phi (Rad.)"};
+  static const int num_particles_eff = 5;                                                                                                                                                                                              
+  const char* particles_eff[num_particles_eff] = {"_muon_all","_muon_contained","_muon_uncontainied","_lead_proton","_recoil_proton"};
+  const char* particles_eff_titles[num_particles_eff] = {"All Muons","Contained Muons","Uncontained Muons","Leading Proton","Recoil Proton"};
+
+  TH1D* h_particle_num[num_particles_eff][num_particles_eff_plots]; //particles for                                                                                                                                                    
+  TH1D* h_particle_denom[num_particles_eff][num_particles_eff_plots];     
+  TCanvas* canv_particle_eff[num_particles_eff][num_particles_eff_plots];
+  
+  //efficiency plots of other variables to determine potential xsec candidates                                                                                                                                                                                                     
+  static const int num_other_eff = 8;
+  const char* other_eff[num_other_eff] = {"_opening_angle_protons_lab","_opening_angle_protons_com","_opening_angle_mu_leading","_opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_nu_E"};
+  const char* other_eff_titles[num_other_eff] = {"cos(Opening Angle Protons_{Lab})","cos(Opening Angle Protons_{COM}","cos(Opening Angle Muon and Leading_{Lab})","cos(Opening Angle Muon and Both Protons_{Lab})","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)","#delta #phi_{T} (Deg.)","True Neutrino Energy (GeV)"};
+  TH1D* h_other_eff_num[num_other_eff];
+  TH1D* h_other_eff_denom[num_other_eff];
+  TCanvas* canv_other_eff[num_other_eff];
   
   /* don't use atm.
 
@@ -178,23 +201,28 @@ private:
   /////////////////////////////////////////
   static const int num_track = 4;
   static const int num_particles = 10;
+  static const int track_cut = 3;
   const char* variable[num_track] = {"_track_score","_track_vertex_distance","_track_length","_track_pid"};
-    const char* particles[num_particles] = {"_total","_proton_contained","_proton_uncontained","_muon","_pionpm","_pion0","_electron","_gamma","_kaon","_other"};//{"total","proton","muon","pion","electron","other"};
+  const char* which_track_cut[track_cut] = {"_after_3_pfps","_after_track_score","_after_distance_cut"};
+  const char* particles[num_particles] = {"_total","_proton_contained","_proton_uncontained","_muon","_pionpm","_pion0","_electron","_gamma","_kaon","_other"};//{"total","proton","muon","pion","electron","other"};
   std::vector<const char*> channel_legend_chi2 = {"Total Overlay","Protons:Contained","Protons:Uncontained","Muon","Pion#pm","Pion0,","Electron","#gamma","Kaon","Other"};
-  TH1D* h_track_overlay[num_track][num_particles];
+  TH1D* h_track_overlay[num_track][track_cut][num_particles];
   std::vector<TH1D*> h_track_overlay_vec;
-  TH1D* h_track_overlay0[num_track][3]; 
-  TH1D* h_track_bnb[num_track][2];
-  TH1D* h_track_ext[num_track][3];
-  TH1D* h_track_dirt[num_track][3];
-  THStack* h_track[num_track];
-  TCanvas* canv_track[num_track];
-  TLegend* legend_track[num_track];
-  TPad* pad_track[num_track];
-  TPad* pad0_track[num_track];
+  TH1D* h_track_overlay0[num_track][track_cut][3]; 
+  TH1D* h_track_bnb[num_track][track_cut][2];
+  TH1D* h_track_ext[num_track][track_cut][3];
+  TH1D* h_track_dirt[num_track][track_cut][3];
+  THStack* h_track[num_track][track_cut];
+  TCanvas* canv_track[num_track][track_cut];
+  TLegend* legend_track[num_track][track_cut];
+  TPad* pad_track[num_track][track_cut];
+  TPad* pad0_track[num_track][track_cut];
   int ymin_track[num_track] = {0,0,0,0};
-  int ymax_track[num_track] = {3500,2000,700,300};
+  int ymax_track[num_track] = {50000,50000,700,4500};
+  Double_t xlim_track[num_track] = {0.8, 4.0 ,0.0 ,0.2}; 
+  TLine* a_track[num_track];
   const char* titles_track[num_track] = {"Track Score","Track Vertex Distance (cm)","Track Length (cm)","Track PID"};
+  const char* titles_track_cuts[track_cut] = {"After 3PFPs","After Track Score","After Distance Cut"};
   
  ///////////////////////////////////////
  //PLOTS WITH MY MONTEC-CARLO DEFINITIONS
@@ -293,7 +321,7 @@ private:
 				      {130,60,450,275},//run1
 				      {200,100,400,450},//run2
 				      {200,100,400,450},//run3
-				      {600,100,2000,1450}};//runs 1+2+3
+				      {700,100,2000,1450}};//runs 1+2+3
 
   
   int muon_ymin[num_runs][num_var] = {{-2,-2,-2,-2},//jan
@@ -318,7 +346,7 @@ private:
 					{125,175,150,400},//run1
 					{200,200,300,575},//run2
 					{200,200,300,575},//run3
-					{450,200,300,1500}};//runs 1+2+3
+					{450,200,700,1500}};//runs 1+2+3
   
   int recoil_ymin[num_runs][num_var] = {{-2,-2,-2,-2},//jan
 					{-2,-2,-2,-2},//run1
@@ -343,7 +371,7 @@ private:
 					 {130,100,400,275},//run1
 					 {200,200,600,500},//run2
 					 {200,200,600,500},//run3
-					 {625,200,100,1500}};//runs 1+2+3
+					 {625,200,1500,1500}};//runs 1+2+3
   int leading_ymin[num_runs][num_var] = {{-2,-2,-2,-2},//jan
 					 {-2,-2,-2,-2},//run1
 					 {-2,-2,-2,-2},//run2
@@ -574,8 +602,21 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
     h_denom[i] =  (TH1D*)f1->Get(Form("h_mom_threshold_denom_%s",eff[i]));
   }
   eff_graph = (TGraph*)f1->Get("eff_graph");
-  pur_graph = (TGraph*)f1->Get("pur_graph"); 
+  pur_graph = (TGraph*)f1->Get("pur_graph");
 
+   for(int i=0; i < num_particles_eff; i++){
+      for(int j=0; j < num_particles_eff_plots; j++){
+        h_particle_num[i][j] = (TH1D*)f1->Get(Form("h_particle_num%s%s",particles_eff[i],particles_eff_var[j]));
+	h_particle_denom[i][j] = (TH1D*)f1->Get(Form("h_particle_denom%s%s",particles_eff[i],particles_eff_var[j]));
+
+      }
+    }
+
+  for(int i = 0; i < num_other_eff; i++){
+    h_other_eff_num[i] = (TH1D*)f1->Get(Form("h_other_eff_num%s",other_eff[i]));
+    h_other_eff_denom[i] = (TH1D*)f1->Get(Form("h_other_eff_denom%s",other_eff[i]));
+  }
+   
   /* not used atm.
   //grabbing the chi2 plots
   for(int i = 0; i < num_planes; i ++){
@@ -601,13 +642,16 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
     }
   }
   */
+  
   //random track variables
   for(int i =0; i < num_track; i++){
-    h_track_bnb[i][0] = (TH1D*)f2->Get(Form("h_track%s",variable[i]));
-    h_track_ext[i][0] = (TH1D*)f3->Get(Form("h_track%s",variable[i]));
-    h_track_dirt[i][0] = (TH1D*)f_dirt->Get(Form("h_track%s",variable[i]));
-    for(int j = 0; j < num_particles; j++){
-      h_track_overlay[i][j] = (TH1D*)f1->Get(Form("h_track%s%s",variable[i],particles[j]));
+    for(int k=0; k < track_cut; k++){
+      h_track_bnb[i][k][0] = (TH1D*)f2->Get(Form("h_track%s%s",variable[i],which_track_cut[k]));
+      h_track_ext[i][k][0] = (TH1D*)f3->Get(Form("h_track%s%s",variable[i],which_track_cut[k]));
+      h_track_dirt[i][k][0] = (TH1D*)f_dirt->Get(Form("h_track%s%s",variable[i],which_track_cut[k]));
+      for(int j = 0; j < num_particles; j++){
+	h_track_overlay[i][k][j] = (TH1D*)f1->Get(Form("h_track%s%s%s",variable[i],which_track_cut[k],particles[j]));
+      }
     }
   }
   
@@ -667,7 +711,7 @@ void analysis::Grab_Histograms( TFile* f1,  TFile* f2,  TFile* f3, TFile* f4, TF
 
 }
 
-void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend,int ymax, int ymin, int num_channels, const char* titles, string path, const char* titles2 ="", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false, double pad_lim = 0.0, double pad0_lim = 0.19, double bnb_min = 0.0, double bnb_max = 2.7)
+void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend,int ymax, int ymin, int num_channels, const char* titles, string path,  TLine* a2,const char* titles2 ="", const char* plots="", const char* cut = "",bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false, double pad_lim = 0.0, double pad0_lim = 0.19, double bnb_min = 0.0, double bnb_max = 2.7, Double_t xlim = -9999.)
 {      
 
   h_ext1 = (TH1D*)h_ext->Clone();
@@ -733,7 +777,12 @@ void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Colo
   h_bnb->SetLineWidth(1);
 
   h->GetYaxis()->SetTitle("No. Events");
-  
+
+  //Drawing cut lines if needed
+  a2 = new TLine(xlim,ymin,xlim,ymax);  
+  a2->Draw("SAME");
+  a2->SetLineColor(kBlack);
+    
   //if you want to plot the total for sanity sake:
   if(plot_total){
     h_overlay[0]->Draw("SAME");
@@ -791,6 +840,7 @@ void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Colo
   TF1 *a = new TF1("a","1", -150000 , 150000);
   a->SetLineColor(kRed);
   a->Draw("SAME");
+
 
   //Calculate the Chi2
   //h_ext_extra = (TH1D*)h_ext1->Clone();

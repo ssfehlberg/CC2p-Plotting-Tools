@@ -1,15 +1,20 @@
-#ifndef xsec_h
-#define xsec_h
+#ifndef xsec_prep_h
+#define xsec_prep_h
 
-class xsec{
+class xsec_prep{
 
 public:
   virtual void main();
   virtual void Grab_Histograms(TFile* f_bnb,TFile* f_ext,TFile* f_overlay,TFile* f_dirt);
   virtual void Define_Constants();
-  virtual void Plot_XSec();
+  virtual void Determine_Bin_Size(TH2D* hist);
   
 private:
+
+
+  //Debug Statements
+  //////////////////
+  bool _debug = false;
 
   //Stuff for date and time
   /////////////////////////
@@ -26,14 +31,18 @@ private:
   static const int num_particles_matrices = 5;
   const char* particles_matrices[num_particles_matrices] = {"_muon_all","_muon_contained","_muon_uncontainied","_lead_proton","_recoil_proton"};
   TH2D* h_particle_matrices[num_particles_matrices][num_particles_matrices_plots];
+  TH2D* h_particle_matrices_normalized[num_particles_matrices][num_particles_matrices_plots];
   TCanvas* canv_particle_matrices[num_particles_matrices][num_particles_matrices_plots];
+  TCanvas* canv1_particle_matrices[num_particles_matrices][num_particles_matrices_plots];
   const char* titles_particle_matrices[num_particles_matrices_plots] = {"Momentum (GeV/c)","cos(#theta)","#phi (Rad.)"};
   const char* titles_particles_matrices[num_particles_matrices] = {"All Muons","Contained Muons","Uncontained Muons","Leading Proton","Recoil Proton"};
 
   static const int num_other_matrices =8;
   const char* other_matrices[num_other_matrices] = {"_opening_angle_protons_lab","_opening_angle_protons_com","_opening_angle_mu_leading","_opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_nu_E"};
   TH2D* h_other_matrices[num_other_matrices];
+  TH2D* h_other_matrices_normalized[num_other_matrices];
   TCanvas* canv_other_matrices[num_other_matrices];
+  TCanvas* canv1_other_matrices[num_other_matrices];
   const char* titles_other_matrices[num_other_matrices] = {"cos(#gamma_{Lab})","cos(#gamma_{COM})","cos(Opening Angle Muon and Leading)","cos(Opening Angle Muon and Both Protons)","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)", "#delta #phi_{T} (Deg.)","Neutrino Energy"};
 
   //Efficiency Plots. Needed to make the Smearing Matrices
@@ -49,16 +58,16 @@ private:
   TH1D* h_particle_num[num_particles_eff][num_particles_eff_plots];
   TH1D* h_particle_denom[num_particles_eff][num_particles_eff_plots];     
   TCanvas* canv_particle_eff[num_particles_eff][num_particles_eff_plots];
-  /*double xlim_eff[num_eff] = {0.1,0.1,0.1,0.25,0.25};
-  double xlim_high_eff[num_eff] = {-9999.,-9999.,-9999.,1.2,1.2};
-  TLine* a[num_eff];
-  TLine* a1[num_eff];
-  */
+  //double xlim_eff[num_eff] = {0.1,0.1,0.1,0.25,0.25};
+  //double xlim_high_eff[num_eff] = {-9999.,-9999.,-9999.,1.2,1.2};
+  //TLine* a[num_eff];
+  //TLine* a1[num_eff];
+  
   
   //efficiency plots of other variables to determine potential xsec candidates
   static const int num_other_eff = 8;
   const char* other_eff[num_other_eff] = {"_opening_angle_protons_lab","_opening_angle_protons_com","_opening_angle_mu_leading","_opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_nu_E"};
-  const char* other_eff_titles[num_other_eff] = {"cos(Opening Angle Protons_{Lab})","cos(Opening Angle Protons_{COM}","cos(Opening Angle Muon and Leading_{Lab})","cos(Opening Angle Muon and Both Protons_{Lab})","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)","#delta #phi_{T} (Deg.)","True Neutrino Energy (GeV)"};
+  const char* other_eff_titles[num_other_eff] = {"cos(Opening Angle Protons_{Lab})","cos(Opening Angle Protons_{COM})","cos(Opening Angle Muon and Leading_{Lab})","cos(Opening Angle Muon and Both Protons_{Lab})","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)","#delta #phi_{T} (Deg.)","True Neutrino Energy (GeV)"};
   TH1D* h_other_eff_num[num_other_eff];
   TH1D* h_other_eff_denom[num_other_eff];
   TCanvas* canv_other_eff[num_other_eff];
@@ -69,16 +78,6 @@ private:
   TCanvas* canv_particle_smearing[num_particles_matrices][num_particles_matrices_plots];
   TH2D* h_other_smearing[num_other_matrices];
   TCanvas* canv_other_smearing[num_other_matrices];
-
-  //Grabbin Histograms to Determine Bin Size
-  /////////////////////////////////////////
-  TH1D* h_test[25][25];
-  std::vector<double> linspaced{0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5};
-  const char* linspaced_char[25] = {"0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","1_0","1_1","1_2","1_3","1_4","1_5","1_6","1_7","1_8","1_9","2_0","2_1","2_2","2_3","2_4","2_5"};
-
-  static const int bleh = 25;
-  TCanvas* canv_bin[bleh][bleh];
-  TF1* g[bleh][bleh];
 
   //Things for the XSec
   //////////////////////////
@@ -106,26 +105,21 @@ private:
   
 };
 #endif
-#ifdef xsec_cxx
+#ifdef xsec_prep_cxx
 
-void xsec::Grab_Histograms(TFile* f_bnb,TFile* f_ext,TFile* f_overlay,TFile* f_dirt){
+void xsec_prep::Grab_Histograms(TFile* f_bnb,TFile* f_ext,TFile* f_overlay,TFile* f_dirt){
 
-  //Migration Matrices and creating new Smearing Matrices
-  ////////////////////////////
+  //Migration Matrices
+  /////////////////////
   for(int i=0; i < num_particles_matrices; i++){
     for(int j=0; j < num_particles_matrices_plots; j++){
       h_particle_matrices[i][j] = (TH2D*)f_overlay->Get(Form("h_particle_matrices%s%s",particles_matrices[i],particles_matrices_plots[j]));
-      //h_particle_smearing[i][j] = new (TH2D*)Form();
-      //h_2D_list.push_back(h_particle_smearing[i][j]);
     }
   }
   
   for(int i=0; i < num_other_matrices; i++){
     h_other_matrices[i] = (TH2D*)f_overlay->Get(Form("h_other_matrices%s",other_matrices[i]));
-    //h_other_smearing[i] = new (TH2D*);
-    //h_2D_list.push_back(h_other_smearing[i]);
   }
-
 
   //Efficiency Plots
   ///////////////////////////
@@ -141,44 +135,9 @@ void xsec::Grab_Histograms(TFile* f_bnb,TFile* f_ext,TFile* f_overlay,TFile* f_d
     h_other_eff_denom[i] = (TH1D*)f_overlay->Get(Form("h_other_eff_denom%s",other_eff[i]));
   }
 
-
-  //Determine Bin Size Plots
-  ///////////////////////////
-  for(int i=0; i <25; i++){
-    const char* x_low = linspaced_char[i];
-    for(int j=0; j < 24; j++){
-      const char* x_high = linspaced_char[j+1];
-      if(x_low < x_high){
-	h_test[i][j] = (TH1D*)f_overlay->Get(Form("h_test_%s-%s",x_low,x_high));
-      }
-    }
-  }
-
-
-  
-  /* //XSec Histograms
-     /////////////////////////
-  for(int i=0; i < num_particles; i++){
-    for(int j=0; j < num_particle_plots; j++){
-      h_particle[i][j] = new TH1D*(Form(),Form(),);
-      h_particle_bnb[i][j] = f_bnb->Get(Form(""));
-      h_particle_ext[i][j] = f_ext->Get(Form(""));
-      h_particle_overlay[i][j] = f_overlay->Get(Form("_total"));
-      h_particle_dirt[i][j] = f_dirt->Get(Form(""));
-    }
-  }
-
-  for(int i=0; i < num_plots; i++){
-    h[i] = new TH1D*(Form(),Form(),);
-    h_bnb[i] = f_bnb->Get(Form(""));
-    h_ext[i] = f_ext->Get(Form(""));
-    h_overlay[i] = f_overlay->Get(Form("_total"));
-    h_dirt[i] = f_dirt->Get(Form(""));
-  }
-  */ 
 } //end of grab histograms
 
-void xsec::Define_Constants(){
+void xsec_prep::Define_Constants(){
 
   //Calculate the Constants for the XSec
   ///////////////////////////////////////////
@@ -194,52 +153,79 @@ void xsec::Define_Constants(){
   double flux = pot*(1.16e+11/1.6e+20); //fraction is MCC8 CCInclusive flux/POT
   std::cout<<"Value of Flux: "<<flux<<""<<std::endl;
 
-  double bin_wdith;
 
 } //end of define constants
 
 
-/*void xsec::Get_Bin_Sizes(TH2D* hist){
+void xsec_prep::Determine_Bin_Size(TH2D* hist){
 
-  std::cout<<"Starting Process to Find Bin Sizes"<<std::endl;
+  int num_bins =  hist->GetXaxis()->GetNbins();
+  double first_bin = hist->GetXaxis()->GetBinCenter(1);
+  double last_bin =  hist->GetXaxis()->GetBinCenter(num_bins);
+  double bin_width = 0.1;//0.1;
   
-  const int num_bins = int(hist->GetXaxis()->GetNbins());
-  std::cout<<"Value of num_bins:"<<num_bins<<std::endl;
-  std::vector<double> xlim{double(hist->GetXaxis()->GetXmin()),double(hist->GetXaxis()->GetXmax())};
-  std::cout<<"Min X Value: "<<xlim[0]<<" Max X Value: "<<xlim[1]<<std::endl;
+  if(_debug) std::cout<<"Value of num_bins: "<<num_bins<<std::endl;
+  if(_debug) std::cout<<"Value of first Bin: "<<first_bin<<std::endl;
+  if(_debug) std::cout<<"Value of last Bin: "<<last_bin<<std::endl;
+  
+  TH1D* p[num_bins][num_bins];
+  TCanvas* canv_bin[num_bins][num_bins];
+  TF1* g[num_bins][num_bins];
 
+  for(int i=1; i < num_bins + 2; i++){
+    int x_low = i;
+    std::vector<std::pair<double,char*>> values;
 
-  const int num_iterations = 50; //how many times are we going to make the plot
-  double delta = (xlim[0]-xlim[1])/(num_iterations-1);
-  std::vector<double> line[num_iterations];
-  for(int i=0; i < num_iterations; i++){
-    line[i] = xlim[0] + (i*delta);
-  }
-  std::cout<<"Number of Iterations: "<<num_iterations<<std::endl;
-  std::cout<<"Length of Vector: "<<line.size()<<std::endl;
+    for(int j=1; j < num_bins + 2; j++){
+      int x_high = j;
+
+      if(x_low < x_high){
+	 p[i][j] = hist->ProjectionY(Form("p_%d-%d",x_low,x_high),x_low,x_high);
+	 int num_entries = p[i][j]->GetEntries();
+
+	 if(num_entries != 0){
+	   canv_bin[i][j] = new TCanvas(Form("canv_bin_%d-%d",x_low,x_high),Form("canv_bin_%d-%d",x_low,x_high),2000,1500);
+	   p[i][j]->Draw("hist");
+	   p[i][j]->Fit("gaus","Q");
+	   g[i][j] = (TF1*)p[i][j]->GetListOfFunctions()->FindObject("gaus");
+	   g[i][j]->Draw("SAME");
+
+	   double sigma = g[i][j]->GetParameter(2);
+	   double bin_width = 0.05;
+	   double xlow  = double(p[i][j]->GetXaxis()->GetBinCenter(x_low))  - bin_width;
+	   double xhigh = double(p[i][j]->GetXaxis()->GetBinCenter(x_high)) - bin_width;
+	   double bin_size = double(xhigh - xlow);
+	   //double value = std::abs((2.0*sigma) - bin_size)/std::abs(bin_size);
+	   double value = std::pow((2.0*sigma) -  bin_size,2)/ bin_size;
+	   if(value < 1.0){
+	   //std::cout<<"Value of Value: "<<value<<" Bin Range: "<<xlow<<"-"<<xhigh<<std::endl;
+	   values.push_back(std::make_pair(value,Form("%f-%f",xlow,xhigh)));
+	 
+	   }
+	   std::sort(values.begin(),values.end(),greater());
+	     
+	   if(_debug) std::cout<<"Value of X_low: "<<x_low<<std::endl;
+	   if(_debug) std::cout<<"Value of X_high: "<<x_high<<std::endl;
+	   if(_debug) std::cout<<"Number of Entries: "<<num_entries<<std::endl;
+	   if(_debug) std::cout<<"Value of Xlow: "<<xlow<<std::endl;
+	   if(_debug) std::cout<<"Value of XHigh: "<<xhigh<<std::endl;
+	   if(_debug) std::cout<<"Value of Sigma: "<<sigma<<std::endl;
+	   if(_debug) std::cout<<"Value of Bin Size: "<<bin_size<<std::endl;
+	   if(_debug) std::cout<<"Value of Value: "<<value<<std::endl;
+
+	 }// if entries	 
+      } // if xlow
+    } // j loop
+
+    if(_debug) std::cout<<"Size of values: "<<values.size()<<std::endl;
+    if(values.size() != 0){
+      std::cout<<"[LOOKIE HERE] Minimum Difference: "<<values[0].first<<" Bin Range: "<<values[0].second<<std::endl;
+      //std::cout<<"[LOOKIE HERE AGAIN] Second Minimum Difference: "<<values[1].first<<" Bin Range: "<<values[1].second<<std::endl;
+      //std::cout<<"[LOOKIE HERE LAST TIME] Third Minimum Difference: "<<values[2].first<<" Bin Range: "<<values[2].second<<std::endl;
+    } //values size
+          
+  } // i loop
+
+} //Determine bin size
  
-  TCanvas* canv[num_bins];
-  TH1D* h_reco[num_bins];
-
-  std::cout<<"Starting to Loop:"<<std::endl;  
-  for(int i=0; i < num_bins; i++){
-    h_reco[i] = new TH1D(Form("h_reco_%d",i),Form("h_reco_%d",i),num_bins,xlim[0],xlim[1]);
-
-    if(){
-      h_reco[i]->Fill(hist->GetBinContent(i,j));
-    }
-
-    canv[i] = new TCanvas(Form("canv_%d",i),Form("canv_%d",i),2000,1500);
-    h_reco[i]->Draw("hist");
-    h_reco[i]->Fit("gaus");
-    h_reco[i]->Draw();   
-  } 
-  
-}//end of GetBinSizes()
-*/
-void xsec::Plot_XSec(){
-
-
-  
-}
 #endif

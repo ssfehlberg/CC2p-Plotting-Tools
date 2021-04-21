@@ -153,7 +153,7 @@ void analysis::main(){
   /////////////////////////////
   //Plot the Efficiency Stuff:
   //////////////////////////
-  for(int i=0; i < num_eff; i++){
+  /*for(int i=0; i < num_eff; i++){
 
     h_num0[i] = (TH1D*)h_num[i]->Clone();
     h_denom0[i] = (TH1D*)h_denom[i]->Clone();
@@ -185,7 +185,7 @@ void analysis::main(){
     h_num1[i]->SetMaximum(1);
     h_num1[i]->SetMinimum(0);
     t->DrawLatex(0.515,0.97,Form("#scale[1.0]{Efficiency: %s}",titles_eff[i]));
-    t->DrawLatex(0.23,0.92,"#scale[0.5]{Accumulated POT: 4.566e+19}");
+    t->DrawLatex(0.23,0.92,Form("%s",pot_num));
     t->DrawLatex(0.8,0.92,"#scale[0.5]{MicroBooNE In-Progress}");
     a[i] = new TLine(xlim_eff[run_num][i],0,xlim_eff[run_num][i],1);
     a[i]->Draw("same");
@@ -194,7 +194,7 @@ void analysis::main(){
     canv_eff[i]->Print(Form("%s_%s_eff.png",path.c_str(),eff[i]));
     canv_eff[i]->Print(Form("%s_%s_eff.pdf",path.c_str(),eff[i]));
     }
-
+  */
   //efficiency and purity as function of cuts
   TCanvas* canv_eff_pur = new TCanvas("canv_eff_pur","canv_eff_pur",2000,1500);
   eff_graph->Draw("alp");
@@ -203,6 +203,7 @@ void analysis::main(){
   eff_graph->SetLineWidth(3);
   eff_graph->SetMarkerStyle(20);
   //eff_graph->GetXaxis()->SetLabel("Cut Number");
+  eff_graph->SetTitle("Efficiency and Purity as a Function of Cuts");
   eff_graph->GetYaxis()->SetRangeUser(0.,1.);
   eff_graph->GetYaxis()->SetTitle("Efficiency or Purity");
   const char* eff_cut_label[6] = {"No Cuts","FV","3 PFP","Trk Scr","Vtx","PID Cut"};
@@ -229,6 +230,54 @@ void analysis::main(){
   canv_eff_pur->Print(Form("%s_efficiency_and_purity.png",path.c_str()));
   canv_eff_pur->Print(Form("%s_efficiency_and_purity.pdf",path.c_str()));
 
+  //Effieincy of other variables
+  for(int i =0; i < num_particles_eff; i++){
+    for (int j=0; j <num_particles_eff_plots; j++){
+      canv_particle_eff[i][j] = new TCanvas(Form("C_eff%s%s",particles_eff[j],particles_eff_var[i]),Form("C_eff%s%s",particles_eff[j],particles_eff_var[i]),2000,1500);
+
+      h_particle_num[i][j]->Divide(h_particle_num[i][j],h_particle_denom[i][j],1.0,1.0, "B");
+      h_particle_num[i][j]->Draw("1e1p");
+      h_particle_num[i][j]->SetTitle(Form(" ; %s ; Efficiency",particles_eff_var_titles[j]));
+      h_particle_num[i][j]->SetLineColor(kViolet);
+      h_particle_num[i][j]->SetMaximum(1);
+      h_particle_num[i][j]->SetMinimum(0);
+      t->DrawLatex(0.515,0.97,Form("#scale[1.0]{Efficiency: %s of %s}",particles_eff_var_titles[j],particles_eff_titles[i]));
+      t->DrawLatex(0.23,0.92,Form("%s",pot_num));
+      t->DrawLatex(0.8,0.92,"#scale[0.5]{MicroBooNE In-Progress}");
+      //a[i] = new TLine(xlim_eff[run_num][i],0,xlim_eff[run_num][i],1);
+      //a[i]->Draw("same");
+      //a[i]->SetLineColor(kBlack);
+      //a[i]->SetLineWidth(4);
+
+      canv_particle_eff[i][j]->Print(Form("%s%s%s_eff.png",path.c_str(),particles_eff[i],particles_eff_var[j]));
+      canv_particle_eff[i][j]->Print(Form("%s%s%s_eff.pdf",path.c_str(),particles_eff[i],particles_eff_var[j]));
+ 
+    }
+  }
+  
+
+  for(int i =0; i < num_other_eff; i++){
+    canv_other_eff[i] = new TCanvas(Form("C_other_eff%s",other_eff[i]),Form("C_other_eff%s",other_eff[i]),2000,1500);
+    h_other_eff_num[i]->Divide(h_other_eff_num[i],h_other_eff_denom[i],1.0,1.0, "B");
+    h_other_eff_num[i]->Draw("1e1p");
+    h_other_eff_num[i]->SetTitle(Form(" ; %s ; Efficiency",other_eff_titles[i]));
+    h_other_eff_num[i]->SetLineColor(kViolet);
+    h_other_eff_num[i]->SetMaximum(1);
+    h_other_eff_num[i]->SetMinimum(0);
+    t->DrawLatex(0.515,0.97,Form("#scale[1.0]{Efficiency: %s}",other_eff_titles[i]));
+    t->DrawLatex(0.23,0.92,Form("%s",pot_num));
+    t->DrawLatex(0.8,0.92,"#scale[0.5]{MicroBooNE In-Progress}");
+    //a[i] = new TLine(xlim_eff[run_num][i],0,xlim_eff[run_num][i],1);
+    //a[i]->Draw("same");
+    //a[i]->SetLineColor(kBlack);
+    //a[i]->SetLineWidth(4);
+    canv_other_eff[i]->Print(Form("%s%s_eff.png",path.c_str(),other_eff[i]));
+    canv_other_eff[i]->Print(Form("%s%s_eff.pdf",path.c_str(),other_eff[i]));
+
+  }
+
+  
+
   ///////////////////////////////////
   //Plots of the Reconstructed Vertex
   ///////////////////////////////////
@@ -242,10 +291,10 @@ void analysis::main(){
       }
       
       
-      Plot_Histograms(pot_num,sample_name,colors, h_overlay_vec, h_overlay0[i][j][0],h_overlay0[i][j][1],h_overlay0[i][j][2], h_ext[i][j][0], h_ext[i][j][1], h_ext[i][j][2], h_dirt[i][j][0],h_dirt[i][j][1],h_dirt[i][j][2],h_bnb[i][j][0],h_bnb[i][j][1],canv[i][j], h[i][j], pad[i][j], pad0[i][j], legend[i][j], channel_legend, ylim[run_num][i][j],ymin[run_num][i][j], num_channels, titles[j], path, "", plots[j], cut[i], false, false, false, 0.0, 0.19, 0.5, 1.5);
+      Plot_Histograms(pot_num,sample_name,colors, h_overlay_vec, h_overlay0[i][j][0],h_overlay0[i][j][1],h_overlay0[i][j][2], h_ext[i][j][0], h_ext[i][j][1], h_ext[i][j][2], h_dirt[i][j][0],h_dirt[i][j][1],h_dirt[i][j][2],h_bnb[i][j][0],h_bnb[i][j][1],canv[i][j], h[i][j], pad[i][j], pad0[i][j], legend[i][j], channel_legend, ylim[run_num][i][j],ymin[run_num][i][j], num_channels, titles[j], path, a1 ,"", plots[j], cut[i], false, false, false, 0.0, 0.19, 0.5, 1.5);
       h_overlay_vec.clear();
 
-      Plot_Histograms(pot_num,sample_name,colors_raquel, h_overlay_raquel_vec, h_overlay0_raquel[i][j][0],h_overlay0_raquel[i][j][1],h_overlay0_raquel[i][j][2], h_ext[i][j][0], h_ext[i][j][1], h_ext[i][j][2], h_dirt[i][j][0],h_dirt[i][j][1],h_dirt[i][j][2],h_bnb[i][j][0],h_bnb[i][j][1],canv_raquel[i][j], h_raquel[i][j], pad_raquel[i][j], pad0_raquel[i][j], legend_raquel[i][j], channel_legend_raquel, ylim[run_num][i][j],ymin[run_num][i][j], num_channels_raquel, titles[j], path, "", plots[j], Form("%s_raquel",cut[i]), false, false, false, 0.0, 0.19, 0.5, 1.5);
+      Plot_Histograms(pot_num,sample_name,colors_raquel, h_overlay_raquel_vec, h_overlay0_raquel[i][j][0],h_overlay0_raquel[i][j][1],h_overlay0_raquel[i][j][2], h_ext[i][j][0], h_ext[i][j][1], h_ext[i][j][2], h_dirt[i][j][0],h_dirt[i][j][1],h_dirt[i][j][2],h_bnb[i][j][0],h_bnb[i][j][1],canv_raquel[i][j], h_raquel[i][j], pad_raquel[i][j], pad0_raquel[i][j], legend_raquel[i][j], channel_legend_raquel, ylim[run_num][i][j],ymin[run_num][i][j], num_channels_raquel, titles[j], path,   a1,"", plots[j], Form("%s_raquel",cut[i]), false, false, false, 0.0, 0.19, 0.5, 1.5);
       h_overlay_raquel_vec.clear();
      
     }
@@ -289,18 +338,19 @@ void analysis::main(){
   //Track plots, such as PID
   //////////////////////////
   for(int i=0; i < num_track; i++){
-    for(int j=0; j < num_particles; j ++){
-      h_track_overlay_vec.push_back(h_track_overlay[i][j]);
-    }
+    for(int k=0; k < track_cut; k++){
+      for(int j=0; j < num_particles; j ++){
+	h_track_overlay_vec.push_back(h_track_overlay[i][k][j]);
+      }
     
-    Plot_Histograms(pot_num,sample_name,colors_chi2, h_track_overlay_vec, h_track_overlay0[i][0],h_track_overlay0[i][1],h_track_overlay0[i][2],
-		    h_track_ext[i][0], h_track_ext[i][1], h_track_ext[i][2],
-		    h_track_dirt[i][0],h_track_dirt[i][1],h_track_dirt[i][2],
-		    h_track_bnb[i][0],h_track_bnb[i][1],canv_track[i], h_track[i],
-		    pad_track[i], pad0_track[i], legend_track[i], channel_legend_chi2,
-		    ymax_track[i], ymin_track[i], num_particles, Form("%s",titles_track[i]), path,Form(""), Form("%s",variable[i]), Form(""),false, true, true, 0.01, 0.15);
-    h_track_overlay_vec.clear();
-       
+      Plot_Histograms(pot_num,sample_name,colors_chi2, h_track_overlay_vec, h_track_overlay0[i][k][0],h_track_overlay0[i][k][1],h_track_overlay0[i][k][2],
+		      h_track_ext[i][k][0], h_track_ext[i][k][1], h_track_ext[i][k][2],
+		      h_track_dirt[i][k][0],h_track_dirt[i][k][1],h_track_dirt[i][k][2],
+		      h_track_bnb[i][k][0],h_track_bnb[i][k][1],canv_track[i][k], h_track[i][k],
+		      pad_track[i][k], pad0_track[i][k], legend_track[i][k], channel_legend_chi2,
+		      ymax_track[i], ymin_track[i], num_particles, Form("%s",titles_track[i]), path, a_track[i],Form(""), Form("%s%s",variable[i],which_track_cut[k]), Form(""),false, true, true, 0.01, 0.15, xlim_track[i]);
+      h_track_overlay_vec.clear();
+    }
   }
 
   
@@ -328,7 +378,7 @@ void analysis::main(){
 		    h_muon_dirt[i][0],h_muon_dirt[i][1],h_muon_dirt[i][2],
 		    h_muon_bnb[i][0],h_muon_bnb[i][1],canv_muon[i], h_muon[i],
 		    pad_muon[i], pad0_muon[i], legend_muon[i],channel_legend,
-		    muon_ylim[run_num][i], muon_ymin[run_num][i], num_channels, Form("Muon: %s",titles_var[i]), path,"", Form("_muon%s",var[i]), "",false, false,flip_muon[i],0.0,0.19,0.0,2.7);
+		    muon_ylim[run_num][i], muon_ymin[run_num][i], num_channels, Form("Muon: %s",titles_var[i]), path,  a1,"", Form("_muon%s",var[i]), "",false, false,flip_muon[i],0.0,0.19,0.0,2.7);
     h_muon_overlay_vec.clear();
        
     //muon:raquel
@@ -337,7 +387,7 @@ void analysis::main(){
 		    h_muon_dirt[i][0],h_muon_dirt[i][1],h_muon_dirt[i][2],
 		    h_muon_bnb[i][0],h_muon_bnb[i][1],canv_muon_raquel[i], h_muon_raquel[i],
 		     pad_muon_raquel[i], pad0_muon_raquel[i], legend_muon_raquel[i], channel_legend_raquel,
-		     muon_ylim[run_num][i], muon_ymin[run_num][i], num_channels_raquel, Form("Muon: %s",titles_var[i]), path,"", Form("_muon_raquel%s",var[i]), "",false, false,flip_muon[i],0.0,0.19,0.0,2.7);
+		     muon_ylim[run_num][i], muon_ymin[run_num][i], num_channels_raquel, Form("Muon: %s",titles_var[i]), path,  a1,"", Form("_muon_raquel%s",var[i]), "",false, false,flip_muon[i],0.0,0.19,0.0,2.7);
     h_muon_overlay_raquel_vec.clear();
     
       
@@ -347,7 +397,7 @@ void analysis::main(){
 		    h_recoil_dirt[i][0],h_recoil_dirt[i][1],h_recoil_dirt[i][2],
 		    h_recoil_bnb[i][0],h_recoil_bnb[i][1],canv_recoil[i], h_recoil[i],
 		    pad_recoil[i], pad0_recoil[i], legend_recoil[i],channel_legend,
-		    recoil_ylim[run_num][i], recoil_ymin[run_num][i], num_channels, Form("Recoil Proton: %s",titles_var[i]), path,"", Form("_recoil%s",var[i]), "",false, false, flip_recoil[i],0.0105, 0.19, 0.0, 2.7);
+		    recoil_ylim[run_num][i], recoil_ymin[run_num][i], num_channels, Form("Recoil Proton: %s",titles_var[i]), path,  a1,"", Form("_recoil%s",var[i]), "",false, false, flip_recoil[i],0.0105, 0.19, 0.0, 2.7);
     h_recoil_overlay_vec.clear();
 
     //recoil proton:raquel
@@ -356,7 +406,7 @@ void analysis::main(){
 		    h_recoil_dirt[i][0],h_recoil_dirt[i][1],h_recoil_dirt[i][2],
 		    h_recoil_bnb[i][0],h_recoil_bnb[i][1],canv_recoil_raquel[i], h_recoil_raquel[i],
 		    pad_recoil_raquel[i], pad0_recoil_raquel[i], legend_recoil_raquel[i], channel_legend_raquel,
-		    recoil_ylim[run_num][i], recoil_ymin[run_num][i], num_channels_raquel, Form("Recoil Proton: %s",titles_var[i]), path,"", Form("_recoil_raquel%s",var[i]), "",false, false,flip_recoil[i],0.0,0.19,0.0,2.7);
+		    recoil_ylim[run_num][i], recoil_ymin[run_num][i], num_channels_raquel, Form("Recoil Proton: %s",titles_var[i]), path,  a1,"", Form("_recoil_raquel%s",var[i]), "",false, false,flip_recoil[i],0.0,0.19,0.0,2.7);
     h_recoil_overlay_raquel_vec.clear();
     
     //leading proton:mine
@@ -365,7 +415,7 @@ void analysis::main(){
 		    h_leading_dirt[i][0],h_leading_dirt[i][1],h_leading_dirt[i][2],
 		    h_leading_bnb[i][0],h_leading_bnb[i][1],canv_leading[i], h_leading[i],
 		    pad_leading[i], pad0_leading[i], legend_leading[i],channel_legend,
-		    leading_ylim[run_num][i], leading_ymin[run_num][i], num_channels, Form("Leading Proton: %s",titles_var[i]), path,"", Form("_leading%s",var[i]), "",false, false, flip_lead[i],0.0,0.19,0.0,2.7);
+		    leading_ylim[run_num][i], leading_ymin[run_num][i], num_channels, Form("Leading Proton: %s",titles_var[i]), path,  a1,"", Form("_leading%s",var[i]), "",false, false, flip_lead[i],0.0,0.19,0.0,2.7);
     h_leading_overlay_vec.clear();
 
     //leading proton:raquel
@@ -374,7 +424,7 @@ void analysis::main(){
 		    h_leading_dirt[i][0],h_leading_dirt[i][1],h_leading_dirt[i][2],
 		    h_leading_bnb[i][0],h_leading_bnb[i][1],canv_leading_raquel[i], h_leading_raquel[i],
 		    pad_leading_raquel[i], pad0_leading_raquel[i], legend_leading_raquel[i],channel_legend_raquel,
-		    leading_ylim[run_num][i], leading_ymin[run_num][i], num_channels_raquel, Form("Leading Proton: %s",titles_var[i]), path,"", Form("_leading_raquel%s",var[i]), "",false, false, flip_lead[i],0.0,0.19,0.0,2.7);
+		    leading_ylim[run_num][i], leading_ymin[run_num][i], num_channels_raquel, Form("Leading Proton: %s",titles_var[i]), path,  a1,"", Form("_leading_raquel%s",var[i]), "",false, false, flip_lead[i],0.0,0.19,0.0,2.7);
     h_leading_overlay_raquel_vec.clear();
     
   }
@@ -397,7 +447,7 @@ void analysis::main(){
                     h_phys_dirt[i][0],h_phys_dirt[i][1],h_phys_dirt[i][2],
                     h_phys_bnb[i][0],h_phys_bnb[i][1],canv_phys[i], h_phys[i],
                     pad_phys[i], pad0_phys[i], legend_phys[i],channel_legend,
-                    phys_ylim[run_num][i], phys_ymin[run_num][i], num_channels, physics_titles[i], path,"", physics[i], "",false, false, false,0.0, 0.19,0.0,2.7);
+                    phys_ylim[run_num][i], phys_ymin[run_num][i], num_channels, physics_titles[i], path,  a1,"", physics[i], "",false, false, false,0.0, 0.19,0.0,2.7);
     h_phys_overlay_vec.clear();
      
     //raquel
@@ -406,7 +456,7 @@ void analysis::main(){
                     h_phys_dirt[i][0],h_phys_dirt[i][1],h_phys_dirt[i][2],
                     h_phys_bnb[i][0],h_phys_bnb[i][1],canv_phys_raquel[i], h_phys_raquel[i],
                     pad_phys_raquel[i], pad0_phys_raquel[i], legend_phys_raquel[i],channel_legend_raquel,
-                    phys_ylim[run_num][i], phys_ymin[run_num][i], num_channels_raquel, physics_titles[i], path,"", Form("%s_raquel",physics[i]), "",false, false, false,0.0,0.19,0.0,2.7);
+                    phys_ylim[run_num][i], phys_ymin[run_num][i], num_channels_raquel, physics_titles[i], path,  a1,"", Form("%s_raquel",physics[i]), "",false, false, false,0.0,0.19,0.0,2.7);
 		    h_phys_overlay_raquel_vec.clear();
   }
 
@@ -414,7 +464,7 @@ void analysis::main(){
   //STV PLOTS
   ///////////////////////////////////////////
   for(int i=0; i < num_stv; i++){
-    for(int j=0; j < num_channels; j++){
+    for(int j=0; j < num_channels; j++){   
       h_stv_overlay_vec.push_back(h_stv_overlay[i][j]);
       h_stv_overlay[i][j]->Draw("hist");
     }
@@ -428,7 +478,7 @@ void analysis::main(){
                     h_stv_dirt[i][0],h_stv_dirt[i][1],h_stv_dirt[i][2],
                     h_stv_bnb[i][0],h_stv_bnb[i][1],canv_stv[i], h_stv[i],
                     pad_stv[i], pad0_stv[i], legend_stv[i],channel_legend,
-                    stv_ylim[run_num][i], stv_ymin[run_num][i], num_channels, stv_titles[i], path,"", stv[i], "",false, false,false,0.0,0.19);
+                    stv_ylim[run_num][i], stv_ymin[run_num][i], num_channels, stv_titles[i], path, a1,"", stv[i], "", a1,false, false,false,0.0,0.19);
     h_stv_overlay_vec.clear();
     
     //raquel
@@ -437,7 +487,7 @@ void analysis::main(){
                     h_stv_dirt[i][0],h_stv_dirt[i][1],h_stv_dirt[i][2],
                     h_stv_bnb[i][0],h_stv_bnb[i][1],canv_stv_raquel[i], h_stv_raquel[i],
                     pad_stv_raquel[i], pad0_stv_raquel[i], legend_stv_raquel[i],channel_legend_raquel,
-                    stv_ylim[run_num][i], stv_ymin[run_num][i], num_channels_raquel, stv_titles[i], path,"", Form("%s_raquel",stv[i]), "",false, false,false,0.0,0.19);
+                    stv_ylim[run_num][i], stv_ymin[run_num][i], num_channels_raquel, stv_titles[i], path, a1,"", Form("%s_raquel",stv[i]), "",false, false,false,0.0,0.19);
     h_stv_overlay_raquel_vec.clear();
   }
 
