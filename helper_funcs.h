@@ -7,17 +7,15 @@ const char* which_sample(){
   char response;
   const char* Sample;
   std::cout<<"Which Sample is This?"<<std::endl;
-  std::cout<<" 0 = pelee \n 1 = filtered \n 2 = unfiltered"<<std::endl;
+  std::cout<<" 0 = pelee \n 1 = pelee with xsec binning"<<std::endl;
   std::cin>>response;
 
   if(response == '0'){
     Sample = "pelee";
   }else if (response == '1'){
-    Sample = "unfiltered";
-  }else if(response == '2'){
-    Sample = "unfiltered";
+    Sample = "pelee_xsec";
   }else{
-      std::cout<<"Invalid Response. Please Type 0, 1, or 2 for pelee, filtered, and unfiltered samples respectively."<<std::endl;
+    std::cout<<"Invalid Response. Please Type 0, 1, or 2 for pelee, filtered, and unfiltered samples respectively."<<std::endl;
   }
 
   return Sample;
@@ -50,7 +48,7 @@ std::pair<const char*, const char*> which_run(){
     Run = "Run_all";
     Run_Title = "Runs 1+2+3";
   }else{
-      std::cout<<"Invalid Response. Please Type 0, 1, 2 , or 3 for January, Run 1, Run2 ,and Run 3 for pelee, filtered, and respectively."<<std::endl;
+      std::cout<<"Invalid Response. Please Type 0, 1, 2 ,3, 4, or 5 for January, Run 1, Run2 , Run 3, Runs 1+2+3, respectively."<<std::endl;
   }
 
   return std::make_pair(Run,Run_Title);
@@ -97,7 +95,7 @@ double calculatePearsonChiSq(TH1D* O, TH1D* E){
 }
 
 void OverlayStatistics(TH1D* O, TH1D* E, TH1D* L){
-  for(int i_bin = 1; i_bin < O->GetXaxis()->GetNbins(); i_bin++){
+  for(int i_bin = 1; i_bin < O->GetXaxis()->GetNbins() + 1; i_bin++){
     double total_mc_in_bin = O->GetBinContent(i_bin);
     double total_ext_in_bin = E->GetBinContent(i_bin);
     double total_dirt_in_bin = L->GetBinContent(i_bin);
