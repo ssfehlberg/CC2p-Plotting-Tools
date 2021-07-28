@@ -4,16 +4,17 @@
 
 void xsec_prep::main(){
 
-  TFile *f_overlay=new TFile("root_files/pelee/Run_all/histograms_pelee_overlay_wgt.root");//overlay histograms.
-  TFile *f_dirt=new TFile("root_files/pelee/Run_all/histograms_pelee_dirt_wgt.root");//dirt histograms 
-  TFile *f_bnb=new TFile("root_files/pelee/Run_all/histograms_pelee_bnb.root");//bnb histograms  
-  TFile *f_ext=new TFile("root_files/pelee/Run_all/histograms_pelee_ext.root");//extbnb histograms 
-
-   TFile *tfile = new TFile("root_files/pelee/Run_all/xsec_extraction.root","RECREATE"); //output root file
-
+  TFile *f_overlay=new TFile("root_files/pelee/Run_all/histograms_pelee_xsec_overlay_wgt.root");//overlay histograms.
+  TFile *f_dirt=new TFile("root_files/pelee/Run_all/histograms_pelee_xsec_dirt_wgt.root");//dirt histograms 
+  TFile *f_bnb=new TFile("root_files/pelee/Run_all/histograms_pelee_xsec_bnb.root");//bnb histograms  
+  TFile *f_ext=new TFile("root_files/pelee/Run_all/histograms_pelee_xsec_ext.root");//extbnb histograms 
+  TFile *f_eff=new TFile("root_files/pelee/Run_all/histograms_mc_eff.root");//extbnb histograms  
+  
+  TFile *tfile = new TFile("root_files/pelee/Run_all/xsec_extraction.root","RECREATE"); //output root file
+   
   //Grabbing Correct Date and Time and Directory
   ///////////////////////////////////////////////////
-  const char* pathname = Form("images/%d%d%d_pelee_Run_all/",Month,Day,Year);
+  const char* pathname = Form("images/pelee_xsec/Run_all/");
   string path(pathname);
   int dir_exists = dirExists(pathname);
   if(dir_exists == 0){
@@ -41,11 +42,11 @@ void xsec_prep::main(){
 
   //Get the Histograms and Define the XSec ones to Save
   ///////////////////////////////////////////////////
-  Grab_Histograms(f_bnb,f_ext,f_overlay,f_dirt);
+  Grab_Histograms(f_bnb,f_ext,f_overlay,f_dirt, f_eff);
 
 
   //Determine Bin Size Test
-  //Determine_Bin_Size(h_other_matrices[6]);
+  //Determine_Bin_Size(h_other_matrices[4]);
 
   
   //Plotting the Migration Matrices and checking normalization in each column (i.e. each truth bin)
@@ -61,8 +62,8 @@ void xsec_prep::main(){
       t->DrawLatex(0.82,0.92,Form("%s",sample_name));
       h_particle_matrices[i][j]->Write();
       canv_particle_matrices[i][j]->Update();
-      canv_particle_matrices[i][j]->Print(Form("%s%s%s.pdf",path.c_str(),particles_matrices[i],particles_matrices_plots[j]));
-      canv_particle_matrices[i][j]->Print(Form("%s%s%s.png",path.c_str(),particles_matrices[i],particles_matrices_plots[j]));
+      canv_particle_matrices[i][j]->Print(Form("%s%s%s_matrix.pdf",path.c_str(),particles_matrices[i],particles_matrices_plots[j]));
+      canv_particle_matrices[i][j]->Print(Form("%s%s%s_matrix.png",path.c_str(),particles_matrices[i],particles_matrices_plots[j]));
 
       //checking normalization
       canv1_particle_matrices[i][j] = new TCanvas(Form("canv1_particle_matrices%s%s",particles_matrices[i],particles_matrices_plots[j]),Form("canv1_particle_matrices%s%s",particles_matrices[i],particles_matrices_plots[j]),2000,1500);
@@ -117,8 +118,8 @@ void xsec_prep::main(){
     t->DrawLatex(0.82,0.92,Form("%s",sample_name));
     canv_other_matrices[i]->Update();
     h_other_matrices[i]->Write();
-    canv_other_matrices[i]->Print(Form("%s%s.pdf",path.c_str(),other_matrices[i]));
-    canv_other_matrices[i]->Print(Form("%s%s.png",path.c_str(),other_matrices[i]));
+    canv_other_matrices[i]->Print(Form("%s%s_matrix.pdf",path.c_str(),other_matrices[i]));
+    canv_other_matrices[i]->Print(Form("%s%s_matrix.png",path.c_str(),other_matrices[i]));
 
     //checking normalization
     canv1_other_matrices[i] = new TCanvas(Form("canv1_other_matrices%s",other_matrices[i]),Form("canv1_particle_matrices%s",other_matrices[i]),2000,1500);
@@ -174,7 +175,7 @@ void xsec_prep::main(){
       h_particle_num[i][j]->Draw("1e1p");
       h_particle_num[i][j]->SetTitle(Form(" ; %s ; Efficiency",particles_eff_var_titles[j]));
       h_particle_num[i][j]->SetLineColor(kViolet);
-      h_particle_num[i][j]->SetMaximum(1);
+      h_particle_num[i][j]->SetMaximum(0.4);
       h_particle_num[i][j]->SetMinimum(0);
       t->DrawLatex(0.515,0.97,Form("#scale[1.0]{Efficiency: %s of %s}",particles_eff_var_titles[j],particles_eff_titles[i]));
       t->DrawLatex(0.3,0.92,Form("%s",pot_num));
@@ -201,7 +202,7 @@ void xsec_prep::main(){
     h_other_eff_num[i]->Draw("1e1p");
     h_other_eff_num[i]->SetTitle(Form(" ; %s ; Efficiency",other_eff_titles[i]));
     h_other_eff_num[i]->SetLineColor(kViolet);
-    h_other_eff_num[i]->SetMaximum(1);
+    h_other_eff_num[i]->SetMaximum(0.4);
     h_other_eff_num[i]->SetMinimum(0);
     t->DrawLatex(0.515,0.97,Form("#scale[1.0]{Efficiency: %s}",other_eff_titles[i]));
     t->DrawLatex(0.3,0.92,Form("%s",pot_num));
@@ -238,7 +239,7 @@ void xsec_prep::main(){
 	  }else{
 	    eff_correction = 1.0/eff;
 	  }
-	  h_particle_smearing[i][j]->SetBinContent(k,jj,(bin_content/sum)*eff_correction); //remember to apply eff_correction
+	  h_particle_smearing[i][j]->SetBinContent(k,jj,(bin_content/sum)); //remember to apply eff_correction
 	}
       } //end of loop over true bins
 
@@ -275,7 +276,7 @@ void xsec_prep::main(){
 	}else{
 	  eff_correction = 1.0/eff;
 	}
-	h_other_smearing[i]->SetBinContent(k,jj,(bin_content/sum)*eff_correction); //remember to apply eff_correction
+	h_other_smearing[i]->SetBinContent(k,jj,(bin_content/sum)); //remember to apply eff_correction
       }
     } //end of loop over reco bins
 

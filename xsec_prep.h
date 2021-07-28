@@ -5,7 +5,7 @@ class xsec_prep{
 
 public:
   virtual void main();
-  virtual void Grab_Histograms(TFile* f_bnb,TFile* f_ext,TFile* f_overlay,TFile* f_dirt);
+  virtual void Grab_Histograms(TFile* f_bnb,TFile* f_ext,TFile* f_overlay,TFile* f_dirt, TFile* f_eff);
   virtual void Define_Constants();
   virtual void Determine_Bin_Size(TH2D* hist);
   
@@ -37,13 +37,13 @@ private:
   const char* titles_particle_matrices[num_particles_matrices_plots] = {"Momentum (GeV/c)","cos(#theta)","#phi (Rad.)"};
   const char* titles_particles_matrices[num_particles_matrices] = {"All Muons","Contained Muons","Uncontained Muons","Leading Proton","Recoil Proton"};
 
-  static const int num_other_matrices =8;
-  const char* other_matrices[num_other_matrices] = {"_opening_angle_protons_lab","_opening_angle_protons_com","_opening_angle_mu_leading","_opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_nu_E"};
+  static const int num_other_matrices =9;
+  const char* other_matrices[num_other_matrices] = {"_opening_angle_protons_lab","_opening_angle_protons_com","_opening_angle_mu_leading","_opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_pn","_nu_E"};
   TH2D* h_other_matrices[num_other_matrices];
   TH2D* h_other_matrices_normalized[num_other_matrices];
   TCanvas* canv_other_matrices[num_other_matrices];
   TCanvas* canv1_other_matrices[num_other_matrices];
-  const char* titles_other_matrices[num_other_matrices] = {"cos(#gamma_{Lab})","cos(#gamma_{COM})","cos(Opening Angle Muon and Leading)","cos(Opening Angle Muon and Both Protons)","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)", "#delta #phi_{T} (Deg.)","Neutrino Energy"};
+  const char* titles_other_matrices[num_other_matrices] = {"cos(#gamma_{Lab})","cos(#gamma_{1#mu2p COM})","cos(Opening Angle Muon and Leading)","cos(Opening Angle Muon and Both Protons)","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)", "#delta #phi_{T} (Deg.)","p_{n} (GeV/c)","Neutrino Energy"};
 
   //Efficiency Plots. Needed to make the Smearing Matrices
   ///////////////////////////////////////////////////////
@@ -62,12 +62,11 @@ private:
   //double xlim_high_eff[num_eff] = {-9999.,-9999.,-9999.,1.2,1.2};
   //TLine* a[num_eff];
   //TLine* a1[num_eff];
-  
-  
+    
   //efficiency plots of other variables to determine potential xsec candidates
-  static const int num_other_eff = 8;
-  const char* other_eff[num_other_eff] = {"_opening_angle_protons_lab","_opening_angle_protons_com","_opening_angle_mu_leading","_opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_nu_E"};
-  const char* other_eff_titles[num_other_eff] = {"cos(Opening Angle Protons_{Lab})","cos(Opening Angle Protons_{COM})","cos(Opening Angle Muon and Leading_{Lab})","cos(Opening Angle Muon and Both Protons_{Lab})","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)","#delta #phi_{T} (Deg.)","True Neutrino Energy (GeV)"};
+  static const int num_other_eff = 9;
+  const char* other_eff[num_other_eff] = {"_opening_angle_protons_lab","_opening_angle_protons_com","_opening_angle_mu_leading","_opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_pn","_nu_E"};
+  const char* other_eff_titles[num_other_eff] = {"cos(#gamma_{Lab})","cos(#gamma_{1#mu2p COM})","cos(Opening Angle Muon and Leading_{Lab})","cos(Opening Angle Muon and Both Protons_{Lab})","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)","#delta #phi_{T} (Deg.)","True p_{n} (GeV/c)","True Neutrino Energy (GeV)"};
   TH1D* h_other_eff_num[num_other_eff];
   TH1D* h_other_eff_denom[num_other_eff];
   TCanvas* canv_other_eff[num_other_eff];
@@ -91,8 +90,8 @@ private:
   TH1D* h_particle_overlay[num_particles][num_particle_plots];
   TH1D* h_particle_dirt[num_particles][num_particle_plots];
 
-  static const int num_plots = 8;
-  const char* plots[num_plots] = {"_opening_angle_lab","opening_angle_com","opening_angle_mu_leading","opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_neutrino_energy"};
+  static const int num_plots = 9;
+  const char* plots[num_plots] = {"_opening_angle_lab","opening_angle_com","opening_angle_mu_leading","opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_pn","_neutrino_energy"};
   TH1D* h[num_plots];
   TH1D* h_bnb[num_plots];
   TH1D* h_ext[num_plots];
@@ -107,32 +106,32 @@ private:
 #endif
 #ifdef xsec_prep_cxx
 
-void xsec_prep::Grab_Histograms(TFile* f_bnb,TFile* f_ext,TFile* f_overlay,TFile* f_dirt){
+void xsec_prep::Grab_Histograms(TFile* f_bnb,TFile* f_ext,TFile* f_overlay,TFile* f_dirt, TFile* f_eff){
 
   //Migration Matrices
   /////////////////////
   for(int i=0; i < num_particles_matrices; i++){
     for(int j=0; j < num_particles_matrices_plots; j++){
-      h_particle_matrices[i][j] = (TH2D*)f_overlay->Get(Form("h_particle_matrices%s%s",particles_matrices[i],particles_matrices_plots[j]));
+      h_particle_matrices[i][j] = (TH2D*)f_eff->Get(Form("h_particle_matrices%s%s",particles_matrices[i],particles_matrices_plots[j]));
     }
   }
   
   for(int i=0; i < num_other_matrices; i++){
-    h_other_matrices[i] = (TH2D*)f_overlay->Get(Form("h_other_matrices%s",other_matrices[i]));
+    h_other_matrices[i] = (TH2D*)f_eff->Get(Form("h_other_matrices%s",other_matrices[i]));
   }
 
   //Efficiency Plots
   ///////////////////////////
   for(int i=0; i < num_particles_eff; i++){
     for(int j=0; j < num_particles_eff_plots; j++){
-      h_particle_num[i][j] = (TH1D*)f_overlay->Get(Form("h_particle_num%s%s",particles_eff[i],particles_eff_var[j]));
-      h_particle_denom[i][j] = (TH1D*)f_overlay->Get(Form("h_particle_denom%s%s",particles_eff[i],particles_eff_var[j]));
+      h_particle_num[i][j] = (TH1D*)f_eff->Get(Form("h_particle_num%s%s",particles_eff[i],particles_eff_var[j]));
+      h_particle_denom[i][j] = (TH1D*)f_eff->Get(Form("h_particle_denom%s%s",particles_eff[i],particles_eff_var[j]));
     }
   }
 
   for(int i = 0; i < num_other_eff; i++){
-    h_other_eff_num[i] = (TH1D*)f_overlay->Get(Form("h_other_eff_num%s",other_eff[i]));
-    h_other_eff_denom[i] = (TH1D*)f_overlay->Get(Form("h_other_eff_denom%s",other_eff[i]));
+    h_other_eff_num[i] = (TH1D*)f_eff->Get(Form("h_other_eff_num%s",other_eff[i]));
+    h_other_eff_denom[i] = (TH1D*)f_eff->Get(Form("h_other_eff_denom%s",other_eff[i]));
   }
 
 } //end of grab histograms
