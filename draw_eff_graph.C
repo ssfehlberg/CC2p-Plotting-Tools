@@ -72,8 +72,8 @@ void draw_eff_graph(){
     lg[i]->AddEntry(pur_graph[i],"Purity","lp");
     lg[i]->Draw("same");
       
-    canv_eff_pur[i]->Print(Form("images/%s/_efficiency_and_purity.png",run[i]));
-    canv_eff_pur[i]->Print(Form("images/%s/_efficiency_and_purity.pdf",run[i]));
+    canv_eff_pur[i]->Print(Form("images/pelee/%s/_efficiency_and_purity.png",run[i]));
+    canv_eff_pur[i]->Print(Form("images/pelee/%s/_efficiency_and_purity.pdf",run[i]));
   }
 
 

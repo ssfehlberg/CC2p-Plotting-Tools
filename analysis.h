@@ -18,8 +18,8 @@ class analysis{
 public:
   virtual void main();
   virtual void Define_Parameters(const char* run,const char* sample);
-  virtual void Grab_Histograms(TFile* f_overlay,  TFile* f_bnb,  TFile* f_ext, TFile* f_dirt, TFile* f_eff);
-  virtual void Plot_Histograms(char const* pot_num, const char* sample_name,Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend, int ymax, int ymin, int num_channels, const char* titles, string path,  TLine* a2,const char* titles2 = "", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false,double pad_lim = 0.0, double pad0_lim = 0.19,double bnb_min = 0.0, double bnb_max = 2.7, Double_t xlim = -9999.0, Double_t xlim_up = +9999.0);
+  virtual void Grab_Histograms(TFile* f_overlay,  TFile* f_bnb,  TFile* f_ext, TFile* f_dirt, TFile* f_eff, TFile* f_mom_thresholds);
+  virtual void Plot_Histograms(const char* run, char const* pot_num, const char* sample_name,Color_t colors[], std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1, TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend, int ymax, int ymin, int num_channels, const char* titles, string path,  TLine* a2,const char* titles2 = "", const char* plots="", const char* cut = "", bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false,double pad_lim = 0.0, double pad0_lim = 0.19,double bnb_min = 0.0, double bnb_max = 2.7, Double_t xlim = -9999.0, Double_t xlim_up = +9999.0);
 
   
 private:
@@ -92,19 +92,19 @@ private:
 				     {150,150,150,150,150,150,20,20,20}};//runs1+2+3 xsec binning
 
 
-  double xlim_eff[num_runs][num_eff] = {{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065},//jan
-					{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065},//run1
-					{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065},//run2
-					{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065},//run3
-					{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065}, //runs 1 +2+3 normal binning
-					{0.1,0.1,0.1,0.25,0.25,0.25,0.065,0.065,0.065}};//runs 1+2+3  xsec binning
+  double xlim_eff[num_runs][num_eff] = {{0.1,0.1,0.1,0.3,0.3,0.3,0.065,0.065,0.065},//jan
+					{0.1,0.1,0.1,0.3,0.3,0.3,0.065,0.065,0.065},//run1
+					{0.1,0.1,0.1,0.3,0.3,0.3,0.065,0.065,0.065},//run2
+					{0.1,0.1,0.1,0.3,0.3,0.3,0.065,0.065,0.065},//run3
+					{0.1,0.1,0.1,0.3,0.3,0.3,0.065,0.065,0.065}, //runs 1 +2+3 normal binning
+					{0.1,0.1,0.1,0.3,0.3,0.3,0.065,0.065,0.065}};//runs 1+2+3  xsec binning
   
-  double xlim_up_eff[num_runs][num_eff] = {{2.5,2.5,2.5,1.2,1.2,1.2,1.0,1.0,1.0},//jan
-					   {2.5,2.5,2.5,1.2,1.2,1.2,1.0,1.0,1.0},//run1
-					   {2.5,2.5,2.5,1.2,1.2,1.2,1.0,1.0,1.0},//run2
-					   {2.5,2.5,2.5,1.2,1.2,1.2,1.0,1.0,1.0},//run3
-					   {2.5,2.5,2.5,1.2,1.2,1.2,1.0,1.0,1.0}, //runs 1+2+3 normal binning
-					   {2.5,2.5,2.5,1.2,1.2,1.2,1.0,1.0,1.0},};//runs 1+2+3  xsec binning
+  double xlim_up_eff[num_runs][num_eff] = {{1.2,1.2,1.2,1.0,1.0,1.0,1.0,1.0,1.0},//jan
+					   {1.2,1.2,1.2,1.0,1.0,1.0,1.0,1.0,1.0},//run1
+					   {1.2,1.2,1.2,1.0,1.0,1.0,1.0,1.0,1.0},//run2
+					   {1.2,1.2,1.2,1.0,1.0,1.0,1.0,1.0,1.0},//run3
+					   {1.2,1.2,1.2,1.0,1.0,1.0,1.0,1.0,1.0}, //runs 1+2+3 normal binning
+					   {1.2,1.2,1.2,1.0,1.0,1.0,1.0,1.0,1.0},};//runs 1+2+3  xsec binning
   
 
   
@@ -124,7 +124,8 @@ private:
 
 
   static const int num_particles_eff_plots = 3;                                                                                                                                                                                        
-  const char* particles_eff_var[num_particles_eff_plots] = {"_mom","_costheta","_phi"};                                                                                                                                                     const char* particles_eff_var_titles[num_particles_eff_plots] = {"True Momentum (GeV/c)","True cos(#theta)","True #phi (Rad.)"};
+  const char* particles_eff_var[num_particles_eff_plots] = {"_mom","_costheta","_phi"};
+  const char* particles_eff_var_titles[num_particles_eff_plots] = {"True Momentum (GeV/c)","True cos(#theta)","True #phi (Rad.)"};
   static const int num_particles_eff = 5;                                                                                                                                                                                              
   const char* particles_eff[num_particles_eff] = {"_muon_all","_muon_contained","_muon_uncontainied","_lead_proton","_recoil_proton"};
   const char* particles_eff_titles[num_particles_eff] = {"All Muons","Contained Muons","Uncontained Muons","Leading Proton","Recoil Proton"};
@@ -135,7 +136,7 @@ private:
   //efficiency plots of other variables to determine potential xsec candidates
   static const int num_other_eff = 8;
   const char* other_eff[num_other_eff] = {"_opening_angle_protons_lab","_opening_angle_protons_com","_opening_angle_mu_leading","_opening_angle_mu_both","_delta_PT","_delta_alphaT","_delta_phiT","_nu_E"};
-  const char* other_eff_titles[num_other_eff] = {"cos(Opening Angle Protons_{Lab})","cos(Opening Angle Protons_{COM}","cos(Opening Angle Muon and Leading_{Lab})","cos(Opening Angle Muon and Both Protons_{Lab})","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)","#delta #phi_{T} (Deg.)","True Neutrino Energy (GeV)"};
+  const char* other_eff_titles[num_other_eff] = {"cos(#gamma_{Lab})","cos(#gamma_{1#mu2p COM}","cos(#gamma_{#mu,p_{L}})","cos(#gamma_{#mu,p_{L}+p_{R}})","#delta P_{T} (GeV/c)","#delta #alpha_{T} (Deg.)","#delta #phi_{T} (Deg.)","True Neutrino Energy (GeV)"};
   TH1D* h_other_eff_num[num_other_eff];
   TH1D* h_other_eff_denom[num_other_eff];
   TCanvas* canv_other_eff[num_other_eff];
@@ -147,7 +148,17 @@ private:
   static const int track_cut = 3;
   const char* variable[num_track] = {"_track_score","_track_vertex_distance","_track_length","_track_pid"};
   const char* which_track_cut[track_cut] = {"_after_3_pfps","_after_track_score","_after_distance_cut"};
-  const char* particles[num_particles] = {"_total","_proton_contained","_proton_uncontained","_muon_contained","_muon_uncontained","_pionpm","_pion0","_electron","_gamma","_kaon","_other"};//{"total","proton","muon","pion","electron","other"};
+  const char* particles[num_particles] = {"_total",
+					  "_proton_contained",
+					  "_proton_uncontained",
+					  "_muon_contained",
+					  "_muon_uncontained",
+					  "_pionpm",
+					  "_pion0",
+					  "_electron",
+					  "_gamma",
+					  "_kaon",
+					  "_other"};
   std::vector<const char*> channel_legend_chi2 = {"Total Overlay","Protons:Contained","Protons:Uncontained","Muon:Contained","Muon:Uncontained","Pion#pm","Pion0,","Electron","#gamma","Kaon","Other"};
   TH1D* h_track_overlay[num_track][track_cut][num_particles];
   std::vector<TH1D*> h_track_overlay_vec;
@@ -161,24 +172,47 @@ private:
   TPad* pad_track[num_track][track_cut];
   TPad* pad0_track[num_track][track_cut];
   int ymin_track[num_track] = {0,0,0,0};
-  int ymax_track[num_track] = {50000,50000,700,4500};
+  int ymax_track[num_track] = {50000,60000,700,4500};
   Double_t xlim_track[num_track] = {0.8, 4.0 ,0.0 ,0.2}; 
   TLine* a_track[num_track];
   const char* titles_track[num_track] = {"Track Score","Track Vertex Distance (cm)","Track Length (cm)","Track PID"};
   const char* titles_track_cuts[track_cut] = {"After 3PFPs","After Track Score","After Distance Cut"};
   
- ///////////////////////////////////////
- //PLOTS WITH MY MONTEC-CARLO DEFINITIONS
- ////////////////////////////////////////
+  ///////////////////////////////////////
+  //PLOTS WITH MY MONTEC-CARLO DEFINITIONS
+  ////////////////////////////////////////
 
- //General
- /////////
- static const int num_cuts = 3; //number of applied cuts
- static const int num_channels = 11; //number of various overlay channels
+  //General
+  /////////
+  static const int num_cuts = 3; //number of applied cuts
+  static const int num_channels = 11; //number of various overlay channels
   const char* cut[num_cuts] = {"_before_selection","_after_fv","_after_three_pfps"};//,"_after_track_cut","_after_coonnection_cut","_after_pid"}; 
- const char* channel[num_channels] = {"_total", "_cc2p0pi","_ccNp1pi","_ccNp0pi","_cc1p0pi","_nc","_ccNpNpi","_cc0p0pi","_other","_outfv","_ccnue"};
-  //const char* channel_legend[num_channels] = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
-  std::vector<const char*> channel_legend = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
+  //const char* channel[num_channels] = {"_total", "_cc2p0pi","_ccNp1pi","_ccNp0pi","_cc1p0pi","_nc","_ccNpNpi","_cc0p0pi","_ccnue","_outfv","_other"};
+  //std::vector<const char*> channel_legend = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","CC#nu_{e}","Out of FV","Other"};
+
+  const char* channel[num_channels] = {"_total",
+				       "_cc2p0pi",
+				       "_ccNpNpi",
+				       "_ccNp1pi",
+				       "_cc0p0pi",
+				       "_ccNp0pi",
+				       "_ccnue",
+				       "_cc1p0pi",
+				       "_outfv",
+				       "_nc",
+				       "_other"};
+  std::vector<const char*> channel_legend = {"Total Overlay",
+					     "CC2p0#pi (Signal)",
+					     "CC(N>=0)p(N>1)#pi",
+					     "CC(N>=0)p1#pi",
+					     "CC1p0#pi",
+					     "CC(N>2)p0#pi",
+					     "CC#nu_{e}",
+					     "CC1p0#pi",
+					     "Out of FV",
+					     "NC",
+					     "Other"};
+
   const char* cut_titles[num_cuts] = {"Before Selection", "After FV", "After PFP Cut"};//,"After Track Score Cut","After Vertex Attachment Cut","After PID"};
   int z = 0; //dumb indices
   int f = 0; //dumb indices
@@ -193,7 +227,7 @@ private:
 						 { {1000,1000,1000,2000,3500},{1000,1000,600,600,3500},{1000,1000,600,450,3500} }, //run1
 						 { {1000,1000,1000,2000,3500},{1000,1000,600,600,3500},{1000,1000,600,450,3500} }, //run2
 						 { {1000,1000,1000,2000,3500},{1000,1000,600,600,3500},{1000,1000,600,450,3500} }, //run3
-						 { {35000,65000,45000,2000,3500},{1000,1000,600,600,3500},{1000,1000,600,450,3500} }, //runs 1+2+3 normal binning
+						 { {80000,160000,35000,2000,3500},{1000,1000,600,600,3500},{1000,1000,600,450,3500} }, //runs 1+2+3 normal binning
 						 { {35000,65000,45000,2000,3500},{1000,1000,600,600,3500},{1000,1000,600,450,3500} }//runs 1+2+3 xsec binning
                                                 };
 
@@ -205,10 +239,10 @@ private:
 						 { {-3,-3,-4,-4,-4}, {-4,-3,-3,-3,-3}, {-2,-2,-2,-4,-4} }, //runs 1+2+3 normal binning
 						  { {-3,-3,-4,-4,-4}, {-4,-3,-3,-3,-3}, {-2,-2,-2,-4,-4} }//runs 1+2+3 xsec binning
                                                 };
-  Double_t xmin_vtx[num_variables] = {10.0,-115,21.0};
-  Double_t xmax_vtx[num_variables] = {245,115,1029};
-  bool plot_total = false; //sanity check on total overlay
-  bool plot_ccnue = false; //do you want to plot ccnue?
+  Double_t xmin_vtx[num_variables] = {10.0,-106.5,10.0};
+  Double_t xmax_vtx[num_variables] = {246.35,106.5,1026.8};
+  bool plot_total = true; //sanity check on total overlay
+  bool plot_ccnue = true; //do you want to plot ccnue?
   bool flip_legend = false;
   std::vector<TH1D*> h_overlay_vec; //overlay plots
   TH1D* h_overlay[num_cuts][num_variables][num_channels];
@@ -249,8 +283,6 @@ private:
   static const int num_var = 4;
   const char* var[num_var] = {"_mom","_E","_theta","_phi"};
   const char* titles_var[num_var] = {"Momentum (GeV/c)","Energy (GeV)","cos(#theta)","#phi (Rad.)"};
-  //std::vector<const char*> channel_legend_raquel = {"Total Overlay","CCRES","CCQE","CCMEC","NC","CCDIS","CCCOH","OOFV","Other","CC$\nu_{e}$"};
-  //std::vector<const char*> channel_legend = {"Total Overlay","CC2p0#pi (Signal)","CC(N>=0)p1#pi","CC(N>2)p0#pi","CC1p0#pi","NC","CC(N>=0)p(N>1)#pi","CC0p#pi","Other","OOFV","CC#nu_{e}"};
   
  //Muon
   TH1D* h_muon_overlay[num_var][num_channels]; //actual overlay
@@ -269,15 +301,24 @@ private:
 				      {160,60,450,275},//run1
 				      {250,100,650,450},//run2
 				      {300,100,1000,600},//run3
-				      {800,2000,2500,1450}, //runs 1+2+3 normal binning
+				      {300,2000,1100,800}, //runs 1+2+3 normal binning
 				      {700,100,2000,1450}}; //runs 1+2+3 xsec binning
   
   int muon_ymin[num_runs][num_var] = {{-2,-2,-2,-2},//jan
 				      {-2,-2,-2,-2},//run1
 				      {-2,-2,-2,-2},//run2
 				      {-2,-2,-2,-2},//run3
-				      {-2,-2,-2,-2}, //runs 1+2+3 normal binning
+				      {-7,-2,-2,-2}, //runs 1+2+3 normal binning
 				      {-2,-2,-2,-2}};//runs 1+2+3 xsec binning
+
+  double muon_bnb_ymin[num_runs][num_var] = {{2.7,2.7,2.7,2.7},//jan
+				      {2.7,2.7,2.7,2.7},//run1
+				      {2.7,2.7,2.7,2.7},//run2
+				      {2.7,2.7,2.7,2.7},//run3
+				      {1.5,2.7,2.7,2.7}, //runs 1+2+3 normal binning
+				      {1.5,2.7,2.7,2.7}};//runs 1+2+3 xsec binning
+
+  
   //Recoil Proton
   TH1D* h_recoil_overlay[num_var][num_channels];
   std::vector<TH1D*> h_recoil_overlay_vec;
@@ -295,7 +336,7 @@ private:
 					{125,175,150,400},//run1
 					{200,200,300,575},//run2
 					{200,200,300,575},//run3
-					{600,2000,1200,2300}, //runs 1+2+3 normal binning
+					{400,2000,400,850}, //runs 1+2+3 normal binning
 					{600,2000,1200,2300}};//runs 1+2+3 xsec binning
   
   int recoil_ymin[num_runs][num_var] = {{-2,-2,-2,-2},//jan
@@ -317,39 +358,46 @@ private:
   TLegend* legend_leading[num_var];
   TPad* pad_leading[num_var];
   TPad* pad0_leading[num_var];
-  std::vector<bool> flip_lead = {false,false,false,false};
+  std::vector<bool> flip_lead = {false,false,true,false};
   int leading_ylim[num_runs][num_var] = {{35,50,160,100},//jan
 					 {130,100,400,275},//run1
 					 {200,200,600,500},//run2
 					 {200,200,600,500},//run3
-					 {600,2000,2000,1500},//runs 1+2+3 normal binning
+					 {400,2000,800,800},//runs 1+2+3 normal binning
 					 {600,2000,2000,1500}};//runs 1+2+3 xsec binning
   
-  int leading_ymin[num_runs][num_var] = {{-2,-2,-2,-2},//jan
+  double leading_ymin[num_runs][num_var] = {{-2,-2,-2,-2},//jan
 					 {-2,-2,-2,-2},//run1
 					 {-2,-2,-2,-2},//run2
 					 {-2,-2,-2,-2},//run3
-					 {-2,-2,-2,-2},//runs 1+2+3 normal binning
+					 {-7,-2,-2,-2},//runs 1+2+3 normal binning
 					 {-2,-2,-2,-2}};//runs 1+2+3 xsec binning
 
  //Random Physics Variables
  ///////////////////////////
   static const int num_phys = 10; //NOTE: These values are the same for Raquel's plots. If this changes in the future, be sure to chage this!
   const char* physics[num_phys] = {"_opening_angle_protons_lab","_opening_angle_protons_com","_opening_angle_mu_leading","_opening_angle_mu_both","_mom_struck_nuc","_tot_pz","_tot_E","_tot_E_minus_beam","_nu_E","_PT_squared"};
-  const char* physics_titles[num_phys] = {"cos(#gamma_{Lab})","cos(#gamma_{1#mu2p COM})","cos(Opening Angle Between the Muon and Leading Proton_{Lab})","cos(Opening Angle Between the Muon and Both Protons_{Lab})","Momentum of Struck Nucleon (GeV)","Total P_{z} of the Two Protons", "Total Kinetic Energy of System (GeV/c)","Total Kinetic Energy - Beam Energy (MeV/c)","Neutrino Energy (GeV/c)","P^{T}_{Miss}^{2} (GeV^{2}/c^{2})"};
+  const char* physics_titles[num_phys] = {"cos(#gamma_{Lab})","cos(#gamma_{1#mu2p COM})","cos(#gamma_{#mu,p_{L}})","cos(#gamma_{#mu,p_{L} + p_{R}})","Momentum of Struck Nucleon (GeV)","Total P_{z} of the Two Protons", "Total Kinetic Energy of System (GeV/c)","Total Kinetic Energy - Beam Energy (MeV/c)","Neutrino Energy (GeV/c)","P^{T}_{Miss}^{2} (GeV^{2}/c^{2})"};
   int phys_ylim[num_runs][num_phys] = {{60,60,60,60,60,80,50,150,50,250},//jan
-				       {150,150,150,150,60,80,100,450,125,1000},//run1
+				       {150,300,150,150,60,80,100,450,125,1000},//run1
 				       {250,500,250,250,250,80,200,800,200,1500},//run2
 				       {250,800,250,250,250,250,250,800,200,1500},//run3
-				       {800,1500,800,800,250,250,250,800,800,3500}, //runs 1+2+3 normal binning
-				       {800,1500,800,800,250,250,250,800,800,3500}}; //runs 1+2+3 xsec binning
+				       {400,1200,600,600,250,250,250,800,500,3500}, //runs 1+2+3 normal binning
+				       {800,1500,800,800,250,250,250,800,500,3500}}; //runs 1+2+3 xsec binning
   
   int phys_ymin[num_runs][num_phys] =  {{-2,-2,-2,-2,-2,-2,-2,-2,-2},//jan
 					{-2,-2,-2,-2,-2,-2,-2,-2,-2},//run1
 					{-2,-2,-2,-2,-2,-2,-2,-2,-2},//run2
 					{-2,-2,-2,-2,-2,-2,-2,-2,-2},//run3
-					{-2,-2,-2,-2,-2,-2,-2,-2,-2},//runs 1+2+3 normal binning
+					{-2,-2,-2,-10,-2,-2,-2,-2,-2},//runs 1+2+3 normal binning
 					{-2,-2,-2,-2,-2,-2,-2,-2,-2}};//runs 1+2+3 xsec binning
+
+  double phys_bnb_ymin[num_runs][num_phys] =  {{2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7},//jan
+					{2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7},//run1
+					{2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7},//run2
+					{2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7},//run3
+					{2.7,2.7,2.7,1.7,2.7,2.7,2.7,2.7,2.7},//runs 1+2+3 normal binning
+					{2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7,2.7}};//runs 1+2+3 xsec binning    
   
   TH1D* h_phys_overlay[num_phys][num_channels];
   std::vector<TH1D*> h_phys_overlay_vec;
@@ -372,14 +420,22 @@ private:
 				     {300,600,425,150},//run1
 				     {500,900,900,200},//run2
 				     {500,900,900,200},//run3
-				     {1500,2200,1500,600}, //runs 1+2+3 normal binning
+				     {800,1200,1000,300}, //runs 1+2+3 normal binning
 				     {1500,3000,2000}};//runs 1+2+3 xsec binning
   int stv_ymin[num_runs][num_stv] = {{-2,-2,-2,-2},//jan
 				     {-2,-2,-2,-2},//run1
 				     {-2,-2,-2,-2},//run2
 				     {-2,-2,-2,-2},//run3
-				     {-2,-2,-2,-2},//runs 1+2+3 normal binning
+				     {-12,-30,-20,-2},//runs 1+2+3 normal binning
 				     {-2,-2,-2,-2}};//runs 1+2+3 xsec binning
+
+  double stv_bnb_ymin[num_runs][num_stv] = {{2.7,2.7,2.7,2.7},//jan
+					    {2.7,2.7,2.7,2.7},//run1
+					    {2.7,2.7,2.7,2.7},//run2
+					    {2.7,2.7,2.7,2.7},//run3
+					    {1.7,1.5,1.5,2.7},//runs 1+2+3 normal binning
+					    {2.7,2.7,2.7,2.7}};//runs 1+2+3 xsec binning 
+  
   TH1D* h_stv_overlay[num_stv][num_channels];
   std::vector<TH1D*> h_stv_overlay_vec;
   TH1D* h_stv_overlay0[num_stv][3];
@@ -398,15 +454,16 @@ private:
 
  //General
  //////////////////////////
-  bool plot_total_raquel = false; //sanity check on total overlay                                                                                                                                                                       
-  bool plot_ccnue_raquel = false; //do you want to plot ccnue? 
+  bool plot_total_raquel = false; //sanity check on total overlay
+  bool plot_ccnue_raquel = true; //do you want to plot ccnue? 
   int z_raquel=0; //dumb indices                                                                                                                                                                                                        
   int f_raquel = 0; //dumb indices 
-  static const int num_channels_raquel = 10;
-  const char* channel_raquel[num_channels_raquel] = {"_total", "_ccMEC", "_ccRES","_ccQE","_nc","_ccDIS","_ccCOH","_outfv","_other","_ccNue"};
-  //const char* channel_raquel[num_channels_raquel] = {"_total", "_ccRES", "_ccQE","_ccMEC","_nc","_ccDIS","_ccCOH","_outfv","_other","_ccNue"}; //just for now
-  std::vector<const char*> channel_legend_raquel = {"Total Overlay","CCMEC","CCRES","CCQE","NC","CCDIS","CCCOH","OOFV","Other","CC$\nu_{e}$"};
-  //std::vector<const char*> channel_legend_raquel = {"Total Overlay","CCRES","CCQE","CCMEC","NC","CCDIS","CCCOH","OOFV","Other","CC$\nu_{e}$"}; //just for now
+  static const int num_channels_raquel = 8;
+  //const char* channel_raquel[num_channels_raquel] = {"_total", "_ccMEC", "_ccRES","_ccQE","_nc","_ccDIS","_outfv","_ccNue"};
+  //std::vector<const char*> channel_legend_raquel = {"Total Overlay","CCMEC","CCRES","CCQE","NC","CCDIS","Out of FV","CC#nu_{e}"};
+
+  const char* channel_raquel[num_channels_raquel] = {"_total", "_ccMEC", "_ccDIS","_ccRES","_ccNue","_ccQE","_outfv","_nc"};
+  std::vector<const char*> channel_legend_raquel = {"Total Overlay","CCMEC","CCDIS","CCRES","CC#nu_{e}","CCQE","Out of FV","NC"};
   
  //Plots of the individual particle quantities
  //Note: we are taking all the variables from my definintions since they are the same for Raquel's plots
@@ -493,6 +550,8 @@ void analysis::Define_Parameters(const char* run, const char* sample){
   ////////////////////////
   gStyle->SetPaintTextFormat("4.2f");gStyle->SetHistMinimumZero(kTRUE);
   gStyle->SetHistMinimumZero(kFALSE);
+  gStyle->SetTitleSize(0.1);
+  gStyle->SetTitleAlign(23);
   t->SetNDC();
   t->SetTextAlign(22);
 
@@ -518,12 +577,13 @@ void analysis::Define_Parameters(const char* run, const char* sample){
     run_num = 5;
     }
 
-  sample_name="#scale[0.6]{MicroBooNE In-Progress}";//sample name printed on the plots
+  //sample_name="#scale[0.6]{MicroBooNE In-Progress}";//sample name printed on the plots
+  sample_name="#scale[0.6]{MicroBooNE Preliminary}";//sample name printed on the plots 
   
 } //end of define parameters
 
 
-void analysis::Grab_Histograms( TFile* f_overlay,  TFile* f_bnb,  TFile* f_ext, TFile* f_dirt, TFile* f_eff){
+void analysis::Grab_Histograms( TFile* f_overlay,  TFile* f_bnb,  TFile* f_ext, TFile* f_dirt, TFile* f_eff, TFile* f_mom_thresholds){
   for(int i = 0; i < num_cuts; i++){
     for(int j = 0; j < num_variables; j++){
       h_bnb[i][j][0] = (TH1D*)f_bnb->Get(Form("h%s%s_bnb",plots[j],cut[i]));
@@ -559,8 +619,8 @@ void analysis::Grab_Histograms( TFile* f_overlay,  TFile* f_bnb,  TFile* f_ext, 
 
   //grabbing efficiency plots:
   for(int i=0; i < num_eff; i++){
-    h_num[i] =  (TH1D*)f_eff->Get(Form("h_mom_threshold_num_%s",eff[i]));
-    h_denom[i] =  (TH1D*)f_eff->Get(Form("h_mom_threshold_denom_%s",eff[i]));
+    h_num[i] =  (TH1D*)f_mom_thresholds->Get(Form("h_mom_threshold_num_%s",eff[i]));
+    h_denom[i] =  (TH1D*)f_mom_thresholds->Get(Form("h_mom_threshold_denom_%s",eff[i]));
   }
 
   eff_graph = (TGraph*)f_overlay->Get("eff_graph");
@@ -647,7 +707,7 @@ void analysis::Grab_Histograms( TFile* f_overlay,  TFile* f_bnb,  TFile* f_ext, 
 
 }
 
-void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend,int ymax, int ymin, int num_channels, const char* titles, string path,  TLine* a2,const char* titles2 ="", const char* plots="", const char* cut = "",bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false, double pad_lim = 0.0, double pad0_lim = 0.19, double bnb_min = 0.0, double bnb_max = 2.7, Double_t xlim = -9999.,Double_t xlim_up = +9999.0)
+void analysis::Plot_Histograms(char const* run, char const* pot_num, const char* sample_name,Color_t colors[],std::vector<TH1D*> h_overlay, TH1D* h_overlay00,  TH1D* h_overlay1,  TH1D* h_overlay2,  TH1D* h_ext,  TH1D* h_ext1,  TH1D* h_ext2,  TH1D* h_dirt,  TH1D* h_dirt1,  TH1D* h_dirt2,  TH1D* h_bnb,  TH1D* h_bnb1,TCanvas* canv, THStack* h, TPad* pad, TPad* pad0, TLegend* legend, std::vector<const char*> channel_legend,int ymax, int ymin, int num_channels, const char* titles, string path,  TLine* a2,const char* titles2 ="", const char* plots="", const char* cut = "",bool plot_total = false, bool plot_ccnue = false, bool flip_legend = false, double pad_lim = 0.0, double pad0_lim = 0.19, double bnb_min = 0.0, double bnb_max = 2.7, Double_t xlim = -9999.,Double_t xlim_up = +9999.0)
 {      
 
   h_ext1 = (TH1D*)h_ext->Clone();
@@ -688,12 +748,24 @@ void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Colo
   
         
   for(int k=1; k < z ; k++){
-    h_overlay[k]->SetLineColor(colors[k]);
-    h_overlay[k]->SetFillColor(colors[k]);
-    h_overlay[k]->SetLineWidth(1);
-    h->Add(h_overlay[k]);
+    //if(k%2 != 0){
+      h_overlay[k]->SetLineColor(colors[k]);
+      h_overlay[k]->SetFillColor(colors[k]);
+      h_overlay[k]->SetLineWidth(1);
+      h->Add(h_overlay[k]);
+      //}
+  }
+  /*
+   for(int k=1; k < z ; k++){
+    if(k%2 == 0){
+      h_overlay[k]->SetLineColor(colors[k]);
+      h_overlay[k]->SetFillColor(colors[k]);
+      h_overlay[k]->SetLineWidth(1);
+      h->Add(h_overlay[k]);
     }
-  
+  }
+  */
+
   //Dirt
   h->Add(h_dirt);
   h_dirt->SetFillColor(kOrange-8);
@@ -710,10 +782,14 @@ void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Colo
   //BNB
   h_bnb->Draw("e1SAME");
   h_bnb->SetLineColor(kBlack);
-  h_bnb->SetLineWidth(1);
+  h_bnb->SetLineWidth(2);
+  h_bnb->SetMarkerSize(1);
 
   h->GetYaxis()->SetTitle("No. Events");
-
+  h->GetYaxis()->SetTitleSize(40);
+  h->GetYaxis()->SetTitleFont(43); //4 = hevelatica normal 3 = precision
+  h->GetYaxis()->SetTitleOffset(1.5);
+  
   //Drawing cut lines if needed
   a2 = new TLine(xlim,ymin,xlim,ymax);  
   a2->Draw("SAME");
@@ -740,27 +816,41 @@ void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Colo
   h_overlay00->SetLineWidth(1);
 
   if(flip_legend){
-    legend = new TLegend(0.101, 0.54, 0.290, 0.89);
+    legend = new TLegend(0.105, 0.46, 0.524, 0.87);
   }else{
-    legend = new TLegend(0.71, 0.54, 0.899, 0.89);
+    legend = new TLegend(0.48, 0.46, 0.899, 0.87);
   }
-  legend->AddEntry(h_bnb,"Data (Beam-On)","lepf");
+  legend->SetNColumns(2);
+  legend->SetHeader("MicroBooNE 6.79 x 10^{20} POT, Preliminary","C"); // option "C" allows to center the header
+  //TLegendEntry *header = (TLegendEntry*)legend->GetListOfPrimitives()->First();
+  //header->SetTextFont(43);
+  //header->SetTextSize(0.05);   
+  legend->AddEntry(h_bnb,"BNB Data","lepf");
+  legend->AddEntry(h_ext,"EXT Data","f");
   legend->AddEntry(h_overlay00,"Stat. Unc.","f");
-  legend->AddEntry(h_ext,"Data (Beam-Off)","f");
   legend->AddEntry(h_dirt,"Dirt","f");
   for(int k =1; k < z; k++){	
-  legend->AddEntry(h_overlay[f-k],Form("%s",channel_legend[f-k]),"f");
+    //legend->AddEntry(h_overlay[f-k],Form("%s",channel_legend[f-k]),"f");
+    legend->AddEntry(h_overlay[k],Form("%s",channel_legend[k]),"f");
   }
-  legend->SetLineWidth(0);
+  legend->SetLineWidth(2);
+  legend->SetLineColor(kGray);
   legend->SetFillColor(kWhite);
-  legend->SetTextSize(0.03);
+  legend->SetTextSize(0.04);
   legend->Draw("same");
   t->SetNDC();
   t->SetTextAlign(22);
-  t->DrawLatex(0.515,0.97,Form("#scale[1.0]{%s %s}",titles,titles2)); //removing : because sometimes I don't need it
-  t->DrawLatex(0.21,0.92,Form("%s",pot_num));
-  t->DrawLatex(0.82,0.92,Form("%s",sample_name));
-      
+  t->DrawLatex(0.515,0.95,Form("#scale[1.3]{%s %s}",titles,titles2)); //removing : because sometimes I don't need it
+
+  /*if(strcmp(run,"Run_all") == 0){
+    t->DrawLatex(0.23,0.92,Form("%s",pot_num));
+  }else{
+    t->DrawLatex(0.21,0.92,Form("%s",pot_num));
+  }
+  t->DrawLatex(0.827,0.92,Form("%s",sample_name));
+  */
+
+  
   canv->cd();
   pad0 = new TPad(Form("pad0%s%s",plots,cut),Form("pad0%s%s",plots,cut),0,0,1,0.35);
   pad0->SetTopMargin(0);                
@@ -776,13 +866,14 @@ void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Colo
   h_bnb1->Divide(h_bnb1,h_ext1,1.0,1.0);
   h_bnb1->Sumw2();
   h_bnb1->Draw("e1p");
+  h_bnb1->SetLineWidth(2);
+  h_bnb1->SetMarkerSize(1);
   h_bnb1->SetStats(kFALSE);
   h_bnb1->SetTitle("");
       
   TF1 *a = new TF1("a","1", -150000 , 150000);
   a->SetLineColor(kRed);
   a->Draw("SAME");
-
 
   //Calculate the Chi2
   //h_ext_extra = (TH1D*)h_ext1->Clone();
@@ -793,29 +884,31 @@ void analysis::Plot_Histograms(char const* pot_num, const char* sample_name,Colo
   std::cout<<"Value of Bins1: "<<nBins1<<std::endl;
   
   //t->DrawLatex(0.83,0.92,Form("#scale[1.5]{#chi^{2}_{stat}/No. Bins: %g / %i = %g"}",chisqv, nBins, chisqv/nBins);
-  t->DrawLatex(0.83,0.92,Form("#scale[1.3]{#chi^{2}_{stat}/No. Bins: %.2f}", chisqv1/nBins1));
+  ////t->DrawLatex(0.83,0.92,Form("#scale[1.3]{#chi^{2}_{Stat}/No. Bins: %.2f}", chisqv1/nBins1));
   t->SetNDC();
   t->SetTextAlign(22);
  
-  h_bnb1->GetYaxis()->SetTitle("Beam-On/(Simulation + Beam-Off)");
+  //h_bnb1->GetYaxis()->SetTitle("Beam-On/(Simulation + Beam-Off)");
+  h_bnb1->GetYaxis()->SetTitle("Ratio");
   h_bnb1->GetYaxis()->CenterTitle();
-  h_bnb1->GetYaxis()->SetTitleSize(28);
+  h_bnb1->GetYaxis()->SetTitleSize(40);
   h_bnb1->GetYaxis()->SetTitleFont(43);
   h_bnb1->GetYaxis()->SetTitleOffset(1.5);
   h_bnb1->GetYaxis()->SetLabelFont(43);
   h_bnb1->GetYaxis()->SetLabelSize(30);
   h_bnb1->GetXaxis()->SetTitle(Form("%s",titles));
-  h_bnb1->GetXaxis()->SetTitleSize(35);
+  h_bnb1->GetXaxis()->SetTitleSize(40); //35
   h_bnb1->GetXaxis()->SetTitleFont(43);
   h_bnb1->GetXaxis()->SetTitleOffset(3);
   h_bnb1->GetXaxis()->SetLabelFont(43);
   h_bnb1->GetXaxis()->SetLabelSize(35);
   h_bnb1->SetMaximum(bnb_max);
   h_bnb1->SetMinimum(bnb_min);
-      
+    
   canv->Print(Form("%s%s%s.png",path.c_str(),plots,cut));
   canv->Print(Form("%s%s%s.pdf",path.c_str(),plots,cut));
   
 } //end of plot histograms
 
 #endif
+B
